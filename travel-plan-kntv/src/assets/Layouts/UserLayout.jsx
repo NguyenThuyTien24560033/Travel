@@ -233,19 +233,19 @@ export const useUser = () => useContext(UserContext);
    PHẦN 2: API LAYER (CHỈ SỬA MODE)
 ========================================================= */
 
-const MODE = "JSON_SERVER"; 
+// const MODE = "JSON_SERVER"; 
 // Đình Khang đổi comment khi chạy backend thật
-// const MODE = "REAL_BACKEND"; 
+const MODE = "REAL_BACKEND"; 
 
-const JSON_API = "http://localhost:3001/users";
+// const JSON_API = "http://localhost:3001/users";
 
 //Đình Khang đổi đường dẫn tại đây
 const REAL_API = {
   login: "http://localhost:8000/travel/api/login/",
-  register: "http://localhost:8000/travel/users",
+  register: "http://localhost:8000/travel/users/",
   // getUser: "http://localhost:8000/travel/users",
   // logout: "http://localhost:8000/travel/api/logout/",
-  getUser: "api/me/", // Đổi để khớp với authorizedFetch (tự cộng BASE_URL)
+  getUser: "users/", // Đổi để khớp với authorizedFetch (tự cộng BASE_URL)
   logout: "api/logout/",
 };
 
