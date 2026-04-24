@@ -1,0 +1,23 @@
+{
+  "users": [
+    {
+      "id": "5s",
+      "username": "tan",
+      "email": "tan@gmail.com",
+      "password": "123456@",
+      "role": "partner",
+      "name": "Thanh An Travel",
+      "phoneNumber": "0987654321",
+      "address": "Hà Nội"
+    },
+    {
+      "id": "u_001",
+      "username": "thuytien_tester",
+      "email": "tien@student.hust.edu.vn",
+      "password": "password123",
+      "role": "user",
+      "name": "Nguyễn Thủy Tiên",
+      "phoneNumber": "0123456789",
+      "address": "Hai Bà Trưng, Hà Nội"
+    }
+  ]}
