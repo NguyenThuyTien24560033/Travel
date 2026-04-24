@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { User } from "lucide-react";
 import {useUser} from  '../Layouts/UserLayout.jsx'
+import {usePartner} from  '../Layouts/PartnerLayout.jsx'
 
 const Header = ({ onLoginClick }) => {
   const { user, logout } = useUser(); // lấy từ context
