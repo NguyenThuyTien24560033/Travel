@@ -28,6 +28,15 @@
       "id": "4KM-QSXVme8",
       "address": "bt",
       "phone": "0856058555"
+    },
+    {
+      "email": "tho@gmail.com",
+      "username": "tin",
+      "password": "111111@",
+      "role": "user",
+      "id": "rtY2ZohXM_U",
+      "phone": "0856058551",
+      "address": "Bình Thuận"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
