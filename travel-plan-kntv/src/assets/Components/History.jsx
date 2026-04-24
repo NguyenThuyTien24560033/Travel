@@ -67,7 +67,17 @@ function HistoryComponent(){
       setLoading(false);
     }
   }, []);
-
+  /* 
+  historyData = [
+    {
+    "id": string,
+    "created_at": date,
+    "location": string,
+    },
+    
+    ..........
+  ]
+  */ 
 
   return (
     <></>
