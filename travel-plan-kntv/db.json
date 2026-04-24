@@ -19,5 +19,16 @@
       "name": "Nguyễn Thủy Tiên",
       "phoneNumber": "0123456789",
       "address": "Hai Bà Trưng, Hà Nội"
+    },
+    {
+      "email": "son@example.com",
+      "username": "ThuyTien",
+      "password": "112233@",
+      "role": "user",
+      "id": "4KM-QSXVme8",
+      "address": "bt",
+      "phone": "0856058555"
     }
-  ]}
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

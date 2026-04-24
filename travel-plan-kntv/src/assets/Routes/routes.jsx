@@ -1,40 +1,37 @@
 // CẤP 1: Chỉ import 2 Layout chính
-import UserLayout from '../Layouts/UserLayout.jsx'
-import PartnerLayout from '../Layouts/PartnerLayout.jsx'
 
-/**
- * Mảng Public_Layout dành cho User
- * Hiện tại chỉ để 1 trang mặc định để test khung
- */
+//User
+import UserLayout from '../Layouts/UserLayout.jsx'
+import HomePage from '../Components/Home.jsx'
+import UserLogin from '../Components/UserLogin.jsx'
+import UserProfile from '../../pages/User/UserProfile.jsx';
+
+//Partner
+// import PartnerLayout from '../Layouts/PartnerLayout.jsx'
+// import Dashboard from './pages/dashBoard/dashBoard.jsx'
+
 export const Public_Layout = [
-    {
-        path: '/',
-        element: <UserLayout />, 
+    { 
+        path: '/', 
+        element: <UserLayout />, // Layout bọc ngoài
         children: [
-            // Sau này bạn sẽ thêm Home, Location... vào đây
-            { path: '/', element: <div>Trang chủ User (Cấp 2)</div> },
-        ]
+            { path: "", element: <HomePage /> }, // Trang chủ hiện ở chỗ <Outlet />
+            // { path: "locations", element: <Locations /> },
+             { path: "users", element: <UserLogin /> },
+             { path: "profile", element: <UserProfile /> },
+        ] 
     },
-    {
-        path: '/users',
-        element: <div>Trang Login User (Không Layout)</div>
-    }
 ];
 
-/**
- * Mảng Private_Layout dành cho Partner
- */
 export const Private_Layout = [
-    {
-        path: '/partner',
-        element: <PartnerLayout />,
+    // Sau này làm Partner thì mở ra
+    /*
+    { 
+        path: '/partner', 
+        element: <PartnerLayout />, 
         children: [
-            // Sau này bạn sẽ thêm Dashboard, Menu... vào đây
-            { index: true, element: <div>Dashboard Partner (Cấp 2)</div> },
-        ]
+            { path: "dashboard", element: <Dashboard /> },
+        ] 
     },
-    {
-        path: '/partner/login',
-        element: <div>Trang Login Partner (Không Layout)</div>
-    }
+    */
 ];
