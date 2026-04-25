@@ -62,7 +62,6 @@ const api = {
     const data = await res.json();
     localStorage.setItem("access_token", data.access);
 
-    await this.getLocation();
 
     return {
       success: true,
@@ -122,7 +121,9 @@ const api = {
     }
 
     try {
-      const res = await authorizedFetch(REAL_API.getLocation);
+      const res = await authorizedFetch(REAL_API.getLocation, {
+        method: "GET",
+      });
 
       if (res.ok) {
         const data = await res.json();
@@ -203,6 +204,10 @@ function PartnerLayout() {
       setUser(result.user);
       setToken(result.token);
 
+      const data = await api.getLocation();
+      console.log(data);
+      setLocation(data);
+      
       // ✅ SET NGAY
       setLocation(result.user?.locations?.[0] || null);
       setDiscounts(result.user?.discounts || []);

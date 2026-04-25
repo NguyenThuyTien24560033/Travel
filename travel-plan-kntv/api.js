@@ -12,6 +12,7 @@ export const authorizedFetch = async (endpoint, options = {}) => {
     options.headers = { ...defaultHeaders, ...options.headers };
     options.credentials = 'include'; // Quan trọng để gửi/nhận Cookie
 
+    console.log(`${BASE_URL}${endpoint}`, options);
     let response = await fetch(`${BASE_URL}${endpoint}`, options);
 
     // KIỂM TRA: Nếu lỗi 401 (Access Token hết hạn)

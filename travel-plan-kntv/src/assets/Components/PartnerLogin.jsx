@@ -46,7 +46,8 @@ const PartnerLogin = () => {
     const user = await login(email, password);
 
 if (user) {
-  if (user.role !== "partner") {
+  console.log(user);
+  if (user.role !== "OWNER") {
     alert("Bạn không phải partner!");
     return;
   }
