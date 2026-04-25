@@ -26,7 +26,7 @@ const api = {
   // ---------------------------Hàm lấy RandomLocation----------------------------
   // -----------------------------------------------------------------------------
   // Hàm lấy dữ liệu
-  getSearchLocation: async (input = {}) => {
+  getLocation: async (input = {}) => {
     if (MODE === "REAL_BACKEND") {
         setLoading(true); // Bắt đầu load
 
@@ -45,8 +45,8 @@ const api = {
             });
 
             if (response.ok) {
-                const data = response.json();
-                console.log("Location get: ", data.length);
+                const data = await response.json();
+                console.log("Dữ liệu nhận về: ", data.length);
                 return data;
             }
         } catch (err) {

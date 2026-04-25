@@ -19,6 +19,8 @@ const MODE = "REAL_BACKEND";
 //Đình Khang đổi đường dẫn tại đây
 const REAL_API = {
     getHistory: "history/",
+    getPlan: "plan/",
+    // Nếu là lấy xem thì chỉ plan/ còn nếu lấy và sửa thì là plan/<str:plan_id>/edit/
 };
 
 const api = {
@@ -82,8 +84,8 @@ function HistoryComponent(){
   */ 
 
 
-  // Tui chỉ mới lấy dữ liệu mặc định rồi cho nó vào biến historyData thôi. Hàm handleClick để vào kế hoạch chi tiết thì nhờ 
-  // bà làm
+  // Tui chỉ mới lấy dữ liệu mặc định rồi cho nó vào biến historyData thôi. Hàm handleClick để vào kế hoạch chi tiết thì tui sẽ 
+  // làm sau
 
   return (
     <></>
