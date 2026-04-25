@@ -82,7 +82,8 @@ function HistoryComponent(){
   */ 
 
 
-  // Hàm handleClick nhờ bà làm, tui chỉ mới lấy dữ liệu mặc định rồi cho nó vào biến historyData thôi.
+  // Tui chỉ mới lấy dữ liệu mặc định rồi cho nó vào biến historyData thôi. Hàm handleClick để vào kế hoạch chi tiết thì nhờ 
+  // bà làm
 
   return (
     <></>
