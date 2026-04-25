@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
 import { toast } from "sonner";
 import { authorizedFetch } from '../../../api.js'
-import { Navigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 import PartnerSidebar from "../Components/PartnerSiderBar.jsx";
 
 /* =========================================================
@@ -32,10 +33,9 @@ const REAL_API = {
   logout: "api/logout/",
 };
 
+
 const api = {
-  // -----------------------------------------------------------------------------
-  // ---------------------------------Hàm login-----------------------------------
-  // -----------------------------------------------------------------------------
+  // 🔹 LOGIN
   login: async (email, password) => {
     if (MODE === "JSON_SERVER") {
       const res = await fetch(`${JSON_API}?email=${email}&password=${password}`);
@@ -60,14 +60,8 @@ const api = {
     if (!res.ok) return { success: false };
 
     const data = await res.json();
-    console.log(data.user, data.access);
-
-    // BƯỚC QUAN TRỌNG: Lưu token vào localStorage TRƯỚC 
-    // để authorizedFetch có token sử dụng ngay lập tức
     localStorage.setItem("access_token", data.access);
 
-    // Gọi hàm getLocation ngay tại đây
-    // Dùng await để đảm bảo lấy xong data mới hoàn tất login
     await this.getLocation();
 
     return {
@@ -77,11 +71,7 @@ const api = {
     };
   },
 
-
-
-  // -----------------------------------------------------------------------------
-  // -------------------------------Hàm đăng kí-----------------------------------
-  // -----------------------------------------------------------------------------
+  // 🔹 REGISTER
   register: async (payload) => {
     if (MODE === "JSON_SERVER") {
       const check = await fetch(`${JSON_API}?email=${payload.email}`);
@@ -109,58 +99,42 @@ const api = {
     return { success: res.ok };
   },
 
-
-
-  // -----------------------------------------------------------------------------
-  // ---------------------------------Hàm logout----------------------------------
-  // -----------------------------------------------------------------------------
+  // 🔹 LOGOUT
   logout: async () => {
     if (MODE === "REAL_BACKEND") {
       try {
-        await authorizedFetch(REAL_API.logout, { 
-            method: "POST",
-            credentials: 'include' // CỰC KỲ QUAN TRỌNG
+        await authorizedFetch(REAL_API.logout, {
+          method: "POST",
+          credentials: 'include'
         });
       } catch (err) {
-        console.error("Logout API error:", err);
+        console.error(err);
       }
     }
     localStorage.clear();
   },
 
-
-
-  // -----------------------------------------------------------------------------
-  // -----------------------------Hàm lấy location--------------------------------
-  // -----------------------------------------------------------------------------
+  // 🔹 GET LOCATION
   getLocation: async () => {
-    if (MODE === "REAL_BACKEND") {
-        try {
-        const response = await authorizedFetch(REAL_API.getLocation, {
-            method: "GET",
-        });
+    if (MODE === "JSON_SERVER") {
+      const user = JSON.parse(localStorage.getItem("user"));
+      return user?.locations?.[0] || null;
+    }
 
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Lưu object vào localStorage
-            localStorage.setItem("user_location", JSON.stringify(data));
-            
-            console.log("Location saved:", data);
-            return data; 
-        } else {
-            console.error("Lấy Location thất bại, status:", response.status);
-        }
-        } catch (err) {
-        console.error("Lỗi kết nối API getLocation:", err);
-        }
+    try {
+      const res = await authorizedFetch(REAL_API.getLocation);
+
+      if (res.ok) {
+        const data = await res.json();
+        return data;
+      }
+    } catch (err) {
+      console.error(err);
     }
   },
 
-
-
-
-getUser: async () => {
+  // 🔹 GET USER
+  getUser: async () => {
     if (MODE === "JSON_SERVER") {
       return JSON.parse(localStorage.getItem("user"));
     }
@@ -172,55 +146,41 @@ getUser: async () => {
 };
 
 /* =========================================================
-   PHẦN 3: USER LAYOUT (TRUNG TÂM DATA)
+   PHẦN 4: LAYOUT
 ========================================================= */
 
 function PartnerLayout() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [location, setLocation] = useState(null);      // ✅ FIX
+  const [discounts, setDiscounts] = useState([]);      // ✅ FIX
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Load user khi app start
-//   useEffect(() => {
-//     const init = async () => {
-//       // const savedToken = localStorage.getItem("token");
-//       const savedToken = localStorage.getItem("access_token");
-
-//       if (!savedToken) {
-//         setLoading(false);
-//         return;
-//       }
-
-//       setToken(savedToken);
-
-//       // const userData = await api.getUser(savedToken);
-//       const userData = await api.getUser();
-
-//       if (userData) {
-//         setUser(userData);
-//       }
-
-//       setLoading(false);
-//     };
-
-//     init();
-//   }, []);
-useEffect(() => {
+  /* 🔹 INIT */
+  useEffect(() => {
     const init = async () => {
-      const token = localStorage.getItem("access_token");
+      const savedToken = localStorage.getItem("access_token");
       const savedUser = JSON.parse(localStorage.getItem("user"));
 
-      if (!token || !savedUser) {
+      if (!savedToken || !savedUser) {
         setLoading(false);
         return;
       }
 
-      // ✅ restore ngay
       setUser(savedUser);
+      setToken(savedToken);
 
-      // ✅ fetch thêm data
-      const locationData = await api.getLocation();
-      setLocation(locationData);
+      // ✅ lấy data từ JSON SERVER
+      setLocation(savedUser?.locations?.[0] || null);
+      setDiscounts(savedUser?.discounts || []);
+
+      // backend thì gọi API
+      if (MODE === "REAL_BACKEND") {
+        const loc = await api.getLocation();
+        setLocation(loc);
+      }
 
       setLoading(false);
     };
@@ -228,43 +188,14 @@ useEffect(() => {
     init();
   }, []);
 
-  // 🔹 LOGIN
-//   const login = async (email, password) => {
-//     setLoading(true);
-
-//     try {
-//       const result = await api.login(email, password);
-
-//       if (!result.success) {
-//         toast.error("Login failed");
-//         return false;
-//       }
-
-//       // localStorage.setItem("token", result.token);
-//       // localStorage.setItem("user", JSON.stringify(result.user));
-//       localStorage.setItem("access_token", result.token);
-//       localStorage.setItem("user", JSON.stringify(result.user));
-
-//       setUser(result.user);
-//       setToken(result.token);
-
-//       toast.success("Login success");
-//       return true;
-//     } catch (err) {
-//       toast.error("Server error");
-//       return false;
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-      const login = async (email, password) => {
+  /* 🔹 LOGIN */
+  const login = async (email, password) => {
     setLoading(true);
 
     try {
       const result = await api.login(email, password);
 
-      if (!result.success) return null; // ❌ CHANGED (thay vì false)
+      if (!result.success) return null;
 
       localStorage.setItem("access_token", result.token);
       localStorage.setItem("user", JSON.stringify(result.user));
@@ -272,85 +203,58 @@ useEffect(() => {
       setUser(result.user);
       setToken(result.token);
 
-      return result.user; // ✅ CHANGED (QUAN TRỌNG)
+      // ✅ SET NGAY
+      setLocation(result.user?.locations?.[0] || null);
+      setDiscounts(result.user?.discounts || []);
+
+      return result.user;
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔹 REGISTER
-  const register = async (payload) => {
-    setLoading(true);
-
-    try {
-      const result = await api.register(payload);
-
-      if (!result.success) {
-        toast.error(result.message || "Register failed");
-        return false;
-      }
-
-      toast.success("Register success");
-      return true;
-    } catch {
-      toast.error("Server error");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🔹 LOGOUT
-  // const logout = () => {
-  //   localStorage.clear();
-  //   setUser(null);
-  //   setToken(null);
-  //   toast.success("Logged out");
-  // };
+  /* 🔹 LOGOUT */
   const logout = async () => {
     await api.logout();
     setUser(null);
     setToken(null);
-    toast.success("Logged out");
+    navigate("/"); // ✅ về homepage
   };
 
+  /* 🔹 CONTEXT */
   const value = {
     user,
     token,
+    location,   // ✅
+    discounts,  // ✅
     setUser,
     loading,
     isAuthenticated: !!user,
     login,
-    register,
     logout,
   };
 
-// if (loading) return <div>Loading...</div>;
+  /* 🔹 UI */
+  if (loading) return <div>Loading...</div>;
 
-//   if (!user || user.role !== "partner") {
-//     return <Navigate to="/users" replace />;
-//   }
+  return (
+    <PartnerContext.Provider value={value}>
+      <div className="partner-layout" style={{ display: "flex", minHeight: "100vh" }}>
 
-//   // ✅ RETURN CUỐI
-//   return (
-//     <PartnerContext.Provider value={value}>
-//       <Outlet />
-//     </PartnerContext.Provider>
-//   );
-return (
-  <PartnerContext.Provider value={value}>
-    <div className="partner-layout">
+        {/* SIDEBAR */}
+        <PartnerSidebar onLogout={logout} />
 
-      {/* SIDEBAR */}
-      <PartnerSidebar onLogout={logout} />
-
-      {/*  CONTENT */}
-      <div className="content">
+        {/* CONTENT */}
+        {/* <div className="content">
+          <Outlet />
+        </div> */}
+        <main style={{ flex: 1, padding: "20px", backgroundColor: "#fff" }}>
         <Outlet />
-      </div>
+      </main>
 
-    </div>
-  </PartnerContext.Provider>
-);
+      </div>
+    </PartnerContext.Provider>
+  );
 }
+
 export default PartnerLayout;
