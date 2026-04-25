@@ -54,6 +54,8 @@ function HistoryComponent(){
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+
+  // Lấy dữ liệu ban đầu
   useEffect(() => {
     setLoading(true);
 
@@ -67,7 +69,7 @@ function HistoryComponent(){
       setLoading(false);
     }
   }, []);
-  /* 
+  /* Dữ liệu có dạng
   historyData = [
     {
     "id": string,
@@ -78,6 +80,9 @@ function HistoryComponent(){
     ..........
   ]
   */ 
+
+
+  // Hàm handleClick nhờ bà làm, tui chỉ mới lấy dữ liệu mặc định rồi cho nó vào biến historyData thôi.
 
   return (
     <></>
