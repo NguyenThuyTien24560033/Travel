@@ -25,7 +25,7 @@ const api = {
   // -----------------------------------------------------------------------------
   // ------------------------------Hàm lấy History--------------------------------
   // -----------------------------------------------------------------------------
-  getLocation: async () => {
+  getHistory: async () => {
     if (MODE === "REAL_BACKEND") {
       setLoading(true); // Bắt đầu load
       try {
@@ -58,7 +58,7 @@ function HistoryComponent(){
     setLoading(true);
 
     try {
-        const data = await api.getLocation();
+        const data = await api.getHistory();
         setHistoryData(data);
     } catch (err) {
       toast.error("Server error");
