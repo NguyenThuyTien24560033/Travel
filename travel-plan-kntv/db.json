@@ -8,7 +8,7 @@
       "role": "partner",
       "name": "Thanh An Travel",
       "phoneNumber": "0987654321",
-      "address": "Phú QUÝ",
+      "address": "Phú Quý",
       "locations": [
         {
           "id": "loc_001",
@@ -59,6 +59,20 @@
       "role": "user",
       "phone": "0856058551",
       "address": "Bình Thuận"
+    },
+    {
+      "id": "83c4",
+      "email": "thu@example.com",
+      "username": "ttt",
+      "password": "123456@",
+      "role": "user"
+    },
+    {
+      "id": "f544",
+      "email": "anh@gmail.com",
+      "username": "thanhthan",
+      "password": "123456@",
+      "role": "user"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

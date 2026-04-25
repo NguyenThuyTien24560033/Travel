@@ -36,7 +36,7 @@ const PartnerProfile = () => {
   ========================= */
   useEffect(() => {
     if (!user) {
-      navigate("/users");
+      navigate("/");
       return;
     }
 
