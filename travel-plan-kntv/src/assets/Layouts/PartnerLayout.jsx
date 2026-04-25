@@ -208,9 +208,11 @@ function PartnerLayout() {
       console.log(data);
       setLocation(data);
       
-      // ✅ SET NGAY
-      setLocation(result.user?.locations?.[0] || null);
-      setDiscounts(result.user?.discounts || []);
+      if (MODE === "JSON_SERVER"){
+        // ✅ SET NGAY
+        setLocation(result.user?.locations?.[0] || null);
+        setDiscounts(result.user?.discounts || []);
+      }
 
       return result.user;
     } finally {
