@@ -1,0 +1,136 @@
+/* dashBoard.css - Content Section */
+
+.dashboard {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.dashboard h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  letter-spacing: -0.5px;
+}
+
+/* --- CARD TỔNG QUAN (TÊN CỬA HÀNG) --- */
+.dashboard .card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hiệu ứng trang trí nhỏ cho card chính */
+.dashboard .card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: var(--sb-active, #6366f1);
+  opacity: 0.05;
+  border-radius: 0 0 0 100%;
+}
+
+.dashboard .card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard .card p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.dashboard .card svg {
+  color: #6366f1;
+}
+
+/* --- STATS GRID (CÁC Ô CHỈ SỐ) --- */
+.dashboard .stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard .stat {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.dashboard .stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
+}
+
+/* Styling icon trong từng ô stat */
+.dashboard .stat > svg {
+  width: 48px;
+  height: 48px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng màu riêng cho từng loại icon khi hover card */
+.dashboard .stat:hover > svg {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+.dashboard .stat h4 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.dashboard .stat p {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Animation khi vào trang */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dashboard .stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard .card {
+    padding: 1.5rem;
+  }
+}
