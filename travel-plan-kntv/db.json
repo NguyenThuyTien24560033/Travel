@@ -4,11 +4,33 @@
       "id": "5s",
       "username": "tan",
       "email": "tan@gmail.com",
-      "password": "123456@",
+      "password": "111111@",
       "role": "partner",
       "name": "Thanh An Travel",
       "phoneNumber": "0987654321",
-      "address": "Hà Nội"
+      "address": "Phú QUÝ",
+      "locations": [
+        {
+          "id": "loc_001",
+          "name": "Thanh An Travel Office",
+          "address": "123 Hoàn Kiếm, Hà Nội",
+          "rating": 4.6
+        }
+      ],
+      "discounts": [
+        {
+          "id": "dis_001",
+          "title": "Giảm 20% tour Hạ Long",
+          "startDate": "2026-04-01",
+          "endDate": "2026-04-30"
+        },
+        {
+          "id": "dis_002",
+          "title": "Giảm 10% khách đoàn",
+          "startDate": "2026-05-01",
+          "endDate": "2026-05-15"
+        }
+      ]
     },
     {
       "id": "u_001",
@@ -21,20 +43,20 @@
       "address": "Hai Bà Trưng, Hà Nội"
     },
     {
+      "id": "4KM-QSXVme8",
       "email": "son@example.com",
       "username": "ThuyTien",
       "password": "112233@",
       "role": "user",
-      "id": "4KM-QSXVme8",
       "address": "bt",
       "phone": "0856058555"
     },
     {
+      "id": "rtY2ZohXM_U",
       "email": "tho@gmail.com",
       "username": "tin",
       "password": "111111@",
       "role": "user",
-      "id": "rtY2ZohXM_U",
       "phone": "0856058551",
       "address": "Bình Thuận"
     }

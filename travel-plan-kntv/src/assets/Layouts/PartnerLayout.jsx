@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { toast } from "sonner";
-import { authorizedFetch } from '../../../api.js'
+import { authorizedFetch } from '../../../api.js';
+import { Navigate } from "react-router-dom";
+import PartnerSidebar from "../Components/PartnerSiderBar.jsx";
 
 /* =========================================================
    PHẦN 1: CONTEXT (global user state)
@@ -179,24 +181,46 @@ function PartnerLayout() {
   const [loading, setLoading] = useState(true);
 
   // 🔹 Load user khi app start
-  useEffect(() => {
-    const init = async () => {
-      // const savedToken = localStorage.getItem("token");
-      const savedToken = localStorage.getItem("access_token");
+//   useEffect(() => {
+//     const init = async () => {
+//       // const savedToken = localStorage.getItem("token");
+//       const savedToken = localStorage.getItem("access_token");
 
-      if (!savedToken) {
+//       if (!savedToken) {
+//         setLoading(false);
+//         return;
+//       }
+
+//       setToken(savedToken);
+
+//       // const userData = await api.getUser(savedToken);
+//       const userData = await api.getUser();
+
+//       if (userData) {
+//         setUser(userData);
+//       }
+
+//       setLoading(false);
+//     };
+
+//     init();
+//   }, []);
+useEffect(() => {
+    const init = async () => {
+      const token = localStorage.getItem("access_token");
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+
+      if (!token || !savedUser) {
         setLoading(false);
         return;
       }
 
-      setToken(savedToken);
+      // ✅ restore ngay
+      setUser(savedUser);
 
-      // const userData = await api.getUser(savedToken);
-      const userData = await api.getUser();
-
-      if (userData) {
-        setUser(userData);
-      }
+      // ✅ fetch thêm data
+      const locationData = await api.getLocation();
+      setLocation(locationData);
 
       setLoading(false);
     };
@@ -205,30 +229,50 @@ function PartnerLayout() {
   }, []);
 
   // 🔹 LOGIN
-  const login = async (email, password) => {
+//   const login = async (email, password) => {
+//     setLoading(true);
+
+//     try {
+//       const result = await api.login(email, password);
+
+//       if (!result.success) {
+//         toast.error("Login failed");
+//         return false;
+//       }
+
+//       // localStorage.setItem("token", result.token);
+//       // localStorage.setItem("user", JSON.stringify(result.user));
+//       localStorage.setItem("access_token", result.token);
+//       localStorage.setItem("user", JSON.stringify(result.user));
+
+//       setUser(result.user);
+//       setToken(result.token);
+
+//       toast.success("Login success");
+//       return true;
+//     } catch (err) {
+//       toast.error("Server error");
+//       return false;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+      const login = async (email, password) => {
     setLoading(true);
 
     try {
       const result = await api.login(email, password);
 
-      if (!result.success) {
-        toast.error("Login failed");
-        return false;
-      }
+      if (!result.success) return null; // ❌ CHANGED (thay vì false)
 
-      // localStorage.setItem("token", result.token);
-      // localStorage.setItem("user", JSON.stringify(result.user));
       localStorage.setItem("access_token", result.token);
       localStorage.setItem("user", JSON.stringify(result.user));
 
       setUser(result.user);
       setToken(result.token);
 
-      toast.success("Login success");
-      return true;
-    } catch (err) {
-      toast.error("Server error");
-      return false;
+      return result.user; // ✅ CHANGED (QUAN TRỌNG)
     } finally {
       setLoading(false);
     }
@@ -281,11 +325,32 @@ function PartnerLayout() {
     logout,
   };
 
-  return (
-    <PartnerContext.Provider value={value}>
-      {loading ? <div>Loading...</div> : <Outlet />}
-    </PartnerContext.Provider>
-  );
-}
+// if (loading) return <div>Loading...</div>;
 
+//   if (!user || user.role !== "partner") {
+//     return <Navigate to="/users" replace />;
+//   }
+
+//   // ✅ RETURN CUỐI
+//   return (
+//     <PartnerContext.Provider value={value}>
+//       <Outlet />
+//     </PartnerContext.Provider>
+//   );
+return (
+  <PartnerContext.Provider value={value}>
+    <div className="partner-layout">
+
+      {/* SIDEBAR */}
+      <PartnerSidebar onLogout={logout} />
+
+      {/*  CONTENT */}
+      <div className="content">
+        <Outlet />
+      </div>
+
+    </div>
+  </PartnerContext.Provider>
+);
+}
 export default PartnerLayout;

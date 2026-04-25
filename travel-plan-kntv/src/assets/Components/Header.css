@@ -1,83 +1,145 @@
-/* Header.css */
-.header-container {
-    width: 100%;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* Container chính của Header */
+.main-header {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0.5rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.header-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 5%;
-    border-bottom: 1px solid #f0f0f0;
+/* Hàng chứa Nav và User Actions */
+.top-content-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
 }
 
-.header-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* Navigation links */
+.main-top-header {
+  display: flex;
+  gap: 25px;
 }
 
-.logo-img { height: 40px; }
-.web-name { font-size: 1.4rem; font-weight: 700; color: #1a73e8; }
-
-.header-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 5%;
-    background: #fafafa;
+.nav-item {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.nav-group { display: flex; }
-
-.nav-link {
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: 0.3s;
+.nav-item:hover {
+  color: #007bff; /* Màu xanh highlight */
 }
 
-.nav-link:hover {
-    background: #e8f0fe;
-    color: #1a73e8;
+/* Login Button */
+.login-bt {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
 
-/* User Dropdown */
-.user-profile-wrapper { position: relative; }
-.user-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: 1px solid #ddd;
-    padding: 8px 15px;
-    border-radius: 20px;
-    cursor: pointer;
+.login-bt:hover {
+  background-color: #0056b3;
 }
 
-.user-dropdown {
-    position: absolute;
-    top: 110%;
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-    z-index: 999;
+/* User Menu & Dropdown */
+.login-container-bt {
+  position: relative;
 }
 
-.user-dropdown a, .user-dropdown button {
-    padding: 12px 15px;
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    text-decoration: none;
-    color: #333;
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 1px solid #ddd;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.user-dropdown button:hover { background: #f5f5f5; color: red; }
+.user-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #444;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f5;
+  color: #007bff;
+}
+
+/* Phần Search phía dưới (nếu cần) */
+.header-search {
+  max-width: 1200px;
+  margin: 10px auto 5px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive cho Mobile */
+@media (max-width: 768px) {
+  .user-name {
+    display: none; /* Ẩn tên trên mobile chỉ hiện icon để tiết kiệm diện tích */
+  }
+  
+  .main-top-header {
+    gap: 15px;
+    font-size: 14px;
+  }
+}

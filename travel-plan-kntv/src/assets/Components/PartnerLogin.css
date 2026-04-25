@@ -1,0 +1,91 @@
+/* PartnerLogin.css */
+
+.login-container.partner-login {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container h2 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.login-container p {
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Quan trọng để input không bị tràn */
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #27ae60; /* Màu xanh lá đặc trưng cho đối tác/kinh doanh */
+  box-shadow: 0 0 5px rgba(39, 174, 96, 0.2);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-submit:hover {
+  background-color: #219150;
+}
+
+.btn-submit:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.switch-mode {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.switch-mode span:last-child {
+  transition: color 0.2s ease;
+}
+
+.switch-mode span:last-child:hover {
+  text-decoration: underline;
+  color: #1e8449 !important;
+}
+
+/* Hiệu ứng mượt mà khi đổi form */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container form {
+  animation: fadeIn 0.4s ease-out;
+}

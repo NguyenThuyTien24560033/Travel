@@ -7,8 +7,9 @@ import UserLogin from '../Components/UserLogin.jsx'
 import UserProfile from '../../pages/User/UserProfile.jsx';
 
 //Partner
-// import PartnerLayout from '../Layouts/PartnerLayout.jsx'
-// import Dashboard from './pages/dashBoard/dashBoard.jsx'
+import PartnerLayout from '../Layouts/PartnerLayout.jsx'
+import DashBoard from '../../pages/Partner/dashBoard.jsx';
+import PartnerProfile from '../Components/PartnerProfile.jsx';
 
 export const Public_Layout = [
     { 
@@ -24,14 +25,14 @@ export const Public_Layout = [
 ];
 
 export const Private_Layout = [
-    // Sau này làm Partner thì mở ra
-    /*
-    { 
-        path: '/partner', 
-        element: <PartnerLayout />, 
-        children: [
-            { path: "dashboard", element: <Dashboard /> },
-        ] 
-    },
-    */
+  {
+    path: "/partner",
+    element: <PartnerLayout />,
+    children: [
+    //   { index: true, element: <DashBoard /> },
+          { path: "", element: <DashBoard /> },
+          { path: "profile", element: <PartnerProfile /> },
+     
+    ],
+  },
 ];
