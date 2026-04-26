@@ -130,8 +130,8 @@ function LocationComponent(){
         ]
     }
 
-    locationData (những lần sau chỉ 1 trong 4 list)= {
-        "Hotels" hoặc "Restaurants" hoặc "Attractions" hoặc "Locations" = [
+    locationData (những lần sau chỉ 1 trong 4 trường hợp)= {
+        "Hotels" hoặc "Restaurants" hoặc "Attractions" hoặc cả 3 i như trên (khi search bằng name)= [
             {
             'id': string, 
             'name': string, 

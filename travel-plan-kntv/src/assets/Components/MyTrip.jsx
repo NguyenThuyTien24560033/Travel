@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { authorizedFetch } from '../../../api'
 import "./MyTrip.css";
 
 /* =========================
    MODE
 ========================= */
 // Đình Khang nhớ đổi trạng thái nhé
-const MODE = "JSON_SERVER";
-// const MODE = "REAL_BACKEND";
+// const MODE = "JSON_SERVER";
+const MODE = "REAL_BACKEND";
 
 //Đình Khang thêm path vào đây
 const REAL_API = {
-  plan: "",
+  plan: "plan/",
 };
 
 /* =========================
@@ -162,6 +163,9 @@ const MyTripInput = () => {
       food_type: form.food_type,
       accommodation_type: form.accommodation_type,
     };
+
+    console.log("Dữ liệu gửi đi nè", payload);
+    return;
 
     try {
       /* ================= JSON SERVER ================= */
