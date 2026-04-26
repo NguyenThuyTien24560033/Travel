@@ -1,10 +1,16 @@
 // CẤP 1: Chỉ import 2 Layout chính
 import RolePage from '../Components/RoleModel.jsx';
+import { Outlet } from 'react-router-dom';
 //User
 import UserLayout from '../Layouts/UserLayout.jsx'
 import HomePage from '../Components/Home.jsx'
 import UserLogin from '../Components/UserLogin.jsx'
 import UserProfile from '../../pages/User/UserProfile.jsx';
+
+//Function chính
+import MyTripInput from '../Components/MyTrip.jsx';
+import MyTripOutput from '../Components/Output.jsx';
+import HistoryComponent from '../Components/History.jsx';
 
 //Partner
 import PartnerLayout from '../Layouts/PartnerLayout.jsx'
@@ -23,8 +29,10 @@ export const Public_Layout = [
 
       { path: "users", element: <UserLogin /> },
       { path: "profile", element: <UserProfile /> },
-
-    //   { path: "partner", element: <PartnerLogin /> },
+      { path: "my-trip", element: <MyTripInput /> },
+      { path: "my-trip/output", element: <MyTripOutput /> },
+      { path: "history", element: <HistoryComponent /> }
+        
     ] 
   },
 ];

@@ -1,0 +1,116 @@
+.output-page {
+  padding: 20px;
+  background: #f2f2f2;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.nav-left span {
+  margin-right: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-right input {
+  padding: 5px 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+/* TABS */
+.plan-tabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  padding: 5px 10px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #bbb;
+}
+
+.view-all {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* MAIN */
+.output-main {
+  display: flex;
+  gap: 20px;
+}
+
+/* LEFT */
+.schedule-box {
+  flex: 2;
+  background: #ddd;
+  padding: 15px;
+  position: relative;
+}
+
+.day-block {
+  margin-bottom: 20px;
+}
+
+.day-block ul {
+  margin-left: 10px;
+}
+
+.edit-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* RIGHT */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-box,
+.input-box {
+  background: #ddd;
+  padding: 10px;
+}
+
+/* SAVE */
+.save-wrapper {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.save-btn {
+  padding: 10px 30px;
+  background: #ccc;
+  border: none;
+  cursor: pointer;
+}

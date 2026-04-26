@@ -18,11 +18,11 @@ export const usePartner = () => useContext(PartnerContext);
    PHẦN 2: API LAYER (CHỈ SỬA MODE)
 ========================================================= */
 
-// const MODE = "JSON_SERVER"; 
+const MODE = "JSON_SERVER"; 
 // Đình Khang đổi comment khi chạy backend thật
-const MODE = "REAL_BACKEND"; 
+// const MODE = "REAL_BACKEND"; 
 
-// const JSON_API = "http://localhost:3001/users";
+const JSON_API = "http://localhost:3001/users";
 
 //Đình Khang đổi đường dẫn tại đây
 const REAL_API = {

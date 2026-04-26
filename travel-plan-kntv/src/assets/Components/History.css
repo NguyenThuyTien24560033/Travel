@@ -1,0 +1,105 @@
+.history-list {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #f6f7fb;
+  min-height: 100vh;
+}
+
+/* ===== CARD ===== */
+.history-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== LEFT CONTENT ===== */
+.history-card h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.history-card p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ===== LOCK ICON ===== */
+.history-card h3 span {
+  margin-left: 6px;
+  font-size: 14px;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+/* View button */
+.actions button:nth-child(1) {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.actions button:nth-child(1):hover {
+  background: #bae6fd;
+}
+
+/* Continue editing */
+.actions button:nth-child(2) {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.actions button:nth-child(2):hover {
+  background: #bbf7d0;
+}
+
+/* Delete */
+.actions button:nth-child(3) {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.actions button:nth-child(3):hover {
+  background: #fecaca;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .history-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

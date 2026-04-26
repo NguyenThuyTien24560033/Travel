@@ -43,7 +43,7 @@ const Header = ({ onLoginClick }) => {
           {/* USER ONLY */}
           {user && (
             <>
-              <Link to="/my-trips" className="nav-item">My Trips</Link>
+              <Link to="/my-trip" className="nav-item">My Trips</Link>
               <Link to="/history" className="nav-item">History</Link>
             </>
           )}
