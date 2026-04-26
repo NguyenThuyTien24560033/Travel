@@ -18,47 +18,97 @@ const MODE = "REAL_BACKEND";
 
 //Đình Khang đổi đường dẫn tại đây
 const REAL_API = {
-    getLocation: "places/browse/",
+    getLocations: "places/browse/",
+    getHotel: "places/hotels/",
+    getRestaurant: "places/restaurants/",
+    getAttraction: "places/attractions/",
 };
 
 const api = {
   // -----------------------------------------------------------------------------
   // ---------------------------Hàm lấy RandomLocation----------------------------
   // -----------------------------------------------------------------------------
-  // Hàm lấy dữ liệu
-  getLocation: async (input = {}) => {
-    if (MODE === "REAL_BACKEND") {
-        setLoading(true); // Bắt đầu load
+    // Hàm lấy dữ liệu
+    getLocations: async (input = {}) => {
+        if (MODE === "REAL_BACKEND") {
+            setLoading(true); // Bắt đầu load
 
-        try {
-            // 1. Tạo chuỗi query từ object input
-            const queryString = new URLSearchParams(input).toString();
-            
-            // 2. Nối vào URL (kiểm tra xem đã có dấu ? chưa)
-            // Nếu như là lấy lần đầu thì không có input, những lần sau, khi search thì sẽ có input -> queryString sẽ không rỗng
-            const urlWithParams = queryString 
-            ? `${REAL_API.getLocation}?${queryString}` 
-            : REAL_API.getLocation;
+            try {
+                // 1. Tạo chuỗi query từ object input
+                const queryString = new URLSearchParams(input).toString();
+                
+                // 2. Nối vào URL (kiểm tra xem đã có dấu ? chưa)
+                // Nếu như là lấy lần đầu thì không có input, những lần sau, khi search thì sẽ có input -> queryString sẽ không rỗng
+                const urlWithParams = queryString 
+                ? `${REAL_API.getLocations}?${queryString}` 
+                : REAL_API.getLocations;
 
-            const response = await authorizedFetch(urlWithParams, {
-                method: "GET",
-            });
+                const response = await authorizedFetch(urlWithParams, {
+                    method: "GET",
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Dữ liệu nhận về: ", data.length);
-                return data;
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Dữ liệu nhận về: ", data.length);
+                    return data;
+                } else {
+                    console.error(`Lấy dữ liệu thất bại, status:`, response.status);
+                }
+            } catch (err) {
+                console.error("Lỗi lấy dữ liệu: ", err);
             }
-        } catch (err) {
-            console.error("Lỗi lấy dữ liệu:", err);
+        }
+    },
+
+
+    getDetail: async (id, type) => {
+        if (MODE === "REAL_BACKEND") {
+            setLoading(true); // Bắt đầu load
+
+            try {
+                // 1. Xác định base path dựa trên type (1: Hotel, 2: Restaurant, 3: Attraction)
+                let endpoint = "";
+                switch (type) {
+                    case 1:
+                        endpoint = REAL_API.getHotel;
+                        break;
+                    case 2:
+                        endpoint = REAL_API.getRestaurant;
+                        break;
+                    case 3:
+                        endpoint = REAL_API.getAttraction;
+                        break;
+                    default:
+                        console.error("Loại địa điểm (type) không hợp lệ:", type);
+                        return;
+                }
+
+                // 2. Nối ID vào URL (Đảm bảo có dấu / ở cuối nếu backend Django yêu cầu)
+                const url = `${endpoint}${id}/`;
+
+                // 3. Gọi API với authorizedFetch
+                const response = await authorizedFetch(url, {
+                    method: "GET",
+                }); 
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Dữ liệu nhận về: ", data);
+                    return data;
+                } else {
+                    console.error(`Lấy chi tiết thất bại, status:`, response.status);
+                }
+            } catch (err) {
+                console.error("Lỗi lấy dữ liệu: ", err);
+            }
         }
     }
-  },
 }
 
 
 function LocationComponent(){
   const [locationData, setlocationData] = useState([]);
+  const [detailData, setdetailData] = useState([]);
   const [loading, setLoading] = useState(false);
 
 
@@ -67,7 +117,7 @@ function LocationComponent(){
         setLoading(true);
 
         try {
-            const data = await api.getLocation();
+            const data = await api.getLocations();
             setlocationData(data);
         } catch (err) {
         toast.error("Server error");
@@ -80,17 +130,32 @@ function LocationComponent(){
 
     // input ở đây có dạng {"key": value}. Các key bao gồm "travel_style", "food_type", "accommodation_type" và "name"
     // Chỉ lọc một cái
-    function HandleClick(input = {}){
+    function HandleSearch(input = {}){
         setLoading(true);
 
         try {
             const data = await api.getLocation(input);
             setlocationData(data);
         } catch (err) {
-        toast.error("Server error");
-        return false;
+            toast.error("Server error");
+            return false;
         } finally {
-        setLoading(false);
+            setLoading(false);
+        }
+    };
+
+    // Hàm lấy thông tin dựa vào id và dựa vào type để biết dùng đường dẫn nào
+    const HandleClick = async (id, type) => {
+        setLoading(true);
+
+        try {
+            const data = await api.getDetail(id, type);
+            setdetailData(data);
+        } catch (err) {
+            toast.error("Server error");
+            return false;
+        } finally {
+            setLoading(false);
         }
     };
     /* Dữ liệu có dạng
@@ -143,12 +208,19 @@ function LocationComponent(){
             ......
         ]
     }
+
+    thông tin chi tiết của một địa điểm
+    detailData = { nó dài quá nên bà chịu khó vào file docx xem nha }
     */ 
 
-// Hàm handleClick nhờ bà kiểm tra xem tui làm đúng không. 
-// Tui đã làm useEffect để lấy dữ liệu mặc định rồi cho nó vào biến locationData rồi.
+// Hàm handleSearch và HandleClick nhờ bà kiểm tra xem tui làm đúng không. 
+
+// Tui đã làm useEffect để lấy dữ liệu mặc định rồi cho nó vào biến locationData rồi, khi in ra thì nhớ gắn cho nó cái cờ để biết 
+// nó là loại hình địa điểm nào để mà còn search id. Cái cờ đó sẽ là type = 1 (hotel) hoặc 2 (restaurant) hoặc 3 (attraction)
+
 // Các thứ có thể lọc: "travel_style", "food_type", "accommodation_type" và "name". Xây dựng giao diện làm sao để mà nó biết 
 // người dùng muốn tra cái gì do bà quyết định. 
+
 // Việc còn lại bà cần làm là làm giao diện để nó tự động hiện ra từng object một và chỗ để search, cũng như kiểm tra các hàm trên
 
 // Bà chuyên React hơn tui nên là bà nên kiểm tra các hàm xem có đúng í bà không, bà là người quyết định.
