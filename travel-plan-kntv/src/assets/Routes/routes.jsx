@@ -14,7 +14,7 @@ import MyTripOutput from '../Components/Output.jsx';
 import HistoryComponent from '../Components/History.jsx';
 
 //Location
-import LocationComponent from '../Components/Location.jsx';
+import Location from '../Components/Location.jsx';
 import LocationDetail from '../Components/LocationDetail.jsx';
 
 
@@ -38,7 +38,7 @@ export const Public_Layout = [
       { path: "my-trip", element: <MyTripInput /> },
       { path: "my-trip/output", element: <MyTripOutput /> },
       { path: "history", element: <HistoryComponent /> },
-      { path: "locations", element: <LocationComponent /> },
+      { path: "locations", element: <Location /> },
       { path: "locations/:id", element: <LocationDetail /> },
     ] 
   },
