@@ -1,0 +1,129 @@
+/* Tổng thể nền xám nhạt để nổi bật các khối trắng */
+.location-detail-wrapper {
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    padding: 30px 10px;
+}
+
+.location-detail-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Header & Image */
+.detail-header {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.back-btn {
+    margin-bottom: 15px;
+    background: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.image-container {
+    height: 350px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+}
+
+.image-overlay h1 { margin: 0; font-size: 2.2rem; }
+.quick-info { margin-top: 10px; display: flex; gap: 20px; opacity: 0.9; }
+
+/* Bố cục chia Cột */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 25px;
+}
+
+/* Style chung cho các khối (Blocks) */
+.info-block, .promo-block, .reviews-block {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.info-block h3, .sidebar h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 10px;
+    color: #1a202c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clickable-h3 { cursor: pointer; }
+.clickable-h3:hover { color: #3182ce; }
+
+/* Menu List */
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed #edf2f7;
+}
+
+.price { font-weight: bold; color: #2f855a; }
+
+/* Discount Tag */
+.discount-tag {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px dashed #90cdf4;
+}
+
+/* Comments */
+.comment-card {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.comment-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.comment-card p { margin: 5px 0 0; font-size: 0.9rem; color: #4a5568; }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .image-container { height: 250px; }
+}

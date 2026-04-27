@@ -1,0 +1,121 @@
+/* Container chính */
+.location-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.location-container h2 {
+    font-size: 2rem;
+    color: #111827;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+/* Thanh lọc (Filter Bar) */
+.filter-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    color: #374151;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-button:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+}
+
+.filter-button:active {
+    transform: translateY(0);
+}
+
+/* Trạng thái Loading */
+.loading-text {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin: 20px 0;
+}
+
+/* Grid danh sách địa điểm */
+.location-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* Card địa điểm */
+.location-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.location-card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.location-card .address {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.location-card .rating {
+    display: inline-block;
+    color: #f59e0b;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.location-card .type-tag {
+    align-self: flex-start;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 640px) {
+    .location-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-bar {
+        justify-content: center;
+    }
+}

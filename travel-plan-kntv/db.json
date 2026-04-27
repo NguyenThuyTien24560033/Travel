@@ -75,6 +75,160 @@
       "role": "user"
     }
   ],
+  "locations": [
+    {
+      "id": "loc_001",
+      "name": "Da Lat Mountain View Hotel",
+      "address": "Da Lat, Lam Dong",
+      "rating": 4.7,
+      "type": "Hotels",
+      "price_level": "$$",
+      "image": "https://picsum.photos/400/300?1",
+      "description": "Khách sạn view núi cực đẹp tại Đà Lạt",
+
+      "dashboard": {
+        "totalBookings": 120,
+        "revenue": 4500
+      },
+      "menu": [
+        { "name": "Standard Room", "price": 50 },
+        { "name": "Deluxe Room", "price": 80 }
+      ],
+      "operatingHours": {
+        "open": "06:00",
+        "close": "23:00"
+      },
+      "promotions": [
+        { "title": "Giảm 10% mùa thấp điểm" }
+      ],
+      "announcements": [
+        { "title": "Bảo trì hồ bơi 2 ngày" }
+      ],
+      "reviews": [
+        { "user": "A", "rating": 5, "comment": "Rất đẹp" }
+      ]
+    },
+
+    {
+      "id": "loc_002",
+      "name": "Vung Tau Sea Resort",
+      "address": "Vung Tau",
+      "rating": 4.5,
+      "type": "Hotels",
+      "price_level": "$$$",
+      "image": "https://picsum.photos/400/300?2",
+      "description": "Resort sát biển sang trọng",
+
+      "dashboard": {
+        "totalBookings": 200,
+        "revenue": 9000
+      },
+      "menu": [
+        { "name": "Villa Sea View", "price": 150 }
+      ],
+      "operatingHours": {
+        "open": "00:00",
+        "close": "23:59"
+      },
+      "promotions": [
+        { "title": "Stay 3 nights get 1 free" }
+      ],
+      "announcements": [
+        { "title": "Check-in delay possible" }
+      ],
+      "reviews": [
+        { "user": "B", "rating": 4, "comment": "View đẹp nhưng hơi đắt" }
+      ]
+    },
+
+    {
+      "id": "loc_003",
+      "name": "Hanoi Old Quarter Food Street",
+      "address": "Hoan Kiem, Hanoi",
+      "rating": 4.8,
+      "type": "Restaurants",
+      "price_level": "$",
+      "image": "https://picsum.photos/400/300?3",
+      "description": "Thiên đường ẩm thực phố cổ",
+
+      "dashboard": {
+        "totalOrders": 500
+      },
+      "menu": [
+        { "name": "Pho Bo", "price": 2 },
+        { "name": "Bun Cha", "price": 3 }
+      ],
+      "operatingHours": {
+        "open": "06:00",
+        "close": "22:00"
+      },
+      "promotions": [
+        { "title": "Free drink after 5pm" }
+      ],
+      "announcements": [],
+      "reviews": [
+        { "user": "C", "rating": 5, "comment": "Ngon nhất Hà Nội" }
+      ]
+    },
+
+    {
+      "id": "loc_004",
+      "name": "Nha Trang Seafood Paradise",
+      "address": "Nha Trang",
+      "rating": 4.6,
+      "type": "Restaurants",
+      "price_level": "$$",
+      "image": "https://picsum.photos/400/300?4",
+      "description": "Hải sản tươi sống ven biển",
+
+      "dashboard": {
+        "totalOrders": 300
+      },
+      "menu": [
+        { "name": "Grilled Lobster", "price": 20 },
+        { "name": "Sea Crab", "price": 15 }
+      ],
+      "operatingHours": {
+        "open": "10:00",
+        "close": "23:00"
+      },
+      "promotions": [
+        { "title": "20% seafood combo" }
+      ],
+      "announcements": [],
+      "reviews": [
+        { "user": "D", "rating": 4, "comment": "Tươi ngon" }
+      ]
+    },
+
+    {
+      "id": "loc_005",
+      "name": "Sa Pa Fansipan Cable Car",
+      "address": "Sa Pa, Lao Cai",
+      "rating": 4.9,
+      "type": "Attractions",
+      "price_level": "$$$",
+      "image": "https://picsum.photos/400/300?5",
+      "description": "Cáp treo lên đỉnh Fansipan",
+
+      "dashboard": {
+        "visitors": 1000
+      },
+      "menu": [],
+      "operatingHours": {
+        "open": "07:00",
+        "close": "17:00"
+      },
+      "promotions": [],
+      "announcements": [
+        { "title": "Foggy weather alert" }
+      ],
+      "reviews": [
+        { "user": "E", "rating": 5, "comment": "Đỉnh của chóp" }
+      ]
+    }
+  ],
+
   "history": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
