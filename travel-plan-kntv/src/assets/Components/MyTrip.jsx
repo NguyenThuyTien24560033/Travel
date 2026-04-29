@@ -20,7 +20,7 @@ const REAL_API = {
    OPTIONS (NUMBER ONLY)
 ========================= */
 const AREAS = [
-  { label: "Đà Lạt", value: 1 },
+  { label: "Đà Lạt", value: 4 },
   { label: "Nha Trang", value: 2 },
 ];
 
@@ -164,8 +164,7 @@ const MyTripInput = () => {
       accommodation_type: form.accommodation_type,
     };
 
-    console.log("Dữ liệu gửi đi nè", payload);
-    return;
+    console.log("Dữ liệu gửi đi nè: ", payload);
 
     try {
       /* ================= JSON SERVER ================= */
@@ -186,19 +185,23 @@ const MyTripInput = () => {
       }
 
       /* ================= REAL BACKEND ================= */
-      const res = await fetch(REAL_API.plan, {
+      // const res = await fetch(REAL_API.plan, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      //   },
+      //   body: JSON.stringify(payload),
+      // });
+      const res = await authorizedFetch(REAL_API.plan, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error();
 
       const data = await res.json();
-
+      console.log("Dữ liệu nhận về nè: ", data)
       navigate("/my-trip/output", {
         state: {
           input: payload,
