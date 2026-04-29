@@ -38,7 +38,7 @@ const Header = ({ onLoginClick }) => {
         {/* NAV */}
         <nav className="main-top-header">
           <Link to="/" className="nav-item">Home</Link>
-          <Link to="/locations" className="nav-item">Locations</Link>
+          <Link to="/places" className="nav-item">Locations</Link>
 
           {/* USER ONLY */}
           {user && (

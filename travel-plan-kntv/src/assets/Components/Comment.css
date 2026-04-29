@@ -1,0 +1,213 @@
+/* =========================
+   WRAPPER
+========================= */
+.location-detail-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+.location-detail-wrapper button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    background: #f3f4f6;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+.location-detail-wrapper button:hover {
+    background: #e5e7eb;
+}
+
+/* =========================
+   TITLE
+========================= */
+.location-detail-wrapper h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   REVIEWS SECTION
+========================= */
+.reviews-block {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.reviews-header h3 {
+    margin: 0;
+}
+
+/* =========================
+   COMMENT CARD
+========================= */
+.comment-card {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-card:last-child {
+    border-bottom: none;
+}
+
+.comment-card strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.comment-card p {
+    margin: 6px 0 0;
+    color: #444;
+}
+
+/* =========================
+   STAR RATING (display)
+========================= */
+.comment-card svg {
+    margin-right: 2px;
+}
+
+/* =========================
+   COMMENT BUTTON
+========================= */
+.reviews-header button {
+    background: #2563eb;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.reviews-header button:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   MODAL OVERLAY
+========================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* =========================
+   MODAL BOX
+========================= */
+.modal {
+    width: 420px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* =========================
+   MODAL TITLE
+========================= */
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+/* =========================
+   RATING
+========================= */
+.rating {
+    margin-bottom: 12px;
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+.modal textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.modal textarea:focus {
+    border-color: #2563eb;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.modal-actions button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Cancel */
+.modal-actions button:first-child {
+    background: #e5e7eb;
+}
+
+.modal-actions button:first-child:hover {
+    background: #d1d5db;
+}
+
+/* Submit */
+.modal-actions button:last-child {
+    background: #2563eb;
+    color: white;
+}
+
+.modal-actions button:last-child:hover {
+    background: #1d4ed8;
+}
+
+.modal-actions button:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
