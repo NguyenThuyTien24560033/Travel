@@ -1,183 +1,18 @@
-// import { useEffect, useState } from "react";
-// import { authorizedFetch } from '../../../api'
-
-// /* =========================================================
-//    PHẦN 1: CONTEXT (global user state)
-// ========================================================= */
-
-
-// /* =========================================================
-//    PHẦN 2: API LAYER (CHỈ SỬA MODE)
-// ========================================================= */
-
-// // const MODE = "JSON_SERVER"; 
-// // Đình Khang đổi comment khi chạy backend thật
-// const MODE = "REAL_BACKEND"; 
-
-// // const JSON_API = "http://localhost:3001/location";
-
-// //Đình Khang đổi đường dẫn tại đây
-// const REAL_API = {
-//     getLocation: "places/browse/",
-// };
-
-// const api = {
-//   // -----------------------------------------------------------------------------
-//   // ---------------------------Hàm lấy RandomLocation----------------------------
-//   // -----------------------------------------------------------------------------
-//   // Hàm lấy dữ liệu
-//   getLocation: async (input = {}) => {
-//     if (MODE === "REAL_BACKEND") {
-//         setLoading(true); // Bắt đầu load
-
-//         try {
-//             // 1. Tạo chuỗi query từ object input
-//             const queryString = new URLSearchParams(input).toString();
-            
-//             // 2. Nối vào URL (kiểm tra xem đã có dấu ? chưa)
-//             // Nếu như là lấy lần đầu thì không có input, những lần sau, khi search thì sẽ có input -> queryString sẽ không rỗng
-//             const urlWithParams = queryString 
-//             ? `${REAL_API.getLocation}?${queryString}` 
-//             : REAL_API.getLocation;
-
-//             const response = await authorizedFetch(urlWithParams, {
-//                 method: "GET",
-//             });
-
-//             if (response.ok) {
-//                 const data = await response.json();
-//                 console.log("Dữ liệu nhận về: ", data.length);
-//                 return data;
-//             }
-//         } catch (err) {
-//             console.error("Lỗi lấy dữ liệu:", err);
-//         }
-//     }
-//   },
-// }
-
-
-// function LocationComponent(){
-//   const [locationData, setlocationData] = useState([]);
-//   const [loading, setLoading] = useState(false);
-
-
-//     // Lấy dữ liệu ban đầu
-//     useEffect(() => {
-//         setLoading(true);
-
-//         try {
-//             const data = await api.getLocation();
-//             setlocationData(data);
-//         } catch (err) {
-//         toast.error("Server error");
-//         return false;
-//         } finally {
-//         setLoading(false);
-//         }
-//     }, []);
-
-
-//     // input ở đây có dạng {"key": value}. Các key bao gồm "travel_style", "food_type", "accommodation_type" và "name"
-//     // Chỉ lọc một cái
-//     function HandleClick(input = {}){
-//         setLoading(true);
-
-//         try {
-//             const data = await api.getLocation(input);
-//             setlocationData(data);
-//         } catch (err) {
-//         toast.error("Server error");
-//         return false;
-//         } finally {
-//         setLoading(false);
-//         }
-//     };
-//     /* Dữ liệu có dạng
-//     locationData (lần đầu có đủ 3 list)= {
-//         "Hotels": [
-//             {
-//             'id': string, 
-//             'name': string, 
-//             'address': string, 
-//             'rating': string, 
-//             'price_level': string
-//             },
-            
-//             ......
-//         ],
-//         "Restaurants": [
-//             {
-//             'id': string, 
-//             'name': string, 
-//             'address': string, 
-//             'rating': string, 
-//             'price_level': string
-//             },
-            
-//             ......
-//         ],
-//         "Attractions": [
-//             {
-//             'id': string, 
-//             'name': string, 
-//             'address': string, 
-//             'rating': string, 
-//             'price_level': string
-//             },
-            
-//             ......
-//         ]
-//     }
-
-//     locationData (những lần sau chỉ 1 trong 4 list)= {
-//         "Hotels" hoặc "Restaurants" hoặc "Attractions" hoặc "Locations" = [
-//             {
-//             'id': string, 
-//             'name': string, 
-//             'address': string, 
-//             'rating': string, 
-//             'price_level': string
-//             },
-            
-//             ......
-//         ]
-//     }
-//     */ 
-
-// // Hàm handleClick nhờ bà kiểm tra xem tui làm đúng không. 
-// // Tui đã làm useEffect để lấy dữ liệu mặc định rồi cho nó vào biến locationData rồi.
-// // Các thứ có thể lọc: "travel_style", "food_type", "accommodation_type" và "name". Xây dựng giao diện làm sao để mà nó biết 
-// // người dùng muốn tra cái gì do bà quyết định. 
-// // Việc còn lại bà cần làm là làm giao diện để nó tự động hiện ra từng object một và chỗ để search, cũng như kiểm tra các hàm trên
-
-// // Bà chuyên React hơn tui nên là bà nên kiểm tra các hàm xem có đúng í bà không, bà là người quyết định.
-//   return (
-//     <></>
-//   );
-// };
-
-// export default LocationComponent;
-
-
-
 import { useEffect, useState } from "react";
-import { authorizedFetch } from "../../../api";
-import { useNavigate } from "react-router-dom";
+import { authorizedFetch } from '../../../api'
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import './Location.css'
+import Header from "./Header";
 
 /* =========================================================
-   PHẦN 2: API LAYER (CHỈ SỬA MODE)
+   CONFIG
 ========================================================= */
 
 const MODE = "JSON_SERVER"; 
-// Đình Khang đổi comment khi chạy backend thật
-// const MODE = "REAL_BACKEND"; 
 
-const JSON_API = "http://localhost:3001/locations";
+const JSON_API = "http://localhost:3001/places";
 
-//Đình Khang đổi đường dẫn tại đây
 const REAL_API = {
     getLocations: "places/browse/",
     getHotel: "places/hotels/",
@@ -185,21 +20,29 @@ const REAL_API = {
     getAttraction: "places/attractions/",
 };
 
-const api = {
-  // -----------------------------------------------------------------------------
-  // ---------------------------Hàm lấy RandomLocation----------------------------
-  // -----------------------------------------------------------------------------
-    // Hàm lấy dữ liệu
-    getLocations: async (input = {}) => {
-        if (MODE === "REAL_BACKEND") {
-            setLoading(true); // Bắt đầu load
+/* =========================================================
+   API
+========================================================= */
 
-            try {
-                // 1. Tạo chuỗi query từ object input
-                const queryString = new URLSearchParams(input).toString();
-                
-                // 2. Nối vào URL (kiểm tra xem đã có dấu ? chưa)
-                // Nếu như là lấy lần đầu thì không có input, những lần sau, khi search thì sẽ có input -> queryString sẽ không rỗng
+const api = {
+    getLocations: async (input = {}) => {
+        try {
+            const query = {};
+
+            if (input.travel_style) query.travel_style = input.travel_style;
+            if (input.food_type) query.food_type = input.food_type;
+            if (input.accommodation_type) query.accommodation_type = input.accommodation_type;
+
+            // 🔥 CHỈ FETCH, KHÔNG SEARCH Ở BACKEND NỮA
+            const queryString = new URLSearchParams(query).toString();
+
+            if (MODE === "REAL_BACKEND") {
+                // const url = queryString
+                //     ? `${REAL_API.getLocations}?${queryString}`
+                //     : REAL_API.getLocations;
+
+                // const res = await authorizedFetch(url);
+                // return await res.json();
                 const urlWithParams = queryString 
                 ? `${REAL_API.getLocations}?${queryString}` 
                 : REAL_API.getLocations;
@@ -215,41 +58,37 @@ const api = {
                 } else {
                     console.error(`Lấy dữ liệu thất bại, status:`, response.status);
                 }
-            } catch (err) {
-                console.error("Lỗi lấy dữ liệu: ", err);
-            }
-        }
+            } else {
+                const url = queryString
+                    ? `${JSON_API}?${queryString}`
+                    : JSON_API;
 
-        //Json server
-        else {
-            try {
-                const response = await fetch(JSON_API);
-                let data = await response.json();
-
-                // Logic lọc dữ liệu giả lập cho giống Backend thật
-                if (input.type) {
-                    data = data.filter(item => item.type === input.type);
-                }
-                if (input.name) {
-                    data = data.filter(item => 
-                        item.name.toLowerCase().includes(input.name.toLowerCase())
-                    );
-                }
-                return data;
-            } catch (err) {
-                console.error("Lỗi JSON Server:", err);
+                const res = await fetch(url);
+                return await res.json();
             }
+
+        } catch (err) {
+            console.error(err);
+            return [];
         }
     },
-   
-
 
     getDetail: async (id, type) => {
-        if (MODE === "REAL_BACKEND") {
-            setLoading(true); // Bắt đầu load
+        try {
+            if (MODE === "REAL_BACKEND") {
+                // let endpoint = "";
 
-            try {
-                // 1. Xác định base path dựa trên type (1: Hotel, 2: Restaurant, 3: Attraction)
+                // switch (type) {
+                //     case 1: endpoint = REAL_API.getHotel; break;
+                //     case 2: endpoint = REAL_API.getRestaurant; break;
+                //     case 3: endpoint = REAL_API.getAttraction; break;
+                //     default: return null;
+                // }
+
+                // const res = await authorizedFetch(`${endpoint}${id}/`);
+                // if (!res.ok) return null;
+                // return await res.json();
+                 // 1. Xác định base path dựa trên type (1: Hotel, 2: Restaurant, 3: Attraction)
                 let endpoint = "";
                 switch (type) {
                     case 1:
@@ -281,86 +120,113 @@ const api = {
                 } else {
                     console.error(`Lấy chi tiết thất bại, status:`, response.status);
                 }
-            } catch (err) {
-                console.error("Lỗi lấy dữ liệu: ", err);
+            } else {
+                const res = await fetch(`${JSON_API}/${id}`);
+                if (!res.ok) return null;
+                return await res.json();
             }
+
+        } catch (err) {
+            console.error(err);
+            return null;
         }
-        else {
-                    // Xử lý cho JSON Server khi xem chi tiết
-                    const response = await fetch(`${JSON_API}/${id}`);
-                    return await response.json();
-                }
-            }
-        };
+    }
+};
 
+/* =========================================================
+   COMPONENT
+========================================================= */
 
-function LocationComponent(){
-  const [locationData, setlocationData] = useState([]);
-  const [detailData, setdetailData] = useState([]);
-  const [loading, setLoading] = useState(false);
+function LocationComponent() {
+    const [locationData, setLocationData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [mode, setMode] = useState(null);
+    const [nameInput, setNameInput] = useState("");
 
-    // Lấy dữ liệu ban đầu
-    // useEffect(() => {
-    //     setLoading(true);
+    const navigate = useNavigate();
 
-    //     try {
-    //         const data = await api.getLocations();
-    //         setlocationData(data);
-    //     } catch (err) {
-    //     toast.error("Server error");
-    //     return false;
-    //     } finally {
-    //     setLoading(false);
-    //     }
-    // }, []);
+    /* =========================
+       LOAD INIT
+    ========================= */
+    useEffect(() => {
+        loadData();
+    }, []);
 
-useEffect(() => {
     const loadData = async () => {
         setLoading(true);
-
         try {
             const data = await api.getLocations();
-            setlocationData(data);
-        } catch (err) {
-            toast.error("Server error");
+            setLocationData(data);
         } finally {
             setLoading(false);
         }
     };
 
-    loadData();
-}, []);
-    // input ở đây có dạng {"key": value}. Các key bao gồm "travel_style", "food_type", "accommodation_type" và "name"
-    // Chỉ lọc một cái
-    // function HandleSearch(input = {}){
-    //     setLoading(true);
-
-    //     try {
-    //         const data = await api.getLocation(input);
-    //         setlocationData(data);
-    //     } catch (err) {
-    //         toast.error("Server error");
-    //         return false;
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-const HandleSearch = async (input = {}) => {
-    setLoading(true);
-
-    try {
-        const data = await api.getLocations(input); // ⚠️ sửa luôn lỗi 3
-        setlocationData(data);
-    } catch (err) {
-        toast.error("Server error");
-    } finally {
-        setLoading(false);
-    }
-};
-    // Hàm lấy thông tin dựa vào id và dựa vào type để biết dùng đường dẫn nào
-    const HandleClick = async (id, type) => {
+    /* =========================
+       SEARCH (🔥 FIX CHÍNH)
+    ========================= */
+    const handleSearch = async (input) => {
         setLoading(true);
+        try {
+            const data = await api.getLocations(input);
+
+            let result = data;
+
+            // FIX SEARCH NAME Ở FRONTEND
+            if (input.name) {
+                const normalize = (str) =>
+                    str.toLowerCase().replace(/\s+/g, '');
+
+                result = data.filter(item =>
+                    normalize(item.name).includes(normalize(input.name))
+                );
+            }
+
+            setLocationData(result);
+        } catch {
+            toast.error("Server error");
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetSearch = () => {
+        setMode(null);
+        setIsMenuOpen(false);
+        setNameInput("");
+        loadData();
+    };
+
+    // const handleNavigate = (id) => navigate(`/places/${id}`);
+    const HandleClick = async (id, type) => {
+    if (MODE === "JSON_SERVER") {
+        // nhanh cho fake backend
+        navigate(`/places/${id}`);
+        return;
+    }
+
+    // REAL_BACKEND → fetch detail thật
+    setLoading(true);
+    // try {
+    //     const data = await api.getDetail(id, type);
+
+    //     if (!data) {
+    //         toast.error("No detail found");
+    //         return;
+    //     }
+
+    //     // tuỳ bạn: lưu state hoặc navigate
+    //     navigate(`/places/${id}`, { state: data });
+
+    // } catch (err) {
+    //     toast.error("Server error");
+    // } finally {
+    //     setLoading(false);
+    // }
+     setLoading(true);
 
         try {
             const data = await api.getDetail(id, type);
@@ -371,135 +237,140 @@ const HandleSearch = async (input = {}) => {
         } finally {
             setLoading(false);
         }
+};
+
+    /* =========================
+       GROUP DATA (🔥 FIX SẠCH)
+    ========================= */
+    const groupedData = {
+        Hotels: locationData.filter(item => Number(item.type) === 1),
+        Restaurants: locationData.filter(item => Number(item.type) === 2),
+        Attractions: locationData.filter(item => Number(item.type) === 3),
     };
-    /* Dữ liệu có dạng
-    locationData (lần đầu có đủ 3 list)= {
-        "Hotels": [
-            {
-            'id': string, 
-            'name': string, 
-            'address': string, 
-            'rating': string, 
-            'price_level': string
-            },
-            
-            ......
-        ],
-        "Restaurants": [
-            {
-            'id': string, 
-            'name': string, 
-            'address': string, 
-            'rating': string, 
-            'price_level': string
-            },
-            
-            ......
-        ],
-        "Attractions": [
-            {
-            'id': string, 
-            'name': string, 
-            'address': string, 
-            'rating': string, 
-            'price_level': string
-            },
-            
-            ......
-        ]
+
+    /* =========================
+       OPTIONS
+    ========================= */
+    const accommodationOptions = { 1: "Hotel", 2: "Motel", 3: "Homestay", 4: "Resort", 5: "Villa" };
+    const foodOptions = { 1: "Meat", 2: "Seafood", 3: "Vegetarian", 4: "Family-style", 5: "Set meals", 6: "Hotpot" };
+    const travelOptions = { 1: "Relax", 2: "Adventure", 3: "Food tour", 4: "Cultural", 5: "Playground", 6: "History", 7: "Thrill", 8: "Beach", 9: "Take picture" };
+
+    /* =========================
+       RENDER LIST
+    ========================= */
+    // const renderList = (list) => {
+    //     if (!list || list.length === 0) {
+    //         return <p className="empty">No data</p>;
+    //     }
+
+    //     return (
+    //         <div className="list">
+    //             {list.map(item => (
+    //                 <div key={item.id} className="card" onClick={() => handleNavigate(item.id)}>
+    //                     <img src={item.image || "https://placehold.co/300x200"} alt={item.name} />
+    //                     <h3>{item.name}</h3>
+    //                     <p>{item.address}</p>
+    //                     <p>⭐ {item.rating}</p>
+    //                 </div>
+    //             ))}
+    //         </div>
+    //     );
+    // };
+    const renderList = (list) => {
+    if (!list || list.length === 0) {
+        return <p className="empty">No data</p>;
     }
 
-    locationData (những lần sau chỉ 1 trong 4 trường hợp)= {
-        "Hotels" hoặc "Restaurants" hoặc "Attractions" hoặc cả 3 i như trên (khi search bằng name)= [
-            {
-            'id': string, 
-            'name': string, 
-            'address': string, 
-            'rating': string, 
-            'price_level': string
-            },
-            
-            ......
-        ]
-    }
-
-    thông tin chi tiết của một địa điểm
-    detailData = { nó dài quá nên bà chịu khó vào file docx xem nha }
-    */ 
-
-// Hàm handleSearch và HandleClick nhờ bà kiểm tra xem tui làm đúng không. 
-
-// Tui đã làm useEffect để lấy dữ liệu mặc định rồi cho nó vào biến locationData rồi, khi in ra thì nhớ gắn cho nó cái cờ để biết 
-// nó là loại hình địa điểm nào để mà còn search id. Cái cờ đó sẽ là type = 1 (hotel) hoặc 2 (restaurant) hoặc 3 (attraction)
-
-// Các thứ có thể lọc: "travel_style", "food_type", "accommodation_type" và "name". Xây dựng giao diện làm sao để mà nó biết 
-// người dùng muốn tra cái gì do bà quyết định. 
-
-// Việc còn lại bà cần làm là làm giao diện để nó tự động hiện ra từng object một và chỗ để search, cũng như kiểm tra các hàm trên
-
-// Bà chuyên React hơn tui nên là bà nên kiểm tra các hàm xem có đúng í bà không, bà là người quyết định.
-  return (
-    <></>
-  );
+    return (
+        <div className="list">
+            {list.map(item => (
+                <div
+                    key={item.id}
+                    className="card"
+                    onClick={() => HandleClick(item.id, item.type)}
+                >
+                    <img src={item.image || "https://placehold.co/300x200"} />
+                    <h3>{item.name}</h3>
+                    <p>{item.address}</p>
+                    <p>⭐ {item.rating}</p>
+                </div>
+            ))}
+        </div>
+    );
 };
+    return (
+        <div className="location-container">
+            <Header />
 
-export default function Location() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+            <div className="search-section">
 
-  useEffect(() => {
-    load();
-  }, []);
+                <div className="search-bar-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    🔍 {mode ? `Category: ${mode}` : "What are you looking for?"}
+                    {mode && (
+                        <button onClick={(e) => { e.stopPropagation(); resetSearch(); }}>✕</button>
+                    )}
+                </div>
 
-//   const load = async (filter = {}) => {
-//     setLoading(true);
-//     try {
-//       const res = await api.getLocation(filter);
-//       setData(res);
-//     } catch {
-//       toast.error("Error");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-const load = async (filter = {}) => {
-  setLoading(true);
-  try {
-    const res = await api.getLocations(filter); // ✅ FIX
-    setData(res || []);
-  } catch {
-    toast.error("Error");
-  } finally {
-    setLoading(false);
-  }
-};
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Locations</h2>
+                {isMenuOpen && (
+                    <div className="search-mode-menu">
+                        <button onClick={() => { setMode("name"); setIsMenuOpen(false); }}>Search by Name</button>
+                        <button onClick={() => { setMode("accommodation_type"); setIsMenuOpen(false); }}>Hotel Types</button>
+                        <button onClick={() => { setMode("food_type"); setIsMenuOpen(false); }}>Food Types</button>
+                        <button onClick={() => { setMode("travel_style"); setIsMenuOpen(false); }}>Travel Styles</button>
+                    </div>
+                )}
 
-      <button onClick={() => load({ type: "Hotels" })}>Hotels</button>
-      <button onClick={() => load({ type: "Restaurants" })}>Restaurants</button>
-      <button onClick={() => load({ type: "Attractions" })}>Attractions</button>
-      <button onClick={() => load({})}>All</button>
+                <div className="search-control-area">
 
-      {loading && <p>Loading...</p>}
+                    {mode === "name" && (
+                        <input
+                            className="search-input-field"
+                            autoFocus
+                            type="text"
+                            placeholder="Type a location name..."
+                            value={nameInput}
+                            onChange={(e) => setNameInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch({ name: nameInput });
+                                }
+                            }}
+                        />
+                    )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
-        {data.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => navigate(`/locations/${item.id}`)}
-            style={{ border: "1px solid #ddd", padding: 10, cursor: "pointer" }}
-          >
-            <img src={item.image} width="100%" />
-            <h3>{item.name}</h3>
-            <p>{item.address}</p>
-            <p>⭐ {item.rating}</p>
-            <p>{item.type}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+                    {mode && mode !== "name" && (
+                        <div className="options-grid">
+                            {Object.entries(
+                                mode === "accommodation_type" ? accommodationOptions :
+                                mode === "food_type" ? foodOptions : travelOptions
+                            ).map(([k, v]) => (
+                                <button
+                                    key={k}
+                                    onClick={() => handleSearch({ [mode]: Number(k) })}
+                                >
+                                    {v}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
+            </div>
+
+            {loading && <p>Searching...</p>}
+
+            <div className="results-section">
+                <h2>Hotels</h2>
+                {renderList(groupedData.Hotels)}
+
+                <h2>Restaurants</h2>
+                {renderList(groupedData.Restaurants)}
+
+                <h2>Attractions</h2>
+                {renderList(groupedData.Attractions)}
+            </div>
+        </div>
+    );
 }
+
+export default LocationComponent;

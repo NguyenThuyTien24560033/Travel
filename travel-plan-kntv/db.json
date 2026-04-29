@@ -9,7 +9,7 @@
       "name": "Thanh An Travel",
       "phoneNumber": "0987654321",
       "address": "Phú Quý",
-      "locations": [
+      "places": [
         {
           "id": "loc_001",
           "name": "Thanh An Travel Office",
@@ -75,160 +75,446 @@
       "role": "user"
     }
   ],
-  "locations": [
+  "places": [
     {
-      "id": "loc_001",
-      "name": "Da Lat Mountain View Hotel",
-      "address": "Da Lat, Lam Dong",
-      "rating": 4.7,
-      "type": "Hotels",
-      "price_level": "$$",
-      "image": "https://picsum.photos/400/300?1",
-      "description": "Khách sạn view núi cực đẹp tại Đà Lạt",
-
-      "dashboard": {
-        "totalBookings": 120,
-        "revenue": 4500
-      },
-      "menu": [
-        { "name": "Standard Room", "price": 50 },
-        { "name": "Deluxe Room", "price": 80 }
-      ],
-      "operatingHours": {
-        "open": "06:00",
-        "close": "23:00"
-      },
-      "promotions": [
-        { "title": "Giảm 10% mùa thấp điểm" }
-      ],
-      "announcements": [
-        { "title": "Bảo trì hồ bơi 2 ngày" }
-      ],
-      "reviews": [
-        { "user": "A", "rating": 5, "comment": "Rất đẹp" }
-      ]
-    },
-
-    {
-      "id": "loc_002",
-      "name": "Vung Tau Sea Resort",
-      "address": "Vung Tau",
+      "id": "1",
+      "type": 1,
+      "name": "Da Lat Hotel 1",
+      "address": "Da Lat",
       "rating": 4.5,
-      "type": "Hotels",
-      "price_level": "$$$",
-      "image": "https://picsum.photos/400/300?2",
-      "description": "Resort sát biển sang trọng",
-
-      "dashboard": {
-        "totalBookings": 200,
-        "revenue": 9000
-      },
-      "menu": [
-        { "name": "Villa Sea View", "price": 150 }
-      ],
-      "operatingHours": {
-        "open": "00:00",
-        "close": "23:59"
-      },
-      "promotions": [
-        { "title": "Stay 3 nights get 1 free" }
-      ],
-      "announcements": [
-        { "title": "Check-in delay possible" }
-      ],
-      "reviews": [
-        { "user": "B", "rating": 4, "comment": "View đẹp nhưng hơi đắt" }
-      ]
-    },
-
-    {
-      "id": "loc_003",
-      "name": "Hanoi Old Quarter Food Street",
-      "address": "Hoan Kiem, Hanoi",
-      "rating": 4.8,
-      "type": "Restaurants",
-      "price_level": "$",
-      "image": "https://picsum.photos/400/300?3",
-      "description": "Thiên đường ẩm thực phố cổ",
-
-      "dashboard": {
-        "totalOrders": 500
-      },
-      "menu": [
-        { "name": "Pho Bo", "price": 2 },
-        { "name": "Bun Cha", "price": 3 }
-      ],
-      "operatingHours": {
-        "open": "06:00",
-        "close": "22:00"
-      },
-      "promotions": [
-        { "title": "Free drink after 5pm" }
-      ],
-      "announcements": [],
-      "reviews": [
-        { "user": "C", "rating": 5, "comment": "Ngon nhất Hà Nội" }
-      ]
-    },
-
-    {
-      "id": "loc_004",
-      "name": "Nha Trang Seafood Paradise",
-      "address": "Nha Trang",
-      "rating": 4.6,
-      "type": "Restaurants",
       "price_level": "$$",
-      "image": "https://picsum.photos/400/300?4",
-      "description": "Hải sản tươi sống ven biển",
-
-      "dashboard": {
-        "totalOrders": 300
-      },
-      "menu": [
-        { "name": "Grilled Lobster", "price": 20 },
-        { "name": "Sea Crab", "price": 15 }
-      ],
-      "operatingHours": {
-        "open": "10:00",
-        "close": "23:00"
-      },
-      "promotions": [
-        { "title": "20% seafood combo" }
-      ],
-      "announcements": [],
-      "reviews": [
-        { "user": "D", "rating": 4, "comment": "Tươi ngon" }
-      ]
+      "accommodation_type": 1,
+      "travel_style": 1
     },
-
     {
-      "id": "loc_005",
-      "name": "Sa Pa Fansipan Cable Car",
-      "address": "Sa Pa, Lao Cai",
-      "rating": 4.9,
-      "type": "Attractions",
+      "id": "2",
+      "type": 1,
+      "name": "Da Lat Hotel 2",
+      "address": "Da Lat",
+      "rating": 4.6,
       "price_level": "$$$",
-      "image": "https://picsum.photos/400/300?5",
-      "description": "Cáp treo lên đỉnh Fansipan",
-
-      "dashboard": {
-        "visitors": 1000
-      },
-      "menu": [],
-      "operatingHours": {
-        "open": "07:00",
-        "close": "17:00"
-      },
-      "promotions": [],
-      "announcements": [
-        { "title": "Foggy weather alert" }
-      ],
-      "reviews": [
-        { "user": "E", "rating": 5, "comment": "Đỉnh của chóp" }
-      ]
+      "accommodation_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "3",
+      "type": 1,
+      "name": "Da Lat Hotel 3",
+      "address": "Da Lat",
+      "rating": 4.7,
+      "price_level": "$$",
+      "accommodation_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "4",
+      "type": 1,
+      "name": "Da Lat Hotel 4",
+      "address": "Da Lat",
+      "rating": 4.3,
+      "price_level": "$",
+      "accommodation_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "5",
+      "type": 1,
+      "name": "Da Lat Hotel 5",
+      "address": "Da Lat",
+      "rating": 4.9,
+      "price_level": "$$$$",
+      "accommodation_type": 1,
+      "travel_style": 2
+    },
+    {
+      "id": "6",
+      "type": 1,
+      "name": "Hotel 6",
+      "address": "HCM",
+      "rating": 4.1,
+      "price_level": "$",
+      "accommodation_type": 2,
+      "travel_style": 1
+    },
+    {
+      "id": "7",
+      "type": 1,
+      "name": "Hotel 7",
+      "address": "HCM",
+      "rating": 4.2,
+      "price_level": "$",
+      "accommodation_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "8",
+      "type": 1,
+      "name": "Hotel 8",
+      "address": "HCM",
+      "rating": 4.3,
+      "price_level": "$$",
+      "accommodation_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "9",
+      "type": 1,
+      "name": "Hotel 9",
+      "address": "HCM",
+      "rating": 4.4,
+      "price_level": "$$",
+      "accommodation_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "10",
+      "type": 1,
+      "name": "Hotel 10",
+      "address": "HCM",
+      "rating": 4.5,
+      "price_level": "$$$",
+      "accommodation_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "11",
+      "type": 1,
+      "name": "Hotel 11",
+      "address": "HCM",
+      "rating": 4.6,
+      "price_level": "$$",
+      "accommodation_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "12",
+      "type": 1,
+      "name": "Hotel 12",
+      "address": "HCM",
+      "rating": 4.7,
+      "price_level": "$$$",
+      "accommodation_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "101",
+      "type": 2,
+      "name": "Pho 24",
+      "address": "Hanoi",
+      "rating": 4.5,
+      "price_level": "$",
+      "food_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "102",
+      "type": 2,
+      "name": "Bun Cha",
+      "address": "Hanoi",
+      "rating": 4.6,
+      "price_level": "$",
+      "food_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "103",
+      "type": 2,
+      "name": "Fine Dining",
+      "address": "HCM",
+      "rating": 4.9,
+      "price_level": "$$$$",
+      "food_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "104",
+      "type": 2,
+      "name": "BBQ House",
+      "address": "HCM",
+      "rating": 4.4,
+      "price_level": "$$$",
+      "food_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "105",
+      "type": 2,
+      "name": "Pizza Place",
+      "address": "HCM",
+      "rating": 4.3,
+      "price_level": "$$",
+      "food_type": 2,
+      "travel_style": 1
+    },
+    {
+      "id": "106",
+      "type": 2,
+      "name": "Restaurant 6",
+      "address": "HCM",
+      "rating": 4.2,
+      "price_level": "$",
+      "food_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "107",
+      "type": 2,
+      "name": "Restaurant 7",
+      "address": "HCM",
+      "rating": 4.3,
+      "price_level": "$$",
+      "food_type": 1,
+      "travel_style": 2
+    },
+    {
+      "id": "108",
+      "type": 2,
+      "name": "Restaurant 8",
+      "address": "HCM",
+      "rating": 4.4,
+      "price_level": "$$",
+      "food_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "109",
+      "type": 2,
+      "name": "Restaurant 9",
+      "address": "HCM",
+      "rating": 4.5,
+      "price_level": "$$",
+      "food_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "110",
+      "type": 2,
+      "name": "Restaurant 10",
+      "address": "HCM",
+      "rating": 4.6,
+      "price_level": "$$$",
+      "food_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "111",
+      "type": 2,
+      "name": "Restaurant 11",
+      "address": "HCM",
+      "rating": 4.7,
+      "price_level": "$$$",
+      "food_type": 1,
+      "travel_style": 1
+    },
+    {
+      "id": "112",
+      "type": 2,
+      "name": "Restaurant 12",
+      "address": "HCM",
+      "rating": 4.8,
+      "price_level": "$$$$",
+      "food_type": 2,
+      "travel_style": 2
+    },
+    {
+      "id": "201",
+      "type": 3,
+      "name": "Ben Thanh Market",
+      "address": "HCM",
+      "rating": 4.4,
+      "price_level": "$",
+      "travel_style": 1
+    },
+    {
+      "id": "202",
+      "type": 3,
+      "name": "Fansipan",
+      "address": "Lao Cai",
+      "rating": 4.9,
+      "price_level": "$$",
+      "travel_style": 2
+    },
+    {
+      "id": "203",
+      "type": 3,
+      "name": "Ha Long Bay",
+      "address": "Quang Ninh",
+      "rating": 5,
+      "price_level": "$$$",
+      "travel_style": 2
+    },
+    {
+      "id": "204",
+      "type": 3,
+      "name": "Hoi An",
+      "address": "Quang Nam",
+      "rating": 4.8,
+      "price_level": "$$",
+      "travel_style": 1
+    },
+    {
+      "id": "205",
+      "type": 3,
+      "name": "Hue Citadel",
+      "address": "Hue",
+      "rating": 4.6,
+      "price_level": "$",
+      "travel_style": 1
+    },
+    {
+      "id": "206",
+      "type": 3,
+      "name": "Attraction 6",
+      "address": "VN",
+      "rating": 4.3,
+      "price_level": "$",
+      "travel_style": 1
+    },
+    {
+      "id": "207",
+      "type": 3,
+      "name": "Attraction 7",
+      "address": "VN",
+      "rating": 4.4,
+      "price_level": "$$",
+      "travel_style": 2
+    },
+    {
+      "id": "208",
+      "type": 3,
+      "name": "Attraction 8",
+      "address": "VN",
+      "rating": 4.5,
+      "price_level": "$$",
+      "travel_style": 1
+    },
+    {
+      "id": "209",
+      "type": 3,
+      "name": "Attraction 9",
+      "address": "VN",
+      "rating": 4.6,
+      "price_level": "$$$",
+      "travel_style": 2
+    },
+    {
+      "id": "210",
+      "type": 3,
+      "name": "Attraction 10",
+      "address": "VN",
+      "rating": 4.7,
+      "price_level": "$$$",
+      "travel_style": 1
+    },
+    {
+      "id": "211",
+      "type": 3,
+      "name": "Attraction 11",
+      "address": "VN",
+      "rating": 4.8,
+      "price_level": "$$$$",
+      "travel_style": 2
+    },
+    {
+      "id": "212",
+      "type": 3,
+      "name": "Attraction 12",
+      "address": "VN",
+      "rating": 4.9,
+      "price_level": "$$$$",
+      "travel_style": 2
     }
   ],
-
+  "comments": [
+    {
+      "id": "8f70",
+      "placeId": "3",
+      "comment_id": "e94f53e6-0a74-498c-8505-bfd437b9a0ca",
+      "user_id": "user_2026_khangnd",
+      "commenter": "Nguyễn Đình Khang",
+      "content": "cũng được\n",
+      "date": "2026-04-29T06:35:38.370Z"
+    },
+    {
+      "id": "ce48",
+      "placeId": "3",
+      "comment_id": "dca6668c-2a55-4f0e-899d-c3094b62bc1b",
+      "user_id": "user_2026_khangnd",
+      "commenter": "Nguyễn Đình Khang",
+      "content": "ok",
+      "date": "2026-04-29T06:35:50.767Z"
+    },
+    {
+      "id": "a9cf",
+      "placeId": "3",
+      "comment_id": "902403ef-99af-4e77-9599-8983eb97ac63",
+      "user_id": "",
+      "commenter": "thuytien",
+      "content": "quá tệ",
+      "rating": 4,
+      "date": "2026-04-29T06:43:34.602Z"
+    },
+    {
+      "id": "6bb1",
+      "placeId": "3",
+      "comment_id": "30998cd6-bebc-44f9-8d91-78f8a296cda5",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "son@example.com",
+      "content": "yuio",
+      "rating": 3,
+      "date": "2026-04-29T06:48:14.505Z"
+    },
+    {
+      "id": "9a67",
+      "placeId": "3",
+      "comment_id": "d2977e4d-1a2f-46a2-9e9f-3b7b74a20eb7",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "ThuyTien",
+      "content": "bad",
+      "rating": 4,
+      "date": "2026-04-29T07:31:04.975Z"
+    },
+    {
+      "id": "d525",
+      "placeId": "3",
+      "comment_id": "78f6c52b-4788-4f3c-b883-5e5620758f3c",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "ThuyTien",
+      "content": "tuyệt ",
+      "rating": 5,
+      "date": "2026-04-29T07:36:27.781Z"
+    },
+    {
+      "id": "674e",
+      "placeId": "2",
+      "comment_id": "623fd6d8-01a8-455e-a456-b1ccb860be2a",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "ThuyTien",
+      "content": "tốt",
+      "rating": 5,
+      "date": "2026-04-29T07:38:14.281Z"
+    },
+    {
+      "id": "e7c3",
+      "placeId": "2",
+      "comment_id": "d11d83c8-cef0-4a7d-a640-95136aee5210",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "ThuyTien",
+      "content": "cá",
+      "rating": 1,
+      "date": "2026-04-29T07:39:22.865Z"
+    },
+    {
+      "id": "7179",
+      "placeId": "2",
+      "comment_id": "a45fe4d2-ae00-4ac0-92be-f19d763ebddd",
+      "user_id": "4KM-QSXVme8",
+      "commenter": "ThuyTien",
+      "content": "tệ",
+      "rating": 1,
+      "date": "2026-04-29T07:40:25.727Z"
+    }
+  ],
   "history": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

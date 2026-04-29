@@ -13,12 +13,12 @@ import "./LocationDetail.css";
 const MODE = "JSON_SERVER";
 // const MODE = "REAL_BACKEND";
 
-const JSON_API = "http://localhost:3001/locations";
+const JSON_API = "http://localhost:3001/places";
 const COMMENTS_API = "http://localhost:3001/comments";
 
 const REAL_API = {
-  detail: (id) => `locations/${id}/`,
-  comments: (id) => `locations/${id}/comments`,
+  detail: (id) => `places/${id}/`,
+  comments: (id) => `places/${id}/comments`,
 };
 
 const LocationDetail = () => {
@@ -71,25 +71,42 @@ const LocationDetail = () => {
   /* =========================
      FETCH COMMENTS
   ========================= */
-  const fetchComments = async () => {
-    try {
-      if (MODE === "REAL_BACKEND") {
-        const res = await authorizedFetch(REAL_API.comments(id));
-        if (!res.ok) return [];
-        return await res.json();
-      }
+//   const fetchComments = async () => {
+//     try {
+//       if (MODE === "REAL_BACKEND") {
+//         const res = await authorizedFetch(REAL_API.comments(id));
+//         if (!res.ok) return [];
+//         return await res.json();
+//       }
 
-      const res = await fetch(JSON_API);
+//       const res = await fetch(JSON_API);
+//     const data = await res.json();
+
+//     const found = data.find((i) => i.id === id);
+
+//     return found?.reviews || [];
+//     } catch {
+//       return [];
+//     }
+//   };
+    const fetchComments = async () => {
+  try {
+    if (MODE === "REAL_BACKEND") {
+      const res = await authorizedFetch(REAL_API.comments(id));
+      if (!res.ok) return [];
+      return await res.json();
+    }
+
+    const res = await fetch(COMMENTS_API);
     const data = await res.json();
 
-    const found = data.find((i) => i.id === id);
-
-    return found?.reviews || [];
-    } catch {
-      return [];
-    }
-  };
-
+    return data.filter(
+      (c) => String(c.placeId) === String(id)
+    );
+  } catch {
+    return [];
+  }
+};
   /* =========================
      LOAD
   ========================= */
@@ -129,7 +146,7 @@ return (
       
       {/* HEADER SECTION: Nút back và Ảnh bìa */}
       <div className="detail-header">
-        <button className="back-btn" onClick={() => navigate("/locations")}>
+        <button className="back-btn" onClick={() => navigate("/places")}>
           <ArrowLeft size={18} /> Quay lại
         </button>
         <div className="image-container">
@@ -222,7 +239,7 @@ return (
     {/* Nút điều hướng sang trang review mới */}
     <button 
       className="write-review-btn"
-      onClick={() => navigate(`/locations/${id}/review`)}
+      onClick={() => navigate(`/places/${id}/comments`)}
       style={{
         padding: '8px 16px',
         backgroundColor: '#111827',

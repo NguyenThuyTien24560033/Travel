@@ -14,9 +14,10 @@ import MyTripOutput from '../Components/Output.jsx';
 import HistoryComponent from '../Components/History.jsx';
 
 //Location
-import Location from '../Components/Location.jsx';
+import LocationComponent from '../Components/Location.jsx';
 import LocationDetail from '../Components/LocationDetail.jsx';
 
+import Comment from '../Components/Comment.jsx';
 
 //Partner
 import PartnerLayout from '../Layouts/PartnerLayout.jsx'
@@ -35,11 +36,15 @@ export const Public_Layout = [
 
       { path: "users", element: <UserLogin /> },
       { path: "profile", element: <UserProfile /> },
+
       { path: "my-trip", element: <MyTripInput /> },
       { path: "my-trip/output", element: <MyTripOutput /> },
       { path: "history", element: <HistoryComponent /> },
-      { path: "locations", element: <Location /> },
-      { path: "locations/:id", element: <LocationDetail /> },
+
+      { path: "places", element: <LocationComponent /> },
+      { path: "places/:id", element: <LocationDetail /> },
+      
+      { path: "places/:id/comments", element: <Comment /> },
     ] 
   },
 ];
