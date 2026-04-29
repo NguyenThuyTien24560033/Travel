@@ -9,10 +9,11 @@ import Header from "./Header";
    CONFIG
 ========================================================= */
 
-const MODE = "JSON_SERVER"; 
+// const MODE = "JSON_SERVER"; 
 
-const JSON_API = "http://localhost:3001/places";
+// const JSON_API = "http://localhost:3001/places";
 
+const MODE = "REAL_BACKEND"
 const REAL_API = {
     getLocations: "places/browse/",
     getHotel: "places/hotels/",
@@ -53,7 +54,7 @@ const api = {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("Dữ liệu nhận về: ", data.length);
+                    console.log("Dữ liệu nhận về: ", data);
                     return data;
                 } else {
                     console.error(`Lấy dữ liệu thất bại, status:`, response.status);
@@ -200,6 +201,8 @@ function LocationComponent() {
         loadData();
     };
 
+    
+// Lấy xong rồi mới truyền vào navigate để đến giao diện detail
     // const handleNavigate = (id) => navigate(`/places/${id}`);
     const HandleClick = async (id, type) => {
     if (MODE === "JSON_SERVER") {
@@ -237,16 +240,30 @@ function LocationComponent() {
         } finally {
             setLoading(false);
         }
-};
+    };
 
     /* =========================
        GROUP DATA (🔥 FIX SẠCH)
     ========================= */
-    const groupedData = {
-        Hotels: locationData.filter(item => Number(item.type) === 1),
-        Restaurants: locationData.filter(item => Number(item.type) === 2),
-        Attractions: locationData.filter(item => Number(item.type) === 3),
-    };
+    let groupedData = {};
+    if (MODE === "REAL_BACKEND"){
+        groupedData = {
+            // Duyệt qua mảng Hotels, giữ nguyên dữ liệu cũ (...item) và thêm type: 1
+            Hotels: locationData.Hotels?.map(item => ({ ...item, type: 1 })) || [],
+            
+            // Thêm type: 2 cho Restaurants
+            Restaurants: locationData.Restaurants?.map(item => ({ ...item, type: 2 })) || [],
+            
+            // Thêm type: 3 cho Attractions
+            Attractions: locationData.Attractions?.map(item => ({ ...item, type: 3 })) || []
+        };
+    } else {
+        groupedData = {
+            Hotels: locationData.filter(item => Number(item.type) === 1),
+            Restaurants: locationData.filter(item => Number(item.type) === 2),
+            Attractions: locationData.filter(item => Number(item.type) === 3),
+        };
+    }
 
     /* =========================
        OPTIONS
