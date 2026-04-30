@@ -16,12 +16,12 @@ export const useUser = () => useContext(UserContext);
 ========================================================= */
 
 
-// const MODE = "JSON_SERVER"; 
-// const JSON_API = "http://localhost:3001/users";
+const MODE = "JSON_SERVER"; 
+const JSON_API = "http://localhost:3001/users";
 
 
 // Đình Khang đổi comment khi chạy backend thật
-const MODE = "REAL_BACKEND";
+// const MODE = "REAL_BACKEND";
 const REAL_API = {
   login: "http://localhost:8000/travel/api/login/",
   register: "http://localhost:8000/travel/users/",
@@ -52,6 +52,7 @@ const api = {
 
     const res = await fetch(REAL_API.login, {
       method: "POST",
+      credentials: 'include',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
