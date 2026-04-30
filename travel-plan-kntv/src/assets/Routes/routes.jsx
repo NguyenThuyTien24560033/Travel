@@ -16,7 +16,7 @@ import HistoryComponent from '../Components/History.jsx';
 //Location
 import LocationComponent from '../Components/Location.jsx';
 import LocationDetail from '../../pages/User/LocationDetail.jsx';
-
+import CommentPage from '../../pages/User/Comment.jsx';
 
 
 //Partner
@@ -44,6 +44,7 @@ export const Public_Layout = [
 
       { path: "places", element: <LocationComponent /> },
       { path: "places/:id", element: <LocationDetail /> },
+      { path: "/places/:id/comments", element: <CommentPage /> },
       
      
     ] 

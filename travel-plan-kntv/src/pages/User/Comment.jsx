@@ -1,279 +1,146 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./Comment.css";
-import { ArrowLeft, Star } from "lucide-react";
+import { Star, ArrowLeft } from "lucide-react";
+import { authorizedFetch } from "../../../api";
+import { toast } from "sonner";
+import { useUser } from "../../assets/Layouts/UserLayout.jsx"
+import './Comment.css'
 
-
-// Đình Khang nhớ đổi nha
+/* =========================================================
+   MODE CONFIG
+========================================================= */
 const MODE = "JSON_SERVER";
 // const MODE = "REAL_BACKEND";
 
-const JSON_SERVER_API = {
-    locations: "http://localhost:3001/places",
-    comments: "http://localhost:3001/comments",
-}; 
+const JSON_API = "http://localhost:3001/places";
 
-const REAL_BACKEND_API = {
-    locations: "http://localhost:8080/places",
-
-    comments: {
-        getByPlace: (id) =>
-            `http://localhost:8080/places/${id}/comments`,
-        create: (id) =>
-            `http://localhost:8080/places/${id}/comments`,
-    },
+const REAL_API = {
+  getPlace: (id) => `http://localhost:8000/travel/places/${id}`,
+  updatePlace: (id) => `http://localhost:8000/travel/places/${id}`,
 };
 
-const API =
-    MODE === "JSON_SERVER"
-        ? JSON_SERVER_API
-        : REAL_BACKEND_API;
+const CommentPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useUser();
 
-/* =========================
-   COMPONENT
-========================= */
-const LocationDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const [rating, setRating] = useState(0);
+  const [content, setContent] = useState("");
 
-    const [location, setLocation] = useState(null);
-    const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const username = user?.username || user?.email || "Anonymous";
 
-    /* MODAL */
-    const [openCommentModal, setOpenCommentModal] = useState(false);
+  /* =========================================================
+     SUBMIT COMMENT (DUAL MODE)
+  ========================================================= */
+  const handleSubmit = async () => {
+    if (!content.trim()) {
+      toast.error("Vui lòng nhập comment");
+      return;
+    }
 
-    /* FORM */
-    const [content, setContent] = useState("");
-    const [rating, setRating] = useState(0);
-    const [submitting, setSubmitting] = useState(false);
-
-    /* USER */
-    const user = JSON.parse(localStorage.getItem("user")) || {};
-    const commenter = user?.username || user?.email || "Anonymous";
-
-    /* =========================
-       FETCH LOCATION
-    ========================= */
-    const fetchDetail = async () => {
-        const res = await fetch(API.locations);
-        const data = await res.json();
-        return data.find((i) => String(i.id) === String(id));
+    const newComment = {
+      comment_id: Date.now().toString(),
+      commenter: username,
+      rating,
+      content,
     };
 
-    /* =========================
-       FETCH COMMENTS
-    ========================= */
-    const fetchComments = async () => {
-        if (MODE === "JSON_SERVER") {
-            const res = await fetch(API.comments);
-            const data = await res.json();
+    try {
+      /* =========================
+         JSON SERVER MODE
+      ========================= */
+      if (MODE === "JSON_SERVER") {
+        const res = await fetch(`${JSON_API}/${id}`);
+        const place = await res.json();
 
-            return data.filter(
-                (c) => String(c.placeId) === String(id)
-            );
-        }
+        const existing = place.comments || [];
 
-        const res = await fetch(API.backend.comments(id));
-        return await res.json();
-    };
+        await fetch(`${JSON_API}/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comments: [...existing, newComment],
+          }),
+        });
 
-    /* =========================
-       LOAD DATA
-    ========================= */
-    useEffect(() => {
-        const load = async () => {
-            setLoading(true);
+        toast.success("Comment success (JSON_SERVER)");
+      }
 
-            const [loc, cmt] = await Promise.all([
-                fetchDetail(),
-                fetchComments(),
-            ]);
+      /* =========================
+         REAL BACKEND MODE
+      ========================= */
+      else {
+        const res = await authorizedFetch(REAL_API.getPlace(id));
+        const place = await res.json();
 
-            setLocation(loc);
-            setComments(cmt);
+        const existing = place.comments || [];
 
-            setLoading(false);
-        };
+        await authorizedFetch(REAL_API.updatePlace(id), {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            comments: [...existing, newComment],
+          }),
+        });
 
-        load();
-    }, [id]);
+        toast.success("Comment success (BACKEND)");
+      }
 
-    /* =========================
-       SUBMIT COMMENT
-    ========================= */
-    const handleSubmit = async () => {
-        if (!content.trim() || rating === 0) return;
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error submitting comment");
+    }
+  };
 
-        const newComment = {
-            comment_id: crypto.randomUUID(),
-            user_id: user?.id || "guest",
-            commenter,
-            content,
-            rating,
-            date: new Date().toISOString(),
-        };
+  return (
+    <div style={{ padding: 20 }}>
 
-        setSubmitting(true);
+      {/* BACK */}
+      <button onClick={() => navigate(-1)}>
+        <ArrowLeft /> Back
+      </button>
 
-        try {
-            if (MODE === "JSON_SERVER") {
-                await fetch(API.comments, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        placeId: id,
-                        ...newComment,
-                    }),
-                });
+      <h2>Write Comment</h2>
 
-                setComments((prev) => [
-                    ...prev,
-                    { placeId: id, ...newComment },
-                ]);
-            } else {
-                await fetch(API.backend.comments(id), {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(newComment),
-                });
+      {/* STAR RATING */}
+      <div style={{ display: "flex", gap: 6 }}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            size={24}
+            onClick={() => setRating(i + 1)}
+            fill={i < rating ? "#fbbf24" : "none"}
+            color="#fbbf24"
+            style={{ cursor: "pointer" }}
+          />
+        ))}
+      </div>
 
-                setComments((prev) => [...prev, newComment]);
-            }
+      {/* TEXT AREA */}
+      <textarea
+        placeholder="Write your comment..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        style={{
+          width: "100%",
+          height: 120,
+          marginTop: 10,
+          padding: 10,
+        }}
+      />
 
-            setContent("");
-            setRating(0);
-            setOpenCommentModal(false);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setSubmitting(false);
-        }
-    };
+      {/* SUBMIT */}
+      <button onClick={handleSubmit} style={{ marginTop: 10 }}>
+        Submit
+      </button>
 
-    /* =========================
-       UI STATES
-    ========================= */
-    if (loading) return <div>Loading...</div>;
-    if (!location) return <div>Not found</div>;
-
-    return (
-        <div className="location-detail-wrapper">
-
-            {/* BACK BUTTON */}
-            {/* <button onClick={() => navigate("/places")}>
-                <ArrowLeft size={16} /> Back
-            </button> */}
-            <button onClick={() => navigate(-1)}>
-                <ArrowLeft size={16} /> Back
-            </button>
-
-            <h1>{location.name}</h1>
-
-            {/* =========================
-               COMMENTS
-            ========================= */}
-            <div className="reviews-block">
-                <div className="reviews-header">
-                    <h3>Reviews ({comments.length})</h3>
-
-                    <button onClick={() => setOpenCommentModal(true)}>
-                        Comment
-                    </button>
-                </div>
-
-                {comments.map((c, i) => (
-                    <div key={i} className="comment-card">
-                        <strong>{c.commenter}</strong>
-
-                        <div>
-                            {Array.from({ length: 5 }).map((_, idx) => (
-                                <Star
-                                    key={idx}
-                                    size={14}
-                                    color={
-                                        idx < c.rating ? "#fbbf24" : "#ccc"
-                                    }
-                                />
-                            ))}
-                        </div>
-
-                        <p>{c.content}</p>
-                    </div>
-                ))}
-            </div>
-
-            {/* =========================
-               MODAL
-            ========================= */}
-            {openCommentModal && (
-                <div
-                    className="modal-overlay"
-                    onClick={() => setOpenCommentModal(false)}
-                >
-                    <div
-                        className="modal"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h3>Comment as {commenter}</h3>
-
-                        {/* RATING */}
-                        <div className="rating">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <span
-                                    key={i}
-                                    onClick={() => setRating(i + 1)}
-                                    style={{
-                                        fontSize: "28px",
-                                        cursor: "pointer",
-                                        color:
-                                            i < rating
-                                                ? "#fbbf24"
-                                                : "#ccc",
-                                    }}
-                                >
-                                    ★
-                                </span>
-                            ))}
-                        </div>
-
-                        {/* INPUT */}
-                        <textarea
-                            placeholder="Write your comment..."
-                            value={content}
-                            onChange={(e) =>
-                                setContent(e.target.value)
-                            }
-                        />
-
-                        {/* ACTIONS */}
-                        <div className="modal-actions">
-                            <button
-                                onClick={() =>
-                                    setOpenCommentModal(false)
-                                }
-                            >
-                                Cancel
-                            </button>
-
-                            <button
-                                onClick={handleSubmit}
-                                disabled={submitting}
-                            >
-                                {submitting
-                                    ? "Posting..."
-                                    : "Submit"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+    </div>
+  );
 };
 
-export default LocationDetail;
+export default CommentPage;

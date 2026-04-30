@@ -14,15 +14,19 @@ const LocationDetail = () => {
         ...raw,
 
         
-        operatingHours: raw.active_hours
-          ? JSON.parse(raw.active_hours)
-          : raw.operatingHours || null,
-
+        // operatingHours: raw.active_hours
+        //   ? JSON.parse(raw.active_hours)
+        //   : raw.operatingHours || null,
+      operatingHours: Array.isArray(raw.active_hours)
+  ? raw.active_hours
+  : raw.active_hours
+  ? JSON.parse(raw.active_hours)
+  : raw.operatingHours || null,
       
-        menu: raw.room_types || raw.menu || [],
+        menu: raw.room_types || raw.dishes || [],
 
         reviews: raw.comments || raw.reviews || [],
-
+        
         
         promotions: raw.discounts || raw.promotions || [],
 
@@ -31,13 +35,27 @@ const LocationDetail = () => {
     : null;
 
   const comments = location?.reviews || [];
-
+  const averageRating =
+  comments.length > 0
+    ? (
+        comments.reduce((sum, c) => sum + (c.rating || 0), 0) /
+        comments.length
+      ).toFixed(1)
+    : 4.5;
+const [reviewPage, setReviewPage] = useState(0);
+const REVIEWS_PER_PAGE = 3;
+const start = reviewPage * REVIEWS_PER_PAGE;
+const visibleReviews = comments.slice(
+  start,
+  start + REVIEWS_PER_PAGE
+);
+const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE);
   const [openSection, setOpenSection] = useState("menu");
 
   const toggleSection = (key) => {
     setOpenSection(openSection === key ? null : key);
   };
-
+const [openDiscount, setOpenDiscount] = useState(false);
   /* =========================
      GUARD
   ========================= */
@@ -49,7 +67,21 @@ const LocationDetail = () => {
       </div>
     );
   }
+  const now = new Date();
 
+const validDiscounts = (location.promotions || []).filter((d) => {
+  if (!d.end_date) return true; // nếu không có end_date thì vẫn show
+
+  return new Date(d.end_date) >= now;
+});
+const validAnnouncements = Array.isArray(location?.announcements)
+  ? location.announcements.filter((n) => {
+      // nếu không có end_date → vẫn hiển thị
+      if (!n.end_date) return true;
+
+      return new Date(n.end_date) >= now;
+    })
+  : [];
   return (
     <div className="location-detail-wrapper">
       <div className="location-detail-container">
@@ -72,12 +104,15 @@ const LocationDetail = () => {
               <div className="quick-info">
                 <span>{location.address}</span>
 
-               
+               <span>
+  ⭐ {averageRating}
+</span>
                 <span>
                   {location.operatingHours
                     ? `Active days: ${location.operatingHours.join(", ")}`
                     : "Not updated"}
                 </span>
+
               </div>
             </div>
           </div>
@@ -107,28 +142,29 @@ const LocationDetail = () => {
                 <div className="content-list">
                   {location.menu.length > 0 ? (
                     location.menu.map((item, i) => (
-                      <div key={i} className="list-item">
+                      <div key={item.dish_id || i} className="dish-card">
 
-                      
-                        {item.type_name ? (
-                          <>
-                            <span>{item.type_name}</span>
-                            <span className="price">{item.price}đ</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>{item.name}</span>
-                            <span className="price">{item.price}</span>
-                          </>
-                        )}
+                        <div className="dish-header">
+                          <h4 className="dish-name">
+                            {item.dish_name || item.name || "No name"}
+                          </h4>
 
-                      </div>
-                    ))
-                  ) : (
-                    <p>Chưa có thông tin</p>
-                  )}
+                          <span className="dish-price">
+                            {item.price ? `${item.price.toLocaleString()}đ` : "0đ"}
+                          </span>
                 </div>
-              )}
+
+          <p className="dish-desc">
+            {item.description?.trim() || "Không có mô tả"}
+          </p>
+
+        </div>
+      ))
+    ) : (
+      <p>Chưa có thông tin</p>
+    )}
+  </div>
+)}
             </div>
 
             {/* NOTIFICATION */}
@@ -140,17 +176,36 @@ const LocationDetail = () => {
                 Notification {openSection === "notify" ? "▲" : "▼"}
               </h3>
 
+              
               {openSection === "notify" && (
-                <div className="content-list">
-                  {location.announcements.length > 0 ? (
-                    location.announcements.map((n, i) => (
-                      <p key={i}>• {n.title || n}</p>
-                    ))
-                  ) : (
-                    <p>Không có thông báo</p>
-                  )}
-                </div>
-              )}
+  <div className="content-list">
+
+    {Array.isArray(location?.announcements) &&
+    location.announcements.length > 0 ? (
+      location.announcements.map((n) => (
+        <div key={n.id} className="announce-card">
+
+          <h4 className="announce-title">
+            {n.title}
+          </h4>
+
+          <p className="announce-desc">
+            {n.description || n.content || n.desc || "Không có mô tả"}
+          </p>
+
+          <div className="announce-meta">
+            {n.start_date && <small>Từ: {n.start_date}</small>}
+            {n.end_date && <small>Đến: {n.end_date}</small>}
+          </div>
+
+        </div>
+      ))
+    ) : (
+      <p>Không có thông báo</p>
+    )}
+
+  </div>
+)}
             </div>
 
           </div>
@@ -158,16 +213,53 @@ const LocationDetail = () => {
           {/* RIGHT */}
           <div className="sidebar">
 
-            {/* DISCOUNT */}
             <div className="promo-block">
-              <h3>Discount</h3>
 
-              <div className="discount-tag">
-                {location.promotions.length > 0
-                  ? location.promotions.map(p => p.title || p).join(", ")
-                  : "No discount"}
-              </div>
+  <h3
+    className="clickable-h3"
+    onClick={() => setOpenDiscount(!openDiscount)}
+  >
+    Discount {openDiscount ? "▲" : "▼"}
+  </h3>
+
+  {openDiscount && (
+    <div className="content-list">
+
+      {validDiscounts.length > 0 ? (
+        validDiscounts.map((d) => (
+          <div key={d.discount_id} className="promo-card">
+
+            <div className="promo-header">
+              <h4 className="promo-title">{d.title}</h4>
+
+              <span className="promo-value">
+                {d.percent ? `${d.percent}%` : ""}
+              </span>
             </div>
+
+            <p className="promo-desc">
+              {d.description || "Không có mô tả"}
+            </p>
+
+            <div className="promo-meta">
+              {d.start_date && (
+                <small>Từ: {d.start_date}</small>
+              )}
+              <br />
+              {d.end_date && (
+                <small>Đến: {d.end_date}</small>
+              )}
+            </div>
+
+          </div>
+        ))
+      ) : (
+        <p>No valid discount</p>
+      )}
+
+    </div>
+  )}
+</div>
 
             {/* REVIEWS */}
             <div className="reviews-block">
@@ -177,6 +269,7 @@ const LocationDetail = () => {
 
                 <button
                   className="write-review-btn"
+                  // onClick={() => navigate(`/places/${id}/comments`)}
                   onClick={() => navigate(`/places/${id}/comments`)}
                 >
                   Comment
@@ -188,7 +281,7 @@ const LocationDetail = () => {
                 {comments.length === 0 ? (
                   <p>Chưa có đánh giá</p>
                 ) : (
-                  comments.map((c, index) => (
+                 visibleReviews.map((c, index) => (
                     <div key={c.comment_id || index} className="comment-card">
 
                       <div className="comment-top">
@@ -212,6 +305,29 @@ const LocationDetail = () => {
                     </div>
                   ))
                 )}
+                {comments.length > 3 && (
+  <div className="review-pagination">
+
+    <button
+      disabled={reviewPage === 0}
+      onClick={() => setReviewPage((p) => p - 1)}
+    >
+      ◀ Prev
+    </button>
+
+    <span>
+      {reviewPage + 1} / {totalPages}
+    </span>
+
+    <button
+      disabled={reviewPage === totalPages - 1}
+      onClick={() => setReviewPage((p) => p + 1)}
+    >
+      Next ▶
+    </button>
+
+  </div>
+)}
 
               </div>
 

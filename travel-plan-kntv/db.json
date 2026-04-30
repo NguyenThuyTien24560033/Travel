@@ -96,6 +96,175 @@
       "travel_style": 1
     },
     {
+      "id": "loc_1",
+      "type": 2,
+      "name": "Quán Lẩu A",
+      "address": "Da Lat",
+      "rating": 4.5,
+      "price_level": "$$",
+      "accommodation_type": 1,
+      "travel_style": 1,
+      "dishes": [
+        {
+          "dish_id": "d1",
+          "dish_name": "Combo lẩu nấm",
+          "price": 450000,
+          "description": "Dành cho 1 người ăn"
+        },
+        {
+          "dish_id": "d2",
+          "dish_name": "Gà",
+          "price": 125000,
+          "description": "Dành cho 2 người ăn"
+        }
+      ],
+      "discounts": [
+        {
+          "discount_id": "dc1",
+          "title": "Giảm giá nhóm",
+          "percent": 10,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-25",
+          "description": "Thành Viên"
+        },
+        {
+          "discount_id": "dc2",
+          "title": "Giảm giá Khai trương",
+          "percent": 50,
+          "start_date": "2026-04-01",
+          "end_date": "2026-05-3",
+          "description": "Thành Viên VIP"
+        }
+      ]
+    },
+    {
+      "id": "hotel_101",
+      "type": 1,
+      "name": "Khách Sạn Mường Thanh",
+      "address": "Phường 9, Đà Lạt",
+      "rating": 4.8,
+      "price_level": "$$$",
+      "description": "Khách sạn sang trọng với view nhìn ra Hồ Xuân Hương, đầy đủ tiện nghi.",
+      "image": "https://picsum.photos/800/400",
+      "active_hours": [
+        "24/7"
+      ],
+      "accommodation_type": 1,
+      "travel_style": 1,
+      "room_types": [
+        {
+          "room_type_id": "r1",
+          "type_name": "Phòng Đơn Standard",
+          "price": 850000,
+          "description": "1 giường đơn, phù hợp cho khách công tác"
+        },
+        {
+          "room_type_id": "r2",
+          "type_name": "Phòng Đôi Luxury",
+          "price": 1500000,
+          "description": "2 giường đôi lớn, có ban công nhìn ra thung lũng"
+        },
+        {
+          "room_type_id": "r3",
+          "type_name": "Phòng Suite VIP",
+          "price": 3000000,
+          "description": "Phòng cao cấp nhất, có phòng khách và bồn tắm sục"
+        }
+      ],
+      "discounts": [
+        {
+          "discount_id": "dc_h1",
+          "title": "Ưu đãi đặt sớm",
+          "percent": 15,
+          "start_date": "2026-04-01",
+          "end_date": "2026-05-30",
+          "description": "Giảm giá khi đặt trước ít nhất 15 ngày"
+        }
+      ],
+      "comments": [
+        {
+          "comment_id": "c1",
+          "commenter": "Nguyễn Văn A",
+          "content": "Phòng rất sạch sẽ, nhân viên nhiệt tình.",
+          "rating": 5,
+          "date": "2026-04-01"
+        },
+        {
+          "comment_id": "c2",
+          "commenter": "Trần Thị B",
+          "content": "Gần trung tâm, đi lại thuận tiện.",
+          "rating": 4
+        },
+        {
+          "comment_id": "1777554960766",
+          "commenter": "User",
+          "rating": 3,
+          "content": "an"
+        },
+        {
+          "comment_id": "1777555701466",
+          "commenter": "ThuyTien",
+          "rating": 3,
+          "content": "tiên"
+        },
+        {
+          "comment_id": "1777555999711",
+          "commenter": "ThuyTien",
+          "rating": 4,
+          "content": "cũng đc"
+        },
+        {
+          "comment_id": "1777556024175",
+          "commenter": "ThuyTien",
+          "rating": 1,
+          "content": "11111"
+        },
+        {
+          "comment_id": "1777556029525",
+          "commenter": "ThuyTien",
+          "rating": 0,
+          "content": "222232"
+        },
+        {
+          "comment_id": "1777556034608",
+          "commenter": "ThuyTien",
+          "rating": 1,
+          "content": "34567"
+        }
+      ],
+      "announcements": [
+        {
+          "id": "ann_1",
+          "title": "Bảo trì hồ bơi",
+          "start_date": "2026-04-01",
+          "end_date": "2026-05-30",
+          "description": "Giảm giá khi đặt trước ít nhất 15 ngày"
+        }
+      ]
+    },
+    {
+      "id": "loc_2",
+      "name": "Nhà hàng Bún C",
+      "dishes": [
+        {
+          "dish_id": "d2",
+          "dish_name": "Bún bò Huế đặc biệt",
+          "price": 65000,
+          "description": ""
+        }
+      ],
+      "discounts": [
+        {
+          "discount_id": "dc2",
+          "title": "Giảm cuối tuần",
+          "percent": 15,
+          "start_date": null,
+          "end_date": null,
+          "description": ""
+        }
+      ]
+    },
+    {
       "id": "2",
       "type": 1,
       "name": "Da Lat Hotel 2",
