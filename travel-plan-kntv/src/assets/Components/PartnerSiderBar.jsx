@@ -7,6 +7,7 @@ import {
   Star,
   User,
   LogOut,
+  Utensils,
   Home
 } from "lucide-react";
 import './PartnerSiderbar.css'
@@ -15,6 +16,7 @@ const MENU = [
   { label: "Dashboard", icon: Home, path: "/partner" },
   { label: "Location", icon: MapPin, path: "/partner/location" },
   { label: "Hours", icon: Clock, path: "/partner/hours" },
+   { label: "Menu", icon: MapPin, path: "/partner/menu" },
   { label: "Discount", icon: Percent, path: "/partner/discount" },
   { label: "Notifications", icon: Bell, path: "/partner/notifications" },
   { label: "Rating", icon: Star, path: "/partner/rating" },

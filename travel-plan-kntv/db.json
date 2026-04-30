@@ -5,7 +5,7 @@
       "username": "tan",
       "email": "tan@gmail.com",
       "password": "111111@",
-      "role": "partner",
+      "role": "OWNER",
       "name": "Thanh An Travel",
       "phoneNumber": "0987654321",
       "address": "Phú Quý",
@@ -14,7 +14,16 @@
           "id": "loc_001",
           "name": "Thanh An Travel Office",
           "address": "123 Hoàn Kiếm, Hà Nội",
-          "rating": 4.6
+          "rating": 4.6,
+          "dishes": [
+            {
+              "dish_id": "d4514039-472c-428c-bd4b-7ef8fed1fb8c",
+              "dish_name": "Cá Chiên",
+              "price": "90",
+              "description": "ngon ",
+              "image": ""
+            }
+          ]
         }
       ],
       "discounts": [

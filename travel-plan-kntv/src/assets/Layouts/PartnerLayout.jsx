@@ -117,7 +117,7 @@ const api = {
   getLocation: async () => {
     if (MODE === "JSON_SERVER") {
       const user = JSON.parse(localStorage.getItem("user"));
-      return user?.locations?.[0] || null;
+      return user?.places?.[0] || null;
     }
 
     try {
@@ -174,7 +174,7 @@ function PartnerLayout() {
       setToken(savedToken);
 
       // ✅ lấy data từ JSON SERVER
-      setLocation(savedUser?.locations?.[0] || null);
+      setLocation(savedUser?.places?.[0] || null);
       setDiscounts(savedUser?.discounts || []);
 
       // backend thì gọi API
@@ -210,7 +210,7 @@ function PartnerLayout() {
       
       if (MODE === "JSON_SERVER"){
         // ✅ SET NGAY
-        setLocation(result.user?.locations?.[0] || null);
+        setLocation(result.user?.places?.[0] || null);
         setDiscounts(result.user?.discounts || []);
       }
 
