@@ -7,10 +7,29 @@ const LocationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
+  const raw = state?.detail || null;
 
-  const location = state?.detail || null;
+  const location = raw
+    ? {
+        ...raw,
 
- 
+        
+        operatingHours: raw.active_hours
+          ? JSON.parse(raw.active_hours)
+          : raw.operatingHours || null,
+
+      
+        menu: raw.room_types || raw.menu || [],
+
+        reviews: raw.comments || raw.reviews || [],
+
+        
+        promotions: raw.discounts || raw.promotions || [],
+
+        announcements: raw.announcements || [],
+      }
+    : null;
+
   const comments = location?.reviews || [];
 
   const [openSection, setOpenSection] = useState("menu");
@@ -23,7 +42,12 @@ const LocationDetail = () => {
      GUARD
   ========================= */
   if (!location) {
-    return null;
+    return (
+      <div style={{ padding: 20 }}>
+        <p>Không có dữ liệu.</p>
+        <button onClick={() => navigate("/places")}>Quay lại</button>
+      </div>
+    );
   }
 
   return (
@@ -39,7 +63,7 @@ const LocationDetail = () => {
           <div className="image-container">
             <img
               src={location.image || "https://placehold.co/800x400"}
-              alt={location.name} // 
+              alt={location.name}
             />
 
             <div className="image-overlay">
@@ -47,9 +71,11 @@ const LocationDetail = () => {
 
               <div className="quick-info">
                 <span>{location.address}</span>
+
+               
                 <span>
                   {location.operatingHours
-                    ? `${location.operatingHours.open} - ${location.operatingHours.close}`
+                    ? `Active days: ${location.operatingHours.join(", ")}`
                     : "Not updated"}
                 </span>
               </div>
@@ -62,6 +88,7 @@ const LocationDetail = () => {
           {/* LEFT */}
           <div className="main-content">
 
+            {/* DESCRIPTION */}
             <div className="info-block">
               <h3>Description</h3>
               <p>{location.description}</p>
@@ -78,17 +105,23 @@ const LocationDetail = () => {
 
               {openSection === "menu" && (
                 <div className="content-list">
-                  {location.menu?.length > 0 ? (
+                  {location.menu.length > 0 ? (
                     location.menu.map((item, i) => (
                       <div key={i} className="list-item">
-                        {typeof item === "object" ? (
+
+                      
+                        {item.type_name ? (
                           <>
-                            <span>{item.name}</span>
-                            <span className="price">${item.price}</span>
+                            <span>{item.type_name}</span>
+                            <span className="price">{item.price}đ</span>
                           </>
                         ) : (
-                          <span>{item}</span>
+                          <>
+                            <span>{item.name}</span>
+                            <span className="price">{item.price}</span>
+                          </>
                         )}
+
                       </div>
                     ))
                   ) : (
@@ -109,9 +142,9 @@ const LocationDetail = () => {
 
               {openSection === "notify" && (
                 <div className="content-list">
-                  {location.announcements?.length > 0 ? (
+                  {location.announcements.length > 0 ? (
                     location.announcements.map((n, i) => (
-                      <p key={i}>• {n.title}</p>
+                      <p key={i}>• {n.title || n}</p>
                     ))
                   ) : (
                     <p>Không có thông báo</p>
@@ -130,8 +163,8 @@ const LocationDetail = () => {
               <h3>Discount</h3>
 
               <div className="discount-tag">
-                {location.promotions?.length > 0
-                  ? location.promotions.map(p => p.title).join(", ")
+                {location.promotions.length > 0
+                  ? location.promotions.map(p => p.title || p).join(", ")
                   : "No discount"}
               </div>
             </div>
@@ -156,24 +189,25 @@ const LocationDetail = () => {
                   <p>Chưa có đánh giá</p>
                 ) : (
                   comments.map((c, index) => (
-                    <div key={c.id || index} className="comment-card">
+                    <div key={c.comment_id || index} className="comment-card">
 
                       <div className="comment-top">
-                        <strong>{c.name || c.user}</strong>
+        
+                        <strong>{c.commenter || c.user}</strong>
 
                         <div className="stars">
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
                               size={12}
-                              fill={i < c.rating ? "#fbbf24" : "none"}
+                              fill={i < (c.rating || 0) ? "#fbbf24" : "none"}
                               color="#fbbf24"
                             />
                           ))}
                         </div>
                       </div>
 
-                      <p>{c.content || c.comment}</p>
+                      <p>{c.comment || c.content}</p>
 
                     </div>
                   ))
