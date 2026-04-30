@@ -15,15 +15,16 @@ import HistoryComponent from '../Components/History.jsx';
 
 //Location
 import LocationComponent from '../Components/Location.jsx';
-import LocationDetail from '../Components/LocationDetail.jsx';
+import LocationDetail from '../../pages/User/LocationDetail.jsx';
 
-import Comment from '../Components/Comment.jsx';
+
 
 //Partner
 import PartnerLayout from '../Layouts/PartnerLayout.jsx'
 import PartnerLogin from '../Components/PartnerLogin.jsx';
 import DashBoard from '../../pages/Partner/dashBoard.jsx';
 import PartnerProfile from '../Components/PartnerProfile.jsx';
+import PartnerMenu from '../../pages/Partner/Menu.jsx';
 
 export const Public_Layout = [
   { 
@@ -44,7 +45,7 @@ export const Public_Layout = [
       { path: "places", element: <LocationComponent /> },
       { path: "places/:id", element: <LocationDetail /> },
       
-      { path: "places/:id/comments", element: <Comment /> },
+     
     ] 
   },
 ];
@@ -58,6 +59,7 @@ export const Private_Layout = [
     //   { index: true, element: <DashBoard /> },
     { path: "", element: <DashBoard /> },
       { path: "profile", element: <PartnerProfile /> },
+       { path: "menu", element: <PartnerMenu /> },
     ],
   },
 ];
