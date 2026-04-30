@@ -429,17 +429,30 @@ const REAL_API = {
 ========================================================= */
 
 const api = {
-    getLocations: async () => { // ✅ FIX: KHÔNG nhận input nữa
+    getLocations: async (input = {}) => {
         try {
             if (MODE === "REAL_BACKEND") {
-                const response = await authorizedFetch(REAL_API.getLocations, {
+                const query = {};
+
+                if (input.name) query.name = input.name;
+                if (input.travel_style) query.travel_style = input.travel_style;
+                if (input.food_type) query.food_type = input.food_type;
+                if (input.accommodation_type) query.accommodation_type = input.accommodation_type;
+
+                const queryString = new URLSearchParams(query).toString();
+
+                const url = queryString
+                    ? `${REAL_API.getLocations}?${queryString}`
+                    : REAL_API.getLocations;
+
+                const response = await authorizedFetch(url, {
                     method: "GET",
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    return data;
+                    return await response.json();
                 }
+
             } else {
                 const res = await fetch(JSON_API);
                 return await res.json();
@@ -451,21 +464,10 @@ const api = {
         }
     },
 
+
     getDetail: async (id, type) => {
         try {
             if (MODE === "REAL_BACKEND") {
-                // let endpoint = "";
-
-                // switch (type) {
-                //     case 1: endpoint = REAL_API.getHotel; break;
-                //     case 2: endpoint = REAL_API.getRestaurant; break;
-                //     case 3: endpoint = REAL_API.getAttraction; break;
-                //     default: return null;
-                // }
-
-                // const res = await authorizedFetch(`${endpoint}${id}/`);
-                // if (!res.ok) return null;
-                // return await res.json();
                  // 1. Xác định base path dựa trên type (1: Hotel, 2: Restaurant, 3: Attraction)
                 let endpoint = "";
                 switch (type) {
@@ -528,31 +530,46 @@ function LocationComponent() {
     /* =========================
        LOAD INIT
     ========================= */
-    // useEffect(() => {
-    //     loadData();
-    // }, []);
+
+    useEffect(() => {
+        loadData();
+    }, []);
 
     // const loadData = async () => {
     //     setLoading(true);
     //     try {
-    //         const data = await api.getLocations();
+    //         let data = await api.getLocations();
+
+    //         // ✅ FIX QUAN TRỌNG: flatten data backend → mảng chung
+    //         if (MODE === "REAL_BACKEND") {
+    //             data = [
+    //                 ...(data.Hotels || []).map(i => ({ ...i, type: 1 })),
+    //                 ...(data.Restaurants || []).map(i => ({ ...i, type: 2 })),
+    //                 ...(data.Attractions || []).map(i => ({ ...i, type: 3 })),
+    //             ];
+    //         }
+
+    //         // ✅ FIX: pre-normalize để search nhanh hơn
+    //         data = data.map(item => ({
+    //             ...item,
+    //             _name: item.name?.toLowerCase().replaceAll(" ", "")
+    //         }));
+
     //         setLocationData(data);
-    //         setLocationDataOriginal(data); 
+    //         setLocationDataOriginal(data);
+
     //     } finally {
     //         setLoading(false);
     //     }
     // };
 
-    useEffect(() => {
-        loadData();
-    }, []);
 
     const loadData = async () => {
         setLoading(true);
         try {
             let data = await api.getLocations();
 
-            // ✅ FIX QUAN TRỌNG: flatten data backend → mảng chung
+            // 🔥 FIX 2: flatten backend → mảng chung
             if (MODE === "REAL_BACKEND") {
                 data = [
                     ...(data.Hotels || []).map(i => ({ ...i, type: 1 })),
@@ -561,7 +578,7 @@ function LocationComponent() {
                 ];
             }
 
-            // ✅ FIX: pre-normalize để search nhanh hơn
+            // 🔥 FIX 3: pre-normalize để search nhanh
             data = data.map(item => ({
                 ...item,
                 _name: item.name?.toLowerCase().replaceAll(" ", "")
@@ -574,88 +591,56 @@ function LocationComponent() {
             setLoading(false);
         }
     };
+
     /* =========================
        SEARCH (🔥 FIX CHÍNH)
     ========================= */
  
-// const handleSearch = (input = {}) => { // ✅ FIX: KHÔNG async
-//         setLoading(true);
-
-//         try {
-//             let result = [...locationDataOriginal]; // ✅ FIX
-
-//             // 🔥 SEARCH NAME
-//             if (input.name && input.name.trim() !== "") {
-//                 const normalize = (str) =>
-//                     str?.toLowerCase().replace(/\s+/g, '');
-
-//                 result = result.filter(item =>
-//                     normalize(item.name).includes(normalize(input.name))
-//                 );
-//             }
-
-//             // 🔥 FILTER
-//             if (input.travel_style) {
-//                 result = result.filter(item => item.travel_style === input.travel_style);
-//             }
-
-//             if (input.food_type) {
-//                 result = result.filter(item => item.food_type === input.food_type);
-//             }
-
-//             if (input.accommodation_type) {
-//                 result = result.filter(item => item.accommodation_type === input.accommodation_type);
-//             }
-
-//             setLocationData(result);
-
-//         } catch {
-//             toast.error("Server error");
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-    // const resetSearch = () => {
-    //      setMode(null);
-    //     setIsMenuOpen(false);
-    //     setNameInput("");
-
-    //     setLocationData(locationDataOriginal); 
-    // };
-
-    const handleSearch = (input = {}) => {
+const handleSearch = async (input = {}) => {
         setLoading(true);
 
         try {
-            let result = [...locationDataOriginal]; // ✅ FIX: luôn dùng bản gốc
+            if (MODE === "REAL_BACKEND") {
+                // ✅ gọi backend filter
+                let data = await api.getLocations(input);
 
-            const normalize = (str) =>
-                str?.toLowerCase().replaceAll(" ", "");
+                data = [
+                    ...(data.Hotels || []).map(i => ({ ...i, type: 1 })),
+                    ...(data.Restaurants || []).map(i => ({ ...i, type: 2 })),
+                    ...(data.Attractions || []).map(i => ({ ...i, type: 3 })),
+                ];
 
-            // 🔥 SEARCH NAME
-            if (input.name && input.name.trim() !== "") {
-                const keyword = normalize(input.name);
+                setLocationData(data);
 
-                result = result.filter(item =>
-                    item._name.includes(keyword) // ✅ FIX: dùng pre-normalize
-                );
+            } else {
+                // ✅ JSON SERVER filter local
+                let result = [...locationDataOriginal];
+
+                const normalize = (str) =>
+                    str?.toLowerCase().replaceAll(" ", "");
+
+                if (input.name && input.name.trim() !== "") {
+                    const keyword = normalize(input.name);
+
+                    result = result.filter(item =>
+                        item._name.includes(keyword)
+                    );
+                }
+
+                if (input.travel_style) {
+                    result = result.filter(item => item.travel_style === input.travel_style);
+                }
+
+                if (input.food_type) {
+                    result = result.filter(item => item.food_type === input.food_type);
+                }
+
+                if (input.accommodation_type) {
+                    result = result.filter(item => item.accommodation_type === input.accommodation_type);
+                }
+
+                setLocationData(result);
             }
-
-            // 🔥 FILTER
-            if (input.travel_style) {
-                result = result.filter(item => item.travel_style === input.travel_style);
-            }
-
-            if (input.food_type) {
-                result = result.filter(item => item.food_type === input.food_type);
-            }
-
-            if (input.accommodation_type) {
-                result = result.filter(item => item.accommodation_type === input.accommodation_type);
-            }
-
-            setLocationData(result);
 
         } catch {
             toast.error("Server error");
@@ -664,13 +649,15 @@ function LocationComponent() {
         }
     };
 
+    // 🔥 FIX 5: reset KHÔNG gọi lại API
     const resetSearch = () => {
         setMode(null);
         setIsMenuOpen(false);
         setNameInput("");
-
-        setLocationData(locationDataOriginal); // ✅ FIX: không gọi lại API
+        setLocationData(locationDataOriginal);
     };
+
+    
 // Lấy xong rồi mới truyền vào navigate để đến giao diện detail
     // const handleNavigate = (id) => navigate(`/places/${id}`);
     // const HandleClick = async (id, type) => {
