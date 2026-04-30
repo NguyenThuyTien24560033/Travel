@@ -64,17 +64,17 @@ const PartnerMenu = () => {
                 // --- UPDATE (SỬA MÓN) ---
                 // Backend dùng logic: d_id = request.data.get('dish_id')
                 res = await authorizedFetch(url, {
-                method: "PUT",
-                body: JSON.stringify({
-                    ...form,
-                    dish_id: editingId, // Truyền ID món vào body để backend nhận diện
-                }),
+                    method: "PUT",
+                    body: JSON.stringify({
+                        ...form,
+                        dish_id: editingId, // Truyền ID món vào body để backend nhận diện
+                    }),
                 });
             } else {
                 // --- CREATE (THÊM MỚI) ---
                 res = await authorizedFetch(url, {
-                method: "POST",
-                body: JSON.stringify(form),
+                    method: "POST",
+                    body: JSON.stringify(form),
                 });
             }
 
@@ -87,10 +87,11 @@ const PartnerMenu = () => {
                 const errorData = await res.json();
                 console.error("Lỗi thao tác Menu:", errorData.message);
             }
+
             } catch (err) {
-            console.error("Lỗi kết nối API Menu:", err);
+                console.error("Lỗi kết nối API Menu:", err);
             } finally {
-            setLoading(false);
+                setLoading(false);
             }
 
             /* ================= SYNC ================= */
@@ -115,46 +116,43 @@ const PartnerMenu = () => {
     };
 
     /* ================= DELETE ================= */
+    // Mấy cái handle này có cái bị trùng rồi. làm lại từ đầu đi
     const handleDelete = async (id) => {
-    if (!isOwner) return toast.error("Không có quyền!");
+        if (!isOwner) return toast.error("Không có quyền!");
 
-    try {
-    let updatedUser;
+        try {
+            let updatedUser;
+            const locationId = location.id;
+            const url = `${REAL_API.Dish}/${locationId}/menu/`;
 
-    /* ================= JSON SERVER ================= */
-    if (MODE === "JSON_SERVER") {
-    const newDishes = dishes.filter(d => d.dish_id !== id);
+            try {
+            setLoading(true);
 
-    const updatedPlaces = user.places.map(p =>
-    p.id === location.id ? { ...p, dishes: newDishes } : p
-    );
+            // 2. Gọi authorizedFetch với method DELETE
+            // Lưu ý: ID của món ăn cần xóa (id) phải được bỏ vào body JSON
+            const res = await authorizedFetch(url, {
+                method: "DELETE",
+                body: JSON.stringify({
+                dish_id: id // 'id' này là ID của món ăn bạn truyền vào hàm delete
+                }),
+            });
 
-    const res = await fetch(`${JSON_API}/${user.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ places: updatedPlaces }),
-    });
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Xóa món thất bại");
+            }
 
-    if (!res.ok) throw new Error();
+            const data = await res.json();
+            console.log("Xóa món thành công:", data);
+            
+            // Trả về data để cập nhật lại state UI (nếu cần)
+            return data;
 
-    updatedUser = await res.json();
-    setDishes(newDishes);
-    }
-
-    /* ================= REAL BACKEND ================= */
-    else {
-    const res = await fetch(`${REAL_API.deleteDish}${id}`, {
-    method: "DELETE",
-    headers: {
-    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-    },
-    });
-
-    if (!res.ok) throw new Error();
-
-    updatedUser = await res.json();
-    }
-
+            } catch (err) {
+            console.error("Lỗi khi xóa món:", err);
+            } finally {
+            setLoading(false);
+            }
     localStorage.setItem("user", JSON.stringify(updatedUser));
     setUser(updatedUser);
 
