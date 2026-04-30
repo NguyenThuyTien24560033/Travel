@@ -20,7 +20,7 @@ const REAL_API = {
    OPTIONS (NUMBER ONLY)
 ========================= */
 const AREAS = [
-  { label: "Đà Lạt", value: 4 },
+  { label: "Đà Lạt", value: 12 },
   { label: "Nha Trang", value: 2 },
 ];
 
