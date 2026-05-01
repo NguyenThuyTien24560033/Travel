@@ -24,8 +24,8 @@ import PartnerLayout from '../Layouts/PartnerLayout.jsx'
 import PartnerProfile from '../Components/PartnerProfile.jsx';
 import PartnerLogin from '../Components/PartnerLogin.jsx';
 import DashBoard from '../../pages/Partner/dashBoard.jsx';
-import PartnerMenu from '../../pages/Partner/Menu.jsx';
-import PartnerDetail from '../../pages/Partner/PartnerDetail.jsx';
+import Menu from '../../pages/Partner/Menu.jsx';
+import Detail from '../../pages/Partner/Detail.jsx';
 
 export const Public_Layout = [
   { 
@@ -59,8 +59,8 @@ export const Private_Layout = [
     children: [
       { path: "login", element: <PartnerLogin /> }, // ✅ THÊM
       { path: "dashboard", element: <DashBoard /> },
-      { path: "detail", element: <PartnerDetail /> },
-      // { path: "menu", element: <PartnerMenu /> },
+      { path: "detail", element: <Detail /> },
+      // { path: "menu", element: <Menu /> },
       // { path: "room", element: {} },
       // { path: "discount", element: {} },
       { path: "profile", element: <PartnerProfile /> },

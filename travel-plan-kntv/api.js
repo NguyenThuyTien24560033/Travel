@@ -48,7 +48,7 @@ export const authorizedFetch = async (endpoint, options = {}) => {
             return fetch(`${BASE_URL}${endpoint}`, options);
         } catch (err) {
             localStorage.removeItem('access_token');
-            window.location.href = '/login';
+            window.location.href = '/';
         }
     }
 
