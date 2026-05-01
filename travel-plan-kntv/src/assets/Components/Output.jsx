@@ -10,6 +10,96 @@ const REAL_API = {
   edit: "plan/",
   save: "plan/",
 };
+const TRAVEL_STYLE = [
+  { label: "Relax", value: 1 },
+  { label: "Adventure", value: 2 },
+  { label: "Food tour", value: 3 },
+  { label: "Cultural", value: 4 },
+  { label: "Playground", value: 5 },
+  { label: "History", value: 6 },
+  { label: "Thrill", value: 7 },
+  { label: "Beach", value: 8 },
+  { label: "Take Picture", value: 9 },
+];
+
+const FOOD_TYPE = [
+  { label: "Meat", value: 1 },
+  { label: "Seafood", value: 2 },
+  { label: "Vegetarian", value: 3 },
+  { label: "Family-style", value: 4},
+  { label: "Set meal", value: 5 },
+  { label: "Hotpot", value: 6 },
+];
+
+const ACCOMMODATION = [
+  { label: "Hotel", value: 1 },
+  { label: "Motel", value: 2 },
+  { label: "Homestay", value: 3 },
+  { label: "Resort", value: 4 },
+  { label: "Villa", value: 5 },
+];
+
+/* =========================
+   TAG MAP (tránh trùng value)
+========================= */
+const TAG_MAP = {
+  ...Object.fromEntries(TRAVEL_STYLE.map(i => [i.value, i.label])),
+  ...Object.fromEntries(FOOD_TYPE.map(i => [i.value, i.label])),
+  ...Object.fromEntries(ACCOMMODATION.map(i => [i.value, i.label])),
+};
+
+/* =========================
+   REUSABLE COMPONENT
+========================= */
+const RenderItem = ({ item }) => {
+  if (!item) return <span>Không có dữ liệu</span>;
+
+  return (
+    <div className="item-box">
+      <div className="item-main">
+                {item.img && item.img !== "null" && (
+  <img
+    src={item.img}
+    alt={item.name}
+    className="item-img"
+  />
+)}
+        <span className="item-name">{item.name}</span>
+      
+        {item.has_surge_price && (
+          <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
+        )}
+      </div>
+
+      {/* TAG */}
+      {item.tag?.length > 0 && (
+        <div className="tag-list">
+          {item.tag.map((t, i) => (
+            <span key={i} className="tag">
+              {TAG_MAP[t] || `Tag ${t}`}
+              <br />
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* EXTRA FIELD */}
+      <div className="item-extra">
+        {Object.entries(item)
+          .filter(
+            ([key]) =>
+              !["id", "name", "tag", "has_surge_price", "img"].includes(key)
+          )
+          .map(([key, value]) => (
+            <div key={key}>
+              {key}: {String(value)}
+            </div>
+          ))}
+
+      </div>
+    </div>
+  );
+};
 
 const MyTripOutput = () => {
   const { state } = useLocation();
@@ -201,9 +291,9 @@ const MyTripOutput = () => {
           {currentPlan.schedule.map((day, i) => {
 
            
-            const placeList = day.Place || [];
+            {/* const placeList = day.Place || [];
             const currentPlaceIndex = getIndex("place", i);
-            const currentPlace = placeList[currentPlaceIndex];
+            const currentPlace = placeList[currentPlaceIndex]; */}
 
             return (
               <div key={i} className="day-block">
@@ -213,13 +303,61 @@ const MyTripOutput = () => {
                   <li>
                     <strong>Ăn uống:</strong>
                     <ul>
-                      <li>Sáng: {day.Breakfast?.name || "Tự túc"}</li>
-                      <li>Trưa: {day.Lunch?.name || "Tự túc"}</li>
-                      <li>Tối: {day.Dinner?.name || "Tự túc"}</li>
+                      {/* <li>Sáng: {day.Breakfast?.name || "Tự túc"}
+                      {(day.Breakfast?.has_surge_price) (
+    <div className="surge-price">
+      ⚠️ Cuối tuần có tăng giá
+    </div>
+  )}</li> */}
+  {/* <li className="item-row">
+  <span>
+    Sáng: {day.Breakfast?.name || "Tự túc"}
+  </span>
+
+  {day.Breakfast?.has_surge_price && (
+    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
+  )}
+</li>
+
+<li className="item-row">
+  <span>
+    Trưa: {day.Lunch?.name || "Tự túc"}
+  </span>
+
+  {day.Lunch?.has_surge_price && (
+    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
+  )}
+</li>
+
+<li className="item-row">
+  <span>
+    Tối: {day.Dinner?.name || "Tự túc"}
+  </span>
+
+  {day.Dinner?.has_surge_price && (
+    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
+  )}
+</li> */}
+<li className="item-row">
+  <span>Sáng:</span>
+  <RenderItem item={day.Breakfast} />
+</li>
+
+<li className="item-row">
+  <span>Trưa:</span>
+  <RenderItem item={day.Lunch} />
+</li>
+
+<li className="item-row">
+  <span>Tối:</span>
+  <RenderItem item={day.Dinner} />
+</li>
+                
                     </ul>
+                    
                   </li>
 
-                  <li>
+                  {/* <li>
                     <strong>Tham quan:</strong>
 
                     <div className="switch-box">
@@ -248,7 +386,26 @@ const MyTripOutput = () => {
                         ⚠️ Cuối tuần có tăng giá
                       </div>
                     </div>
-                  </li>
+                  </li> */}
+                  <li>
+  <strong>Tham quan:</strong>
+
+  {day.Place && day.Place.length > 0 ? (
+    <ul>
+      {/* {day.Place.map((place, idx) => (
+        <li key={idx}>
+          {place?.name || "Không có tên"}
+        </li>
+      ))} */}
+      {day.Place?.map((place, idx) => (
+  <RenderItem key={idx} item={place} />
+))}
+    </ul>
+  ) : (
+    <p>Không có địa điểm</p>
+  )}
+
+</li>
                 </ul>
               </div>
             );
@@ -266,7 +423,11 @@ const MyTripOutput = () => {
             <h4>Thông tin chung</h4>
 
             <p>
-              <strong>Khách sạn:</strong> {currentHotel?.name || "Không có dữ liệu"}
+              <strong>Khách sạn:</strong> 
+              <RenderItem item={currentHotel} />
+ 
+  
+
             </p>
 
             <div className="hotel-switch">
@@ -303,12 +464,31 @@ const MyTripOutput = () => {
           </div>
 
           <div className="input-box locked">
-            <h4>Yêu cầu ban đầu (🔒)</h4>
-            <p>Ngân sách: {currentPlan.input_data?.budget?.toLocaleString()} VNĐ</p>
-             {/* <li>Khác: {currentPlan.budget_breakdown?.other?.toLocaleString()} VNĐ</li> */}
-            <p>Số người: {currentPlan.input_data?.num_people}</p>
-            <p>Địa điểm: {currentPlan.input_data?.location}</p>
-          </div>
+  <h4>Yêu cầu ban đầu (🔒)</h4>
+
+  {currentPlan.input_data?.budget && (
+    <p>
+      Ngân sách: {currentPlan.input_data.budget.toLocaleString()} VNĐ
+    </p>
+  )}
+
+  {currentPlan.input_data?.num_people && (
+    <p>Số người: {currentPlan.input_data.num_people}</p>
+  )}
+
+  {/* ✅ THÊM NGÀY ĐI */}
+  {currentPlan.input_data?.departure_date && (
+  <p>Ngày đi: {currentPlan.input_data.departure_date}</p>
+)}
+
+{currentPlan.input_data?.return_date && (
+  <p>Ngày về: {currentPlan.input_data.return_date}</p>
+)}
+
+{currentPlan.input_data?.location && (
+  <p>Địa điểm: {currentPlan.input_data.location}</p>
+)}
+</div>
         </div>
       </div>
 
@@ -336,6 +516,7 @@ const MyTripOutput = () => {
 const fakeEdit = (oldPlan) => {
   return {
     ...oldPlan,
+     hotels: oldPlan.hotels || [],
     input_data: oldPlan.input_data, // 👈 THÊM DÒNG NÀY
     schedule: oldPlan.schedule.map((day, i) =>
       i === 0
