@@ -30,30 +30,20 @@ const PartnerLogin = () => {
 
     if (!validate()) return;
 
-    // const success = await login(email, password);
-
-    // if (success) {
-    //   // 🔥 QUAN TRỌNG: check role
-    //   const user = JSON.parse(localStorage.getItem("user"));
-
-    //   if (user?.role !== "partner") {
-    //     alert("Bạn không phải partner!");
-    //     return;
-    //   }
-
-    //   navigate("/partner");
-    // }
     const user = await login(email, password);
 
-if (user) {
-  console.log(user);
-  if (user.role !== "OWNER") {
-    alert("Bạn không phải partner!");
-    return;
-  }
+    if (user) {
+        console.log(user);
 
-  navigate("/partner");
-}
+        if (user.role !== "OWNER") {
+            alert("Bạn không phải partner!");
+            return;
+        }
+
+        navigate("/partner");
+    } else {
+        alert("Username hoặc password bị sai!");
+    }
   };
 
   return (

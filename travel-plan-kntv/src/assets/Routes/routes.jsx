@@ -57,10 +57,13 @@ export const Private_Layout = [
     element: <PartnerLayout />,
     children: [
       { path: "login", element: <PartnerLogin /> }, // ✅ THÊM
-    //   { index: true, element: <DashBoard /> },
-    { path: "", element: <DashBoard /> },
+      //   { index: true, element: <DashBoard /> },
+      { path: "", element: <DashBoard /> },
+      // { path: "/location", element: {} },
+      { path: "menu", element: <PartnerMenu /> },
+      // { path: "/room", element: {} },
+      // { path: "/discount", element: {} },
       { path: "profile", element: <PartnerProfile /> },
-       { path: "menu", element: <PartnerMenu /> },
     ],
   },
 ];

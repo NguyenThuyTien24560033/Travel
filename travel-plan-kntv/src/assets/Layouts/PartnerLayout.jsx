@@ -36,6 +36,7 @@ const api = {
         try {
             const res = await fetch(REAL_API.login, {
                 method: "POST",
+                credentials: 'include',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
@@ -108,9 +109,7 @@ const api = {
 function PartnerLayout() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
-    const [location, setLocation] = useState(null);    
-    const [discounts, setDiscounts] = useState([]);   
+    const [location, setLocation] = useState(null);     
     const [loading, setLoading] = useState(true);
 
     /* 🔹 First operation */
@@ -141,49 +140,35 @@ function PartnerLayout() {
         setLoading(true);
 
         try {
-        const result = await api.login(email, password);
+            const result = await api.login(email, password);
 
-        if (!result.success) return null;
+            if (!result.success) return null;
 
-        localStorage.setItem("access_token", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
+            localStorage.setItem("access_token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.user));
 
-        setUser(result.user);
-        setToken(result.token);
+            setUser(result.user);
 
-        const data = await api.getLocation();
-        console.log(data);
-        setLocation(data);
-        
-        if (MODE === "JSON_SERVER"){
-            // ✅ SET NGAY
-            setLocation(result.user?.places?.[0] || null);
-            setDiscounts(result.user?.discounts || []);
-        }
+            const data = await api.getLocation();
+            console.log("Dữ liệu địa điểm của tôi: ", data);
+            setLocation(data);
 
-        return result.user;
+            return result.user;
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
     /* 🔹 LOGOUT */
     const logout = async () => {
         await api.logout();
-        setUser(null);
-        setToken(null);
         navigate("/"); // ✅ về homepage
     };
 
     /* 🔹 CONTEXT */
     const value = {
-        user,
-        token,
-        location,   // ✅
-        discounts,  // ✅
-        setUser,
+        location,
         loading,
-        isAuthenticated: !!user,
         login,
         logout,
     };
