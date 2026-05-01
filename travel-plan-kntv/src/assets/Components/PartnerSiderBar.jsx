@@ -1,23 +1,38 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     Home,
-    MapPin,
+    Settings,
     Utensils,
     Bed,
     Percent,
     User,
+    MessageCircle,
     LogOut,
 } from "lucide-react";
 import './PartnerSiderbar.css'
 
+const user = JSON.parse(localStorage.getItem("user"));
+
 const MENU = [
-    { label: "Dashboard", icon: Home, path: "/partner" },
-    { label: "Location", icon: MapPin, path: "/partner/location" },
+    { label: "Dashboard", icon: Home, path: "/partner/dashboard" },
     { label: "Menu", icon: Utensils, path: "/partner/menu" },
     { label: "Room", icon: Bed, path: "/partner/room" },
     { label: "Discount", icon: Percent, path: "/partner/discount" },
+    { label: "Comment", icon: MessageCircle, path: "/partner/comment" },
+    { label: "Detail", icon: Settings, path: "/partner/detail" },
     { label: "Profile", icon: User, path: "/partner/profile" },
 ];
+
+const filteredMenu = MENU.filter(item => {
+    if (item.label === "Room") return user?.type_location === "ACCOMMODATION";
+    if (item.label === "Menu") return user?.type_location === "RESTAURANT";
+    if (item.label === "Discount") return true;
+    if (item.label === "Profile") return true;
+    if (item.label === "Dashboard") return true;
+    if (item.label === "Detail") return true;
+    if (item.label === "Comment") return true;
+    return true;
+});
 
 const PartnerSidebar = ({ onLogout }) => {
     const navigate = useNavigate();
@@ -27,23 +42,23 @@ const PartnerSidebar = ({ onLogout }) => {
         <div className="sidebar">
         <div className="sidebar-title">Partner Panel</div>
 
-        {MENU.map((item) => {
+        {filteredMenu.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname.startsWith(item.path);
 
             return (
-            <div
-                key={item.label}
-                className={`sidebar-item ${isActive ? "active" : ""}`}
-                onClick={() => {
-                    if (location.pathname !== item.path) {
-                        navigate(item.path);
-                    }
-                }}
-            >
-                <Icon size={18} />
-                <span>{item.label}</span>
-            </div>
+                <div
+                    key={item.label}
+                    className={`sidebar-item ${isActive ? "active" : ""}`}
+                    onClick={() => {
+                        if (location.pathname !== item.path) {
+                            navigate(item.path);
+                        }
+                    }}
+                >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                </div>
             );
         })}
 

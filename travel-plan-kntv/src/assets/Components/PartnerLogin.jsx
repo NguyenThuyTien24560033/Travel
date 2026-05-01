@@ -40,7 +40,7 @@ const PartnerLogin = () => {
             return;
         }
 
-        navigate("/partner");
+        navigate("/partner/dashboard");
     } else {
         alert("Username hoặc password bị sai!");
     }

@@ -123,9 +123,6 @@ function PartnerLayout() {
                 return;
             }
 
-            setUser(savedUser);
-            setToken(savedToken);
-
             const loc = await api.getLocation();
             setLocation(loc);
 
