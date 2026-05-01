@@ -7,9 +7,55 @@ import "./Output.css";
 const MODE = "JSON_SERVER"; 
 
 const REAL_API = {
-  edit: "plan/",
-  save: "plan/",
+    plan: "travel-output/",
 };
+
+// const handleSave = async (payload) => {
+//     try {
+//         const res = await authorizedFetch(REAL_API.plan, {
+//             method: "POST",
+//             body: JSON.stringify(payload)
+//         });
+
+//         if (res.ok) {
+//             const data = await res.json();
+//             return data;
+//         }
+//     } catch (err) {
+//         console.error(err);
+//     }
+// };
+const savePlanToServer = async (payload) => {
+  try {
+    const res = await authorizedFetch(REAL_API.plan, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error("Save failed");
+
+    return await res.json();
+  } catch (err) {
+    console.error("savePlanToServer error:", err);
+    throw err;
+  }
+};
+const handleUpdate = async (id, payload) => {
+    try {
+        const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
+            method: "PATCH",
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            return data;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 const TRAVEL_STYLE = [
   { label: "Relax", value: 1 },
   { label: "Adventure", value: 2 },
@@ -42,83 +88,131 @@ const ACCOMMODATION = [
 /* =========================
    TAG MAP (tránh trùng value)
 ========================= */
-const TAG_MAP = {
-  ...Object.fromEntries(TRAVEL_STYLE.map(i => [i.value, i.label])),
-  ...Object.fromEntries(FOOD_TYPE.map(i => [i.value, i.label])),
-  ...Object.fromEntries(ACCOMMODATION.map(i => [i.value, i.label])),
-};
+// const TAG_MAP = {
+//   ...Object.fromEntries(TRAVEL_STYLE.map(i => [i.value, i.label])),
+//   ...Object.fromEntries(FOOD_TYPE.map(i => [i.value, i.label])),
+//   ...Object.fromEntries(ACCOMMODATION.map(i => [i.value, i.label])),
+// };
+const FOOD_MAP = Object.fromEntries(FOOD_TYPE.map(i => [i.value, i.label]));
+const HOTEL_MAP = Object.fromEntries(ACCOMMODATION.map(i => [i.value, i.label]));
+const STYLE_MAP = Object.fromEntries(TRAVEL_STYLE.map(i => [i.value, i.label]));
+const getItemType = (item) => {
+  const tags = item?.tag || [];
 
+  // hotel: có tag thuộc ACCOMMODATION
+  if (tags.some(t => ACCOMMODATION.some(a => a.value === t))) {
+    return "hotel";
+  }
+
+  // food/restaurant: có FOOD_TYPE
+  if (tags.some(t => FOOD_TYPE.some(f => f.value === t))) {
+    return "food";
+  }
+
+  // còn lại coi là attraction / travel style
+  if (tags.some(t => TRAVEL_STYLE.some(s => s.value === t))) {
+    return "attraction";
+  }
+
+  return "unknown";
+};
 /* =========================
    REUSABLE COMPONENT
 ========================= */
-const RenderItem = ({ item }) => {
+
+// const RenderItem = ({ item, onEdit, canEdit }) => {
+//   if (!item) return <span>Không có dữ liệu</span>;
+
+//   const type = getItemType(item);
+
+//   const getLabel = (t) => {
+//     if (type === "food") return FOOD_MAP[t] || `Food ${t}`;
+//     if (type === "hotel") return HOTEL_MAP[t] || `Hotel ${t}`;
+//     if (type === "attraction") return STYLE_MAP[t] || `Style ${t}`;
+//     return `Tag ${t}`;
+//   };
+
+//   return (
+//     <div className="item-box">
+//       <div className="item-main">
+//         <span className="item-name">
+//           {item.name} ({type})
+//         </span>
+
+//         {item.has_surge_price && (
+//           <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
+//         )}
+
+//         {canEdit && (
+//           <button className="edit-icon" onClick={onEdit}>
+//             Edit
+//           </button>
+//         )}
+//       </div>
+
+//       {item.tag?.length > 0 && (
+//         <div className="tag-list">
+//           {item.tag.map((t, i) => (
+//             <span key={i} className="tag">
+//               {getLabel(t)}
+//             </span>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+const RenderItem = ({ item, typeScope, onEdit, canEdit }) => {
   if (!item) return <span>Không có dữ liệu</span>;
+
+  const getLabel = (t) => {
+    if (typeScope === "food") return FOOD_MAP[t] || `Food ${t}`;
+    if (typeScope === "hotel") return HOTEL_MAP[t] || `Hotel ${t}`;
+    if (typeScope === "attraction") return STYLE_MAP[t] || `Style ${t}`;
+    return `Tag ${t}`;
+  };
 
   return (
     <div className="item-box">
       <div className="item-main">
-                {item.img && item.img !== "null" && (
-  <img
-    src={item.img}
-    alt={item.name}
-    className="item-img"
-  />
-)}
         <span className="item-name">{item.name}</span>
-      
+
         {item.has_surge_price && (
           <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
         )}
+
+        {/* {canEdit && (
+          <button className="edit-icon" onClick={onEdit}>
+            Edit
+          </button>
+        )} */}
+{canEdit && (
+  <button className="edit-icon" onClick={onEdit}>
+    Edit
+  </button>
+)}
       </div>
 
-      {/* TAG */}
       {item.tag?.length > 0 && (
         <div className="tag-list">
           {item.tag.map((t, i) => (
             <span key={i} className="tag">
-              {TAG_MAP[t] || `Tag ${t}`}
-              <br />
+              {getLabel(t)}
             </span>
           ))}
         </div>
       )}
-
-      {/* EXTRA FIELD */}
-      <div className="item-extra">
-        {Object.entries(item)
-          .filter(
-            ([key]) =>
-              !["id", "name", "tag", "has_surge_price", "img"].includes(key)
-          )
-          .map(([key, value]) => (
-            <div key={key}>
-              {key}: {String(value)}
-            </div>
-          ))}
-
-      </div>
     </div>
   );
 };
 
+
 const MyTripOutput = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-
-  // const [plans, setPlans] = useState(() => {
-  //   const initialData = state?.data;
-  //   if (!initialData) return [];
-
-  //   if (initialData.all_versions && initialData.all_versions.length > 0) {
-  //     return initialData.all_versions;
-  //   }
-
-  //   return [{
-  //     ...initialData,
-  //     input_id: initialData.input_id || Date.now(),
-  //     is_locked: initialData.is_locked ?? false,
-  //   }];
-  // });
+const [isEditing, setIsEditing] = useState(false);
+  
 
   const [plans, setPlans] = useState(() => {
   const initialData = state?.data;
@@ -139,6 +233,8 @@ const MyTripOutput = () => {
 });
   const [currentIndex, setCurrentIndex] = useState(plans.length - 1);
   const mode = state?.mode || "view";
+  const isViewMode = mode === "view";
+const isEditMode = mode === "change";
   const maxEdit = state?.maxEdit || 5;
   const currentPlan = plans[currentIndex];
 
@@ -166,68 +262,177 @@ const MyTripOutput = () => {
     localStorage.setItem(`plan_${summaryItem.id}`, JSON.stringify(detailedData));
   };
 
-  const handleEdit = async () => {
-    if (currentPlan.is_locked) {
-      toast.error("Plan này đã được lưu cố định");
-      return;
+  // const handleEdit = async () => {
+  //   if (currentPlan.is_locked) {
+  //     toast.error("Plan này đã được lưu cố định");
+  //     return;
+  //   }
+  //   if (plans.length >= maxEdit) {
+  //     toast.error(`Giới hạn ${maxEdit} lần chỉnh sửa`);
+  //     return;
+  //   }
+
+  //   try {
+  //     let newPlanData;
+  //     if (MODE === "JSON_SERVER") {
+  //       newPlanData = fakeEdit(currentPlan);
+  //     } else {
+  //       const res = await fetch(`${REAL_API.edit}${currentPlan.input_id}/edit/`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //         },
+  //         body: JSON.stringify(currentPlan)
+  //       });
+  //       if (!res.ok) throw new Error();
+  //       newPlanData = await res.json();
+  //     }
+
+  //     const newPlans = [...plans, newPlanData];
+  //     setPlans(newPlans);
+  //     setCurrentIndex(newPlans.length - 1);
+  //     toast.success("Đã tạo bản phác thảo mới!");
+  //   } catch (err) {
+  //     toast.error("Lỗi kết nối máy chủ");
+  //   }
+  // };
+const handleEdit = async () => {
+  // if (currentPlan.is_locked) {
+  //   toast.error("Plan này đã được lưu cố định");
+  //   return;
+  // }
+  if (!canShowEdit ) {
+  toast.error("Không thể chỉnh sửa kế hoạch này");
+  return;
+}
+
+  if (plans.length >= maxEdit) {
+    toast.error(`Giới hạn ${maxEdit} lần chỉnh sửa`);
+    return;
+  }
+
+  try {
+    let newPlanData;
+
+    /* =========================
+       1. JSON SERVER MODE
+    ========================= */
+    if (MODE === "JSON_SERVER") {
+      newPlanData = {
+        ...currentPlan,
+        schedule: currentPlan.schedule.map((d, i) =>
+          i === 0
+            ? { ...d, Lunch: { name: "Mock update 🍜" } }
+            : d
+        ),
+      };
     }
-    if (plans.length >= maxEdit) {
-      toast.error(`Giới hạn ${maxEdit} lần chỉnh sửa`);
-      return;
+
+    /* =========================
+       2. REAL BACKEND MODE
+    ========================= */
+    else {
+      newPlanData = await handleUpdate(
+        currentPlan.input_id,
+        currentPlan
+      );
     }
 
-    try {
-      let newPlanData;
-      if (MODE === "JSON_SERVER") {
-        newPlanData = fakeEdit(currentPlan);
-      } else {
-        const res = await fetch(`${REAL_API.edit}${currentPlan.input_id}/edit/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(currentPlan)
-        });
-        if (!res.ok) throw new Error();
-        newPlanData = await res.json();
-      }
+    const newPlans = [...plans, newPlanData];
+    setPlans(newPlans);
+    setCurrentIndex(newPlans.length - 1);
 
-      const newPlans = [...plans, newPlanData];
-      setPlans(newPlans);
-      setCurrentIndex(newPlans.length - 1);
-      toast.success("Đã tạo bản phác thảo mới!");
-    } catch (err) {
-      toast.error("Lỗi kết nối máy chủ");
+    toast.success("Đã tạo bản chỉnh sửa mới!");
+
+  } catch (err) {
+    toast.error("Lỗi khi chỉnh sửa");
+  }
+};
+ 
+// const handleSave = async () => {
+//   try {
+//     const lockedPlan = { ...currentPlan, is_locked: true };
+
+//     /* =========================
+//        JSON SERVER
+//     ========================= */
+//     if (MODE === "JSON_SERVER") {
+//       console.log("Mock save:", lockedPlan);
+//     }
+
+//     /* =========================
+//        REAL BACKEND
+//     ========================= */
+//     else {
+//       await handleSave(lockedPlan);
+//     }
+
+//     updateHistoryStorage(lockedPlan, true);
+
+//     toast.success("Đã chốt kế hoạch thành công!");
+//     navigate("/history");
+
+//   } catch (err) {
+//     toast.error("Lưu thất bại");
+//   }
+// };
+  
+// const handleSave = async () => {
+//   try {
+//     const lockedPlan = {
+//       ...currentPlan,
+//       is_locked: true,
+//     };
+
+//     // =========================
+//     // 1. SAVE (API or mock)
+//     // =========================
+//     if (MODE === "JSON_SERVER") {
+//       console.log("Mock save:", lockedPlan);
+//     } else {
+//       await savePlanToServer(lockedPlan);
+//     }
+
+//     // =========================
+//     // 2. UPDATE LOCAL STORAGE
+//     // =========================
+//     updateHistoryStorage(lockedPlan, true);
+
+//     // =========================
+//     // 3. NAVIGATE
+//     // =========================
+//     toast.success("Đã chốt kế hoạch thành công!");
+//     navigate("/history");
+
+//   } catch (err) {
+//     console.error("handleSave error:", err);
+//     toast.error("Lưu thất bại");
+//   }
+// };
+const handleSave = async () => {
+  try {
+    const savedPlan = {
+      ...currentPlan,
+    };
+
+    if (MODE === "JSON_SERVER") {
+      console.log("Mock save:", savedPlan);
+    } else {
+      await savePlanToServer(savedPlan);
     }
-  };
 
-  const handleSave = async () => {
-    try {
-      const lockedPlan = { ...currentPlan, is_locked: true };
+    updateHistoryStorage(savedPlan, false);
 
-      if (MODE === "REAL_BACKEND") {
-        const res = await fetch(`${REAL_API.save}${currentPlan.input_id}/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(lockedPlan),
-        });
-        if (!res.ok) throw new Error();
-      }
+    toast.success("Đã lưu kế hoạch thành công!");
+    navigate("/history");
 
-      updateHistoryStorage(lockedPlan, true);
-
-      toast.success("Đã chốt kế hoạch thành công!");
-      navigate("/history");
-    } catch (err) {
-      toast.error("Lưu thất bại");
-    }
-  };
-
-  const handleClose = () => {
+  } catch (err) {
+    console.error("handleSave error:", err);
+    toast.error("Lưu thất bại");
+  }
+};
+const handleClose = () => {
     if (mode === "change" && !currentPlan.is_locked) {
       updateHistoryStorage(currentPlan, false);
       toast.info("Đã lưu lại các bản phác thảo vào lịch sử.");
@@ -235,6 +440,60 @@ const MyTripOutput = () => {
     navigate("/history");
   };
 
+  const updatePlace = ({ dayIndex, field, newPlace }) => {
+  setPlans(prevPlans => {
+    const newPlans = [...prevPlans];
+
+    const plan = { ...newPlans[currentIndex] };
+
+    const newSchedule = plan.schedule.map((day, i) => {
+      if (i !== dayIndex) return day;
+
+      return {
+        ...day,
+        [field]: {
+          ...day[field],
+          ...newPlace
+        }
+      };
+    });
+
+    newPlans[currentIndex] = {
+      ...plan,
+      schedule: newSchedule
+    };
+
+    return newPlans;
+  });
+};
+const today = new Date().toISOString().split("T")[0];
+const end_day = currentPlan.input_data?.return_date;
+
+// const isExpired = end_day && today > end_day;
+const isExpired = currentPlan.input_data?.return_date
+  ? new Date(currentPlan.input_data.return_date) < new Date()
+  : false;
+
+// const canEditGlobal =
+//   mode === "change" &&
+//   !currentPlan.is_locked &&
+//   !isExpired;
+// const today = new Date().toISOString().split("T")[0];
+// const end_day = currentPlan.input_data?.return_date;
+
+// const isExpired = end_day && today > end_day;
+
+// const can_change =
+//   mode === "change" &&
+//   !isExpired;
+// const canEditUI = isEditing && mode === "change" && !isExpired;
+// const canShowEdit = mode === "change" && !isExpired && isEditing;
+// const canShowEdit = isEditMode && !isExpired;
+const canShowEdit =
+  mode === "change" &&
+  isEditing &&
+  !isExpired;
+const canShowSave = true; // luôn luôn hiện
   /* =====================================================
      FIXED PART: HOTEL + PLACE LOGIC (ĐÚNG HOÀN TOÀN)
   ===================================================== */
@@ -290,11 +549,6 @@ const MyTripOutput = () => {
 
           {currentPlan.schedule.map((day, i) => {
 
-           
-            {/* const placeList = day.Place || [];
-            const currentPlaceIndex = getIndex("place", i);
-            const currentPlace = placeList[currentPlaceIndex]; */}
-
             return (
               <div key={i} className="day-block">
                 <h4>Ngày {day.Date}</h4>
@@ -303,42 +557,8 @@ const MyTripOutput = () => {
                   <li>
                     <strong>Ăn uống:</strong>
                     <ul>
-                      {/* <li>Sáng: {day.Breakfast?.name || "Tự túc"}
-                      {(day.Breakfast?.has_surge_price) (
-    <div className="surge-price">
-      ⚠️ Cuối tuần có tăng giá
-    </div>
-  )}</li> */}
-  {/* <li className="item-row">
-  <span>
-    Sáng: {day.Breakfast?.name || "Tự túc"}
-  </span>
-
-  {day.Breakfast?.has_surge_price && (
-    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
-  )}
-</li>
-
-<li className="item-row">
-  <span>
-    Trưa: {day.Lunch?.name || "Tự túc"}
-  </span>
-
-  {day.Lunch?.has_surge_price && (
-    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
-  )}
-</li>
-
-<li className="item-row">
-  <span>
-    Tối: {day.Dinner?.name || "Tự túc"}
-  </span>
-
-  {day.Dinner?.has_surge_price && (
-    <span className="surge-price">⚠️ Cuối tuần có tăng giá</span>
-  )}
-</li> */}
-<li className="item-row">
+                     
+{/* <li className="item-row">
   <span>Sáng:</span>
   <RenderItem item={day.Breakfast} />
 </li>
@@ -351,54 +571,41 @@ const MyTripOutput = () => {
 <li className="item-row">
   <span>Tối:</span>
   <RenderItem item={day.Dinner} />
+</li> */}
+                      <li className="item-row">
+  <span>Sáng:</span>
+  <RenderItem item={day.Breakfast} typeScope="food" canEdit={canShowEdit}/>
+</li>
+
+<li className="item-row">
+  <span>Trưa:</span>
+  <RenderItem item={day.Lunch} typeScope="food" canEdit={canShowEdit} />
+</li>
+
+<li className="item-row">
+  <span>Tối:</span>
+  <RenderItem item={day.Dinner} typeScope="food" canEdit={canShowEdit}/>
 </li>
                 
                     </ul>
                     
                   </li>
 
-                  {/* <li>
-                    <strong>Tham quan:</strong>
-
-                    <div className="switch-box">
-                      <button
-                        onClick={() =>
-                          changeIndex("place", i, -1, placeList.length)
-                        }
-                        disabled={currentPlaceIndex === 0}
-                      >
-                        ◀
-                      </button>
-
-                      <span>
-                        {currentPlace?.name || "Không có địa điểm"}
-                      </span>
-
-                      <button
-                        onClick={() =>
-                          changeIndex("place", i, 1, placeList.length)
-                        }
-                        disabled={currentPlaceIndex === placeList.length - 1}
-                      >
-                        ▶
-                      </button>
-                      <div className="surge-price">
-                        ⚠️ Cuối tuần có tăng giá
-                      </div>
-                    </div>
-                  </li> */}
+                 
                   <li>
   <strong>Tham quan:</strong>
 
   {day.Place && day.Place.length > 0 ? (
     <ul>
-      {/* {day.Place.map((place, idx) => (
-        <li key={idx}>
-          {place?.name || "Không có tên"}
-        </li>
-      ))} */}
-      {day.Place?.map((place, idx) => (
+      {/* {day.Place?.map((place, idx) => (
   <RenderItem key={idx} item={place} />
+))} */}
+{day.Place?.map((place, idx) => (
+  <RenderItem
+    key={idx}
+    item={place}
+    typeScope="attraction" canEdit={canShowEdit}
+  />
 ))}
     </ul>
   ) : (
@@ -411,24 +618,34 @@ const MyTripOutput = () => {
             );
           })}
 
-          {mode === "change" && !currentPlan.is_locked && (
-            <button className="edit-btn" onClick={handleEdit}>
-              Chỉnh sửa 
-            </button>
-          )}
+         
+{/* <button
+  className="edit-btn"
+  onClick={() => setIsEditing(true)}
+>
+  Chỉnh sửa
+</button> */}
+{mode === "change" && !isExpired && !isEditing && (
+  <button
+    className="edit-btn"
+    onClick={() => setIsEditing(true)}
+  >
+    Chỉnh sửa
+  </button>
+)}
         </div>
 
         <div className="right-panel">
           <div className="summary-box">
             <h4>Thông tin chung</h4>
-
-            <p>
+            <br />
+            <div>
               <strong>Khách sạn:</strong> 
-              <RenderItem item={currentHotel} />
- 
+              {/* <RenderItem item={currentHotel} /> */}
+ <RenderItem item={currentHotel} typeScope="hotel" canEdit={canShowEdit}/>
   
 
-            </p>
+            </div>
 
             <div className="hotel-switch">
               <button onClick={() => setHotelIndex((prev) => Math.max(prev - 1, 0))}>
@@ -445,74 +662,71 @@ const MyTripOutput = () => {
                 ▶
               </button>
             </div>
-
-            <p>
+              <br />
+            <div>
               <strong>Điểm chính:</strong> {currentPlan.Summary_info?.Main_location || "Chưa xác định"}
-              {/* {currentPlan.Summary_info.Main_location} */}
-            </p>
+             
+            </div>
 
             <h4 style={{ marginTop: "20px" }}>Dự toán chi phí</h4>
             <ul className="budget-list">
-              {/* <li>Ăn uống: {currentPlan.budget_breakdown.food}</li>
-              <li>Lưu trú: {currentPlan.budget_breakdown.hotel}</li> */}
-              {/* // Đề phòng budget_breakdown bị undefined */}
-<li>Ăn uống: {currentPlan.budget_breakdown?.food?.toLocaleString()} VNĐ</li>
-<li>Lưu trú: {currentPlan.budget_breakdown?.hotel?.toLocaleString()} VNĐ</li>
-              {/* <li>Khác: {currentPlan.budget_breakdown.other}</li> */}
+              <li>Ăn uống: {currentPlan.budget_breakdown?.food?.toLocaleString()} VNĐ</li>
+              <li>Lưu trú: {currentPlan.budget_breakdown?.hotel?.toLocaleString()} VNĐ</li>
+             
               <li>Khác: {currentPlan.budget_breakdown?.other?.toLocaleString()} VNĐ</li>
             </ul>
           </div>
 
           <div className="input-box locked">
-  <h4>Yêu cầu ban đầu (🔒)</h4>
+              <h4>Yêu cầu ban đầu (🔒)</h4>
 
-  {currentPlan.input_data?.budget && (
-    <p>
-      Ngân sách: {currentPlan.input_data.budget.toLocaleString()} VNĐ
-    </p>
-  )}
+              {currentPlan.input_data?.budget && (
+                <div>
+                <br />
+                  Ngân sách: {currentPlan.input_data.budget.toLocaleString()} VNĐ
+                </div>
+              )}
 
-  {currentPlan.input_data?.num_people && (
-    <p>Số người: {currentPlan.input_data.num_people}</p>
-  )}
+              {currentPlan.input_data?.num_people && (
+                <div><br />Số người: {currentPlan.input_data.num_people}</div>
+              )}
 
-  {/* ✅ THÊM NGÀY ĐI */}
-  {currentPlan.input_data?.departure_date && (
-  <p>Ngày đi: {currentPlan.input_data.departure_date}</p>
-)}
+              
+              {currentPlan.input_data?.departure_date && (
+              <div><br />Ngày đi: {currentPlan.input_data.departure_date}</div>
+            )}
 
-{currentPlan.input_data?.return_date && (
-  <p>Ngày về: {currentPlan.input_data.return_date}</p>
-)}
+            {currentPlan.input_data?.return_date && (
+              <div><br />Ngày về: {currentPlan.input_data.return_date}</div>
+            )}
 
-{currentPlan.input_data?.location && (
-  <p>Địa điểm: {currentPlan.input_data.location}</p>
-)}
-</div>
+            {currentPlan.input_data?.location && (
+              <div><br />Địa điểm: {currentPlan.input_data.location}</div>
+            )}
+            </div>
         </div>
       </div>
 
-      {mode === "change" && !currentPlan.is_locked && (
+      {/* {mode === "change" && !currentPlan.is_locked && (
         <div className="sticky-footer">
           <button className="save-btn" onClick={handleSave}>
             Save
           </button>
         </div>
-      )}
+      )} */}
+      {canShowSave  && (
+  <div className="sticky-footer">
+    <div className="sticky-footer">
+  <button className="save-btn" onClick={handleSave}>
+    Save
+  </button>
+</div>
+  </div>
+)}
     </div>
   );
 };
 
-// const fakeEdit = (oldPlan) => {
-//   return {
-//     ...oldPlan,
-//     schedule: oldPlan.schedule.map((day, i) =>
-//       i === 0
-//         ? { ...day, Lunch: { name: `Món mới ${Math.floor(Math.random() * 100)} 🍲` } }
-//         : day
-//     ),
-//   };
-// };
 const fakeEdit = (oldPlan) => {
   return {
     ...oldPlan,

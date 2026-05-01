@@ -297,3 +297,19 @@
     margin: 0;
   }
 }
+
+.schedule-box {
+  max-height: 80vh;        /* giới hạn chiều cao */
+  overflow-y: auto;        /* scroll dọc */
+  padding-right: 10px;     /* tránh bị che scrollbar */
+}
+
+/* đẹp hơn scrollbar (optional) */
+.schedule-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.schedule-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
