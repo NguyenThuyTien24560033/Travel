@@ -8,8 +8,8 @@ import "./MyTrip.css";
    MODE
 ========================= */
 // Đình Khang nhớ đổi trạng thái nhé
-// const MODE = "JSON_SERVER";
-const MODE = "REAL_BACKEND";
+const MODE = "JSON_SERVER";
+// const MODE = "REAL_BACKEND";
 
 //Đình Khang thêm path vào đây
 const REAL_API = {
@@ -392,42 +392,130 @@ const MyTripInput = () => {
 /* =========================
    FAKE DATA
 ========================= */
-const fakeData = (input) => ({
-  Summary_info: {
-    Hotel: { name: "Dalat Palace Hotel" },
-    Main_location: input.area === 1 ? "Đà Lạt" : "Nha Trang",
-  },
+// const fakeData = (input) => ({
+//   Summary_info: {
+//     Hotel: { name: "Dalat Palace Hotel" },
+//     Main_location: input.area === 1 ? "Đà Lạt" : "Nha Trang",
+//   },
 
-  budget_breakdown: {
-    food: 300000,
-    hotel: 500000,
-    other: 200000,
-  },
+//   budget_breakdown: {
+//     food: 300000,
+//     hotel: 500000,
+//     other: 200000,
+//   },
 
-  schedule: [
-    {
-      Date: input.departure_date,
-      Breakfast: { name: "Bánh mì xíu mại" },
-      Lunch: { name: "Cơm niêu" },
-      Dinner: { name: "Lẩu gà lá é" },
-      Place: [
-        { name: "Hồ Xuân Hương" },
-        { name: "Chợ Đà Lạt" },
+//   schedule: [
+//     {
+//       Date: input.departure_date,
+//       Breakfast: { name: "Bánh mì xíu mại" },
+//       Lunch: { name: "Cơm niêu" },
+//       Dinner: { name: "Lẩu gà lá é" },
+//       Place: [
+//         { name: "Hồ Xuân Hương" },
+//         { name: "Chợ Đà Lạt" },
+//       ],
+//     },
+//     {
+//       Date: input.return_date,
+//       Breakfast: { name: "Phở" },
+//       Lunch: { name: "Bún bò" },
+//       Dinner: { name: "BBQ" },
+//       Place: [
+//         { name: "LangBiang" },
+//         { name: "Quảng trường Lâm Viên" },
+//       ],
+//     },
+//   ],
+
+//   input_data: input,
+// });
+/* =========================
+   FAKE DATA (UPDATED FROM IMAGE)
+========================= */
+const fakeData = (input) => {
+  // Hàm bổ trợ tạo object địa điểm ăn uống/tham quan giống ảnh
+  const createPlace = (name, tags = [1, 2]) => ({
+    id: Math.random().toString(16).slice(2, 26), // Tạo id giả 24 ký tự
+    name: name,
+    img: null,
+    has_surge_price: false,
+    tag: tags,
+  });
+
+  return {
+    Summary_info: {
+      Hotel: {
+        id: "69ead2dd25ee2ea9a979b0d8",
+        name: "Hotel Colline",
+        has_surge_price: false,
+      },
+      Main_location: input.area == 4 ? "Thành phố Đà Lạt" : "Nha Trang",
+      attractions: [
+        { name: "Hồ Xuân Hương", id: "attr_1" },
+        { name: "Chợ Đà Lạt", id: "attr_2" },
       ],
     },
-    {
-      Date: input.return_date,
-      Breakfast: { name: "Phở" },
-      Lunch: { name: "Bún bò" },
-      Dinner: { name: "BBQ" },
-      Place: [
-        { name: "LangBiang" },
-        { name: "Quảng trường Lâm Viên" },
-      ],
+
+    budget_breakdown: {
+      food: 1400000,
+      hotel: 1200000,
+      other: 1200000,
     },
-  ],
 
-  input_data: input,
-});
+    can_change: true,
+    input_id: 3,
+    
+    // Các mảng bổ trợ (trong ảnh có nhưng đang rỗng hoặc chứa list)
+    hotels: [
+        { id: "h1", name: "Hotel Colline" },
+        { id: "h2", name: "Dalat Palace" }
+    ],
+    restaurants_breakfast: [],
+    restaurants_lunch: [],
+    restaurants_dinner: [],
 
+    schedule: [
+      {
+        Date: input.departure_date || "2026-04-30",
+        Breakfast: createPlace("Bánh Canh Xuân An", [5, 2]),
+        Lunch: createPlace("Hải Sản Phố Biển", [2, 6]),
+        Dinner: createPlace("Sashimi Garden", [1, 3]),
+        Place: [
+          createPlace("Quảng trường Lâm Viên"),
+          createPlace("Dinh Bảo Đại"),
+        ],
+      },
+      {
+        Date: "2026-05-01",
+        Breakfast: createPlace("Bánh mì xíu mại"),
+        Lunch: createPlace("Cơm niêu Thuận Gia"),
+        Dinner: createPlace("Lẩu gà lá é Tao Ngộ"),
+        Place: [
+          createPlace("Thung lũng Tình Yêu"),
+          createPlace("LangBiang"),
+        ],
+      },
+      {
+        Date: input.return_date || "2026-05-02",
+        Breakfast: createPlace("Phở Thìn"),
+        Lunch: createPlace("Bún bò bốc khói"),
+        Dinner: createPlace("Tiệc nướng BBQ"),
+        Place: [
+          createPlace("Chùa Linh Phước"),
+          createPlace("Thác Datanla"),
+        ],
+      },
+    ],
+
+    // input_data: input,
+    input_data: {
+  budget: input.budget,
+  num_people: input.num_people,
+  area: input.area,
+  departure_date: input.departure_date,
+  return_date: input.return_date,
+  location: input.location,
+}
+  };
+};
 export default MyTripInput;
