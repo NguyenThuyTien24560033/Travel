@@ -1,120 +1,122 @@
 import { usePartner } from '../../assets/Layouts/PartnerLayout.jsx';
-import { MapPin, Clock, Percent, Star } from "lucide-react";
+import { 
+    MapPin,
+    Clock,
+    Star,
+    MessageCircle,
+    Phone,
+    Tag,
+    FileText 
+} from "lucide-react";
 import './dashBoard.css'
 
 const DashBoard = () => {
-  const { location, discounts } = usePartner();
+    const { location } = usePartner();
 
-  if (!location) {
-    return <div style={{ padding: 20 }}>No data available</div>;
-  }
+    if (!location) {
+        return <div style={{ padding: 20 }}>No data available</div>;
+    }
 
-  const activeDiscounts = (discounts || []).filter(d => {
-    if (!d.startDate || !d.endDate) return false;
 
-    const now = new Date();
-    const start = new Date(d.startDate);
-    const end = new Date(d.endDate);
-    end.setHours(23, 59, 59);
+    const activeHours =
+        typeof location?.active_hours === "string"
+            ? JSON.parse(location.active_hours)
+            : location?.active_hours;
 
-    return now >= start && now <= end;
-  }).length;
+    const ACTIVE_HOURS_MAP = {
+        0: "All day",
+        1: "Morning",
+        2: "Afternoon",
+        3: "Evening",
+        4: "Night",
+    };
 
-  return (
-    <div className="dashboard">
-      <h2>Overview</h2>
+    const tags =
+    typeof location?.tags === "string"
+        ? JSON.parse(location.tags)
+        : location?.tags;
 
-      <div className="card">
-        <h3>{location?.name || "No name"}</h3>
-        <p><MapPin size={16} /> {location?.address || "No address"}</p>
-      </div>
+    const TAGS_MAP = {
+        1: "relax",
+        2: "adventure",
+        3: "food tour",
+        4: "cultural",
+        5: "playground",
+        6: "history",
+        7: "thrill",
+        8: "beach",
+        9: "take picture",
+    };
 
-      <div className="stats">
-        <div className="stat">
-          <Clock />
-          <div>
-            <h4>Hours</h4>
-            <p>View schedule</p>
-          </div>
+    return (
+        <div className="dashboard">
+            {/* Thẻ to nhất lưu hiển thị name, address */}
+            <div className="card">
+                <h2>{location?.name || "No name"}</h2>
+                <p><MapPin size={16} /> {location?.address || "No address"}</p>
+            </div>
+
+            {/* Các thẻ con hiển thị giờ hoạt động, số sao và bao nhiêu lượt đánh giá, số điện thoại, tag, description */}
+            <div className="stats">
+                {/* Hours */}
+                <div className="stat hours">
+                    <Clock />
+                    <div>
+                        <h4>Hours</h4>
+                        <p>
+                            {Array.isArray(activeHours)
+                                ? activeHours.map(h => ACTIVE_HOURS_MAP[h]).join(", ")
+                                : "No schedule"}
+                        </p>
+                    </div>
+                </div>
+                
+                {/* Rating + Reviews */}
+                <div className="stat rating">
+                    <Star />
+                    <div>
+                        <h4>
+                            {location?.rating || 0} / 5
+                        </h4>
+                        <p>
+                            {location?.review_count || 0} reviews
+                        </p>
+                    </div>
+                </div>
+
+                {/* Tags */}
+                <div className="stat tags">
+                    <Tag />
+                    <div>
+                        <h4>Tags</h4>
+                        <p>
+                            {Array.isArray(tags)
+                                ? tags.map(t => TAGS_MAP[t]).join(", ")
+                                : "No tags"}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Phone */}
+                <div className="stat phone">
+                    <Phone />
+                    <div>
+                        <h4>Phone</h4>
+                        <p>{location?.phone_number || "No phone"}</p>
+                    </div>
+                </div>
+
+                {/* Description */}
+                <div className="stat full">
+                    <FileText />
+                    <div>
+                        <h4>Description</h4>
+                        <p>{location?.description || "No description"}</p>
+                    </div>
+                </div>  
+            </div>
         </div>
-
-        <div className="stat">
-          <Percent />
-          <div>
-            <h4>{activeDiscounts}</h4>
-            <p>Active Discounts</p>
-          </div>
-        </div>
-
-        <div className="stat">
-          <Star />
-          <div>
-            <h4>{location?.rating || 4.5}</h4>
-            <p>Rating</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default DashBoard;
-// const DashBoard = () => {
-//   const { user } = usePartner();
-
-//   const location = user; // 🔥 FIX
-//   const discounts = user?.discounts || [];
-
-//   if (!location) {
-//     return <div style={{ padding: 20 }}>No data available</div>;
-//   }
-
-//   const activeDiscounts = discounts.filter(d => {
-//     if (!d.startDate || !d.endDate) return false;
-
-//     const now = new Date();
-//     const start = new Date(d.startDate);
-//     const end = new Date(d.endDate);
-//     end.setHours(23, 59, 59);
-
-//     return now >= start && now <= end;
-//   }).length;
-
-//   return (
-//     <div className="dashboard">
-//       <h2>Overview</h2>
-
-//       <div className="card">
-//         <h3>{location?.name || "No name"}</h3>
-//         <p>{location?.address || "No address"}</p>
-//       </div>
-
-//       <div className="stats">
-//         <div className="stat">
-//           <Clock />
-//           <div>
-//             <h4>Hours</h4>
-//             <p>View schedule</p>
-//           </div>
-//         </div>
-
-//         <div className="stat">
-//           <Percent />
-//           <div>
-//             <h4>{activeDiscounts}</h4>
-//             <p>Active Discounts</p>
-//           </div>
-//         </div>
-
-//         <div className="stat">
-//           <Star />
-//           <div>
-//             <h4>{location?.rating || 4.5}</h4>
-//             <p>Rating</p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-// export default DashBoard;

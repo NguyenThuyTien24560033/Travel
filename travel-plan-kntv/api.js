@@ -1,4 +1,7 @@
-const BASE_URL = 'http://localhost:8000/travel/';
+const BASE_URL = '/travel/';
+let isRefreshing = false;
+let refreshPromise = null;
+
 
 export const authorizedFetch = async (endpoint, options = {}) => {
     let accessToken = localStorage.getItem('access_token');
@@ -17,30 +20,35 @@ export const authorizedFetch = async (endpoint, options = {}) => {
 
     // KIỂM TRA: Nếu lỗi 401 (Access Token hết hạn)
     if (response.status === 401) {
-        console.log("Access token hết hạn, đang thử refresh...");
+        if (!isRefreshing) {
+            isRefreshing = true;
 
-        // Gọi API refresh (Không cần gửi body vì Django đọc từ Cookie)
-        const refreshRes = await fetch(`${BASE_URL}api/token/refresh/`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' }
-        });
+            refreshPromise = fetch(`${BASE_URL}api/token/refresh/`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Refresh failed");
+                return res.json();
+            })
+            .then(data => {
+                localStorage.setItem('access_token', data.access);
+                return data.access;
+            })
+            .finally(() => {
+                isRefreshing = false;
+            });
+        }
 
-        if (refreshRes.ok) {
-            const data = await refreshRes.json();
-            const newAccessToken = data.access;
+        try {
+            const newAccessToken = await refreshPromise;
 
-            // Lưu access token mới
-            localStorage.setItem('access_token', newAccessToken);
-
-            // Cập nhật lại header và THỰC THI LẠI request ban đầu
             options.headers['Authorization'] = `Bearer ${newAccessToken}`;
-            response = await fetch(`${BASE_URL}${endpoint}`, options);
-        } else {
-            // Nếu refresh cũng hỏng (hết hạn đăng nhập) -> Logout
-            console.error("Refresh token cũng hết hạn. Vui lòng đăng nhập lại.");
+            return fetch(`${BASE_URL}${endpoint}`, options);
+        } catch (err) {
             localStorage.removeItem('access_token');
-            window.location.href = '/login'; 
+            window.location.href = '/login';
         }
     }
 
