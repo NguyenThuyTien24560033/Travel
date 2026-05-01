@@ -268,12 +268,17 @@ const validAnnouncements = Array.isArray(location?.announcements)
                 <h3>Đánh giá ({comments.length})</h3>
 
                 <button
-                  className="write-review-btn"
-                  // onClick={() => navigate(`/places/${id}/comments`)}
-                  onClick={() => navigate(`/places/${id}/comments`)}
-                >
-                  Comment
-                </button>
+  className="write-review-btn"
+  onClick={() =>
+    navigate(`/places/${id}/comments`, {
+      state: {
+        comments: location.reviews || [],
+      },
+    })
+  }
+>
+  Comment
+</button>
               </div>
 
               <div className="comments-container">

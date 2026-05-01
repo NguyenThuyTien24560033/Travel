@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { authorizedFetch } from '../../../api'
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -124,12 +124,17 @@ function LocationComponent() {
     const [nameInput, setNameInput] = useState("");
 
     const navigate = useNavigate();
-
+     const hasLoaded = useRef(false); 
     /* =========================
        LOAD INIT
     ========================= */
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     loadData();
+    // }, []);
+     useEffect(() => {
+        if (hasLoaded.current) return; 
+        hasLoaded.current = true;      
         loadData();
     }, []);
 
@@ -530,7 +535,7 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
 </div>
 
 {/* LOADING */}
-{loading && <div className="loading">Searching...</div>}
+{/* {loading && <div className="loading">Searching...</div>}
             <div className="results-section">
                 <h2>Hotels</h2>
                 {renderList(groupedData.Hotels)}
@@ -540,6 +545,37 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
 
                 <h2>Attractions</h2>
                 {renderList(groupedData.Attractions)}
+            </div>
+        </div>
+    );
+}
+
+export default LocationComponent; */}
+<div className="results-section">
+
+                {/* 🔥 FIX 4: chỉ render title nếu có data */}
+
+                {groupedData.Hotels.length > 0 && (
+                    <>
+                        <h2>Hotels</h2>
+                        {renderList(groupedData.Hotels)}
+                    </>
+                )}
+
+                {groupedData.Restaurants.length > 0 && (
+                    <>
+                        <h2>Restaurants</h2>
+                        {renderList(groupedData.Restaurants)}
+                    </>
+                )}
+
+                {groupedData.Attractions.length > 0 && (
+                    <>
+                        <h2>Attractions</h2>
+                        {renderList(groupedData.Attractions)}
+                    </>
+                )}
+
             </div>
         </div>
     );

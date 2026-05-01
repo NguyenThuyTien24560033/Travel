@@ -1,116 +1,284 @@
-.output-page {
-  padding: 20px;
-  background: #f2f2f2;
-  min-height: 100vh;
+/* Output.css */
+
+:root {
+  --primary-color: #2563eb;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-sub: #64748b;
+  --border-color: #e2e8f0;
+  --danger: #ef4444;
+  --success: #22c55e;
 }
 
-/* HEADER */
+.output-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 100px; /* Chừa chỗ cho sticky footer */
+}
+
+/* Header & Close Button */
 .output-header {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.nav-left span {
-  margin-right: 20px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-right input {
-  padding: 5px 10px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #ccc;
-}
-
-/* TABS */
-.plan-tabs {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.tab {
-  padding: 5px 10px;
-  background: #ddd;
-  border: none;
-  cursor: pointer;
-}
-
-.tab.active {
-  background: #bbb;
-}
-
-.view-all {
-  margin-left: 10px;
-  cursor: pointer;
-}
-
-/* MAIN */
-.output-main {
-  display: flex;
-  gap: 20px;
-}
-
-/* LEFT */
-.schedule-box {
-  flex: 2;
-  background: #ddd;
-  padding: 15px;
-  position: relative;
-}
-
-.day-block {
+  justify-content: flex-end;
   margin-bottom: 20px;
 }
 
-.day-block ul {
-  margin-left: 10px;
-}
-
-.edit-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-sub);
   cursor: pointer;
-  font-size: 20px;
+  transition: transform 0.2s;
 }
 
-/* RIGHT */
-.right-panel {
-  flex: 1;
+.close-btn:hover {
+  transform: scale(1.2);
+  color: var(--danger);
+}
+
+/* Plan Tabs */
+.plan-tabs {
   display: flex;
-  flex-direction: column;
   gap: 10px;
+  margin-bottom: 25px;
+  overflow-x: auto;
+  padding-bottom: 10px;
 }
 
-.summary-box,
-.input-box {
-  background: #ddd;
-  padding: 10px;
+.plan-tab {
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-sub);
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 
-/* SAVE */
-.save-wrapper {
+.plan-tab.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Main Layout */
+.output-main {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .output-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Schedule Box */
+.schedule-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-main);
+  border-left: 4px solid var(--primary-color);
+  padding-left: 12px;
+}
+
+.day-block {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.day-block:last-child {
+  border-bottom: none;
+}
+
+.day-block h4 {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.day-details {
+  list-style: none;
+  padding: 0;
+}
+
+.day-details > li {
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+/* Switch Box (Ăn uống & Tham quan) */
+.switch-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  background: white;
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.switch-box button {
+  background: #f1f5f9;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.switch-box button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.switch-box span {
+  flex: 1;
+  font-weight: 500;
   text-align: center;
+}
+
+.surge-price {
+  font-size: 11px;
+  color: #f59e0b;
+  background: #fffbeb;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Right Panel */
+.summary-box, .input-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.summary-box h4, .input-box h4 {
+  margin-bottom: 15px;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
+.budget-list {
+  list-style: none;
+  padding: 0;
+}
+
+.budget-list li {
+  padding: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.hotel-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 10px 0;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.hotel-switch button {
+  background: white;
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Locked Input styling */
+.input-box.locked {
+  background: #f1f5f9;
+  border: 1px solid var(--border-color);
+  opacity: 0.8;
+}
+
+.input-box p {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+}
+
+/* Buttons */
+.edit-btn {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
   margin-top: 20px;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Sticky Footer */
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
 }
 
 .save-btn {
-  padding: 10px 30px;
-  background: #ccc;
+  background: var(--success);
+  color: white;
   border: none;
+  padding: 12px 60px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* No data state */
+.no-data {
+  text-align: center;
+  padding: 50px;
+  color: var(--text-sub);
 }
