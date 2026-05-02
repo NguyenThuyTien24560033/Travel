@@ -27,7 +27,7 @@ const Detail = () => {
     const [loading, setLoading] = useState(false);
     const [dateInput, setDateInput] = useState("");
 
-    const { location } = usePartner();
+    const { location, setLocation } = usePartner();
     const user = JSON.parse(localStorage.getItem("user"));
     // form: luôn chứa dữ liệu mới nhất, ban đầu là lấy từ location sau đó trong quá trình nhập sẽ được lưu lại thông qua 
     // handleChange.
@@ -36,22 +36,38 @@ const Detail = () => {
     // Hàm helper
     const safeArray = (v) => {
         if (Array.isArray(v)) return v;
-        try {
-            return JSON.parse(v || "[]");
-        } catch {
-            return [];
+
+        if (typeof v === "string") {
+            try {
+                return JSON.parse(v);
+            } catch {
+                try {
+                    // replace ' → "
+                    const fixed = v.replace(/'/g, '"');
+                    return JSON.parse(fixed);
+                } catch {
+                    return [];
+                }
+            }
         }
+
+        return [];
     };
 
     // Cập nhật dữ liệu từ location vào form
     useEffect(() => {
         if (!location) return;
 
+        const cuisine_types = location.cuisine_types || [];
+        const tags = location.tags || [];
+
         setForm({
             ...location,
             off_dates: safeArray(location.off_dates),
             off_weekdays: safeArray(location.off_weekdays),
             active_hours: safeArray(location.active_hours),
+            cuisine_types: safeArray(cuisine_types),
+            tags: safeArray(tags),
         });
     }, [location]);
 
@@ -63,6 +79,23 @@ const Detail = () => {
         }));
     };
 
+    // Reset lại data khi không muốn thay đổi nữa
+    const handleCancel = async () => {
+        if (!location) return;
+
+        const cuisine_types = location.cuisine_types || [];
+        const tags = location.tags || [];
+
+        setForm({
+            ...location,
+            off_dates: safeArray(location.off_dates),
+            off_weekdays: safeArray(location.off_weekdays),
+            active_hours: safeArray(location.active_hours),
+            cuisine_types: safeArray(cuisine_types),
+            tags: safeArray(tags),
+        });
+    };
+
 // -------------------------------------------------------------
 // ---------------------------SAVE------------------------------
 // -------------------------------------------------------------
@@ -71,6 +104,13 @@ const Detail = () => {
         RESTAURANT: "places/restaurants",
         ACCOMMODATION: "places/hotels",
         ENTERTAINMENT: "places/attractions",
+    };
+
+    // Bỏ field dư
+    const REMOVE_FIELDS = {
+        ENTERTAINMENT: ["cuisine_types", "discounts", "comments", "location"],
+        RESTAURANT: ["tags", "discounts", "comments", "dish", "location"],
+        ACCOMMODATION: ["tags", "cuisine_types", "discounts", "comments", "room", "location"],
     };
 
     // Lấy đường dẫn thông qua user.type_location
@@ -89,12 +129,17 @@ const Detail = () => {
                 ...form,
                 off_dates: form.off_dates || [],
                 off_weekdays: form.off_weekdays || [],
-                active_hours: form.active_hours || [],
+                active_hours: form.active_hours || [0],
             };
 
-            console.log("Dữ liệu gửi đi nè: ", payload)
-            return;
-            
+            // Bỏ field dư
+            (REMOVE_FIELDS[user.type_location] || []).forEach(field => {
+                delete payload[field];
+            });
+
+            console.log("Dữ liệu gửi đi nè: ", payload, form.id) 
+            // return;
+
             const res = await authorizedFetch(`${endpoint}/${form.id}/`, {
                 method: "PATCH",
                 body: JSON.stringify(payload),
@@ -102,7 +147,17 @@ const Detail = () => {
 
             if (!res.ok) throw new Error();
 
+            setLocation(form);
             toast.success("Updated successfully!");
+
+            setForm({
+                ...location,
+                off_dates: safeArray(location.off_dates),
+                off_weekdays: safeArray(location.off_weekdays),
+                active_hours: safeArray(location.active_hours),
+                cuisine_types: safeArray(cuisine_types),
+                tags: safeArray(tags),
+            });
         } catch (err) {
             toast.error("Update failed!");
         } finally {
@@ -112,7 +167,6 @@ const Detail = () => {
 // -------------------------------------------------------------
 // -------------------------------------------------------------
 
-    // ------------------HOURS-------------------
     const ACTIVE_HOUR_OPTIONS = [
         { label: "All day", value: 0 },
         { label: "Morning", value: 1 },
@@ -146,10 +200,6 @@ const Detail = () => {
         });
     };
 
-    
-    // ------------------------------------------
-
-
     const priceLevelText = (level) => {
         const map = {
             0: "Miễn phí",
@@ -163,18 +213,6 @@ const Detail = () => {
     };
 
 
-    const TAGS_MAP = {
-        1: "relax",
-        2: "adventure",
-        3: "food tour",
-        4: "cultural",
-        5: "playground",
-        6: "history",
-        7: "thrill",
-        8: "beach",
-        9: "take picture",
-    };
-
 
 
     if (!location) return <div>No data</div>;
@@ -186,12 +224,6 @@ const Detail = () => {
             {/* HEADER */}
             <div className="detail-header">
                 <h2>Edit Location Detail</h2>
-
-                <div className="actions">
-                    <button className="save" onClick={handleSave}>
-                        <Save size={16} /> Save
-                    </button>
-                </div>
             </div>
 
 
@@ -423,6 +455,10 @@ const Detail = () => {
 
             {/* SAVE FOOTER */}
             <div className="footer">
+                <button onClick={handleCancel} disabled={loading}>
+                    {loading ? "Reset..." : "Reset data"}
+                </button>
+
                 <button onClick={handleSave} disabled={loading}>
                     {loading ? "Saving..." : "Save Changes"}
                 </button>

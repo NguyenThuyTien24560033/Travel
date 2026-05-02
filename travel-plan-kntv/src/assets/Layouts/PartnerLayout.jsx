@@ -165,6 +165,7 @@ function PartnerLayout() {
     /* 🔹 CONTEXT */
     const value = {
         location,
+        setLocation,
         loading,
         login,
         logout,
