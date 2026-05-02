@@ -1,4 +1,4 @@
-import { usePartner } from '../../assets/Layouts/PartnerLayout.jsx';
+import { usePartner } from '../../../assets/Layouts/PartnerLayout.jsx';
 import { 
     MapPin,
     Clock,
@@ -8,7 +8,7 @@ import {
     Tag,
     FileText 
 } from "lucide-react";
-import './dashBoard.css'
+import './DashBoard.css'
 
 const DashBoard = () => {
     const { location } = usePartner();

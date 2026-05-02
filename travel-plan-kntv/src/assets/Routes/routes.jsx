@@ -23,9 +23,13 @@ import CommentPage from '../../pages/User/Comment.jsx';
 import PartnerLayout from '../Layouts/PartnerLayout.jsx'
 import PartnerProfile from '../Components/PartnerProfile.jsx';
 import PartnerLogin from '../Components/PartnerLogin.jsx';
-import DashBoard from '../../pages/Partner/dashBoard.jsx';
-import Menu from '../../pages/Partner/Menu.jsx';
-import Detail from '../../pages/Partner/Detail.jsx';
+
+import DashBoard from '../../pages/Partner/DashBoard';
+import Detail from '../../pages/Partner/Detail/';
+import Menu from '../../pages/Partner/Menu';
+import Room from '../../pages/Partner/Room';
+import Discount from '../../pages/Partner/Discount'
+import Comment from '../../pages/Partner/Comment';
 
 export const Public_Layout = [
   { 
@@ -57,14 +61,15 @@ export const Private_Layout = [
     path: "/partner",
     element: <PartnerLayout />,
     children: [
-      { path: "login", element: <PartnerLogin /> }, // ✅ THÊM
+      { path: "login", element: <PartnerLogin /> }, 
+      { path: "profile", element: <PartnerProfile /> },
+
       { path: "dashboard", element: <DashBoard /> },
       { path: "detail", element: <Detail /> },
-      // { path: "menu", element: <Menu /> },
-      // { path: "room", element: {} },
-      // { path: "discount", element: {} },
-      { path: "profile", element: <PartnerProfile /> },
-      // { path: "comment", element: {} },
+      { path: "menu", element: <Menu /> },
+      { path: "room", element: <Room />},
+      { path: "discount", element: <Discount /> },
+      { path: "comment", element: <Comment /> },
     ],
   },
 ];

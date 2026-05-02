@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usePartner } from '../../assets/Layouts/PartnerLayout.jsx';
+import { usePartner } from '../../../assets/Layouts/PartnerLayout';
 import { Toaster, toast } from "sonner";
 import './Menu.css';
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { usePartner } from '../../assets/Layouts/PartnerLayout.jsx';
-import { authorizedFetch } from "../../../api.js";
+import { usePartner } from '../../../assets/Layouts/PartnerLayout.jsx';
+import { authorizedFetch } from "../../../../api.js";
 import { toast, Toaster } from "sonner";
 import {
     MapPin,
