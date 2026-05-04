@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import './PartnerSiderbar.css'
 
-const user = JSON.parse(localStorage.getItem("user"));
+
 
 const MENU = [
     { label: "Dashboard", icon: Home, path: "/partner/dashboard" },
@@ -23,20 +23,24 @@ const MENU = [
     { label: "Profile", icon: User, path: "/partner/profile" },
 ];
 
-const filteredMenu = MENU.filter(item => {
-    if (item.label === "Room") return user?.type_location === "ACCOMMODATION";
-    if (item.label === "Menu") return user?.type_location === "RESTAURANT";
-    if (item.label === "Discount") return true;
-    if (item.label === "Profile") return true;
-    if (item.label === "Dashboard") return true;
-    if (item.label === "Detail") return true;
-    if (item.label === "Comment") return true;
-    return true;
-});
 
 const PartnerSidebar = ({ onLogout }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = usePartner();
+    if (!user) {
+        return <div>Loading...</div>; 
+    }
+
+    const filteredMenu = MENU.filter(item => {
+        if (item.label === "Room") {
+            return user.type_location === "ACCOMMODATION";
+        }
+        if (item.label === "Menu") {
+            return user.type_location === "RESTAURANT";
+        }
+        return true;
+    });
 
     return (
         <div className="sidebar">

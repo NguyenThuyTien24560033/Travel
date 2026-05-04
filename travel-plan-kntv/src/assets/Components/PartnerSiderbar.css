@@ -110,3 +110,7 @@
     transform: none;
   }
 }
+
+.loading {
+  height: 100vh;
+}
