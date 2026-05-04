@@ -1,128 +1,28 @@
 
 
-// // import { useEffect, useState } from "react";
-// // import { useNavigate } from "react-router-dom";
-// // import { toast } from "sonner";
-// // import Header from "./Header";// 
-// // import "./History.css";
-
-// // /* =========================
-// //    MODE
-// // ========================= */
-// // const MODE = "JSON_SERVER";
-// // // const MODE = "REAL_BACKEND";
-
-// // const JSON_API = "http://localhost:3001/history";
-
-// // const REAL_API = {
-// //   getHistory: "history/",
-// //   getPlan: "plan/",
-// // };
-
-// // function HistoryComponent() {
-// //   const [historyData, setHistoryData] = useState([]);
-// //   const navigate = useNavigate();
-
-// //   useEffect(() => {
-// //     const data = JSON.parse(localStorage.getItem("history")) || [];
-// //     setHistoryData(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-// //   }, []);
-
-// //   const handleClick = (id, wantToEdit = false) => {
-// //     const plan = JSON.parse(localStorage.getItem(`plan_${id}`));
-// //     if (!plan) {
-// //       toast.error("Data missing");
-// //       return;
-// //     }
-
-// //     // Nếu người dùng muốn Edit nhưng bản này đã bị Lock (Save rồi)
-// //     if (wantToEdit && plan.is_locked) {
-// //       toast.error("Bản này đã chốt, chỉ có thể xem thôi Tiên ơi!");
-// //       navigate("/my-trip/output", { state: { data: plan, mode: "view" } });
-// //       return;
-// //     }
-
-// //     navigate("/my-trip/output", {
-// //       state: {
-// //         data: plan,
-// //         mode: wantToEdit ? "change" : "view",
-// //       },
-// //     });
-// //   };
-
-// //   const handleDelete = async (id) => {
-// //   try {
-// //     if (MODE === "JSON_SERVER") {
-// //       await fetch(`${JSON_API}/${id}`, {
-// //         method: "DELETE",
-// //       });
-
-// //       // update UI
-// //       setHistoryData((prev) => prev.filter((item) => item.id !== id));
-// //       toast.success("Deleted from JSON server");
-// //       return;
-// //     }
-
-// //     // =========================
-// //     // REAL BACKEND MODE
-// //     // =========================
-// //     const res = await fetch(`${REAL_API.getHistory}${id}`, {
-// //       method: "DELETE",
-// //       headers: {
-// //         "Content-Type": "application/json",
-// //       },
-// //     });
-
-// //     if (!res.ok) throw new Error("Delete failed");
-
-// //     setHistoryData((prev) => prev.filter((item) => item.id !== id));
-// //     toast.success("Deleted from backend");
-// //   } catch (err) {
-// //     console.error(err);
-// //     toast.error("Delete failed");
-// //   }
-// // };
-
-// //   return (
-// //     <>
-// //     <Header/>
-// //     <div className="history-list">
-// //       {historyData.map((item) => (
-// //         <div key={item.id} className="history-card">
-// //           <div onClick={() => handleClick(item.id, false)}>
-// //             <h3>{item.location} {item.is_locked && "🔒"}</h3>
-// //             <p>{new Date(item.created_at).toLocaleDateString()}</p>
-// //           </div>
-          
-// //           <div className="actions">
-// //             <button onClick={() => handleClick(item.id, false)}>View</button>
-            
-// //             {/* Chỉ hiện nút Edit nếu chưa bị lock */}
-// //             {!item.is_locked && (
-// //               <button onClick={() => handleClick(item.id, true)}>Continue Editing</button>
-// //             )}
-            
-// //             <button onClick={() => handleDelete(item.id)}>Delete</button>
-// //           </div>
-// //         </div>
-// //       ))}
-// //     </div>
-// //     </>
-// //   );
-// // }
-// // export default HistoryComponent;
-
-
-
 // import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { toast } from "sonner";
 // import Header from "./Header";
 // import "./History.css";
 
+// /* =========================
+//    MODE
+// ========================= */
 // const MODE = "JSON_SERVER";
 
 // const JSON_API = "http://localhost:3001/history";
+
+// /* =========================
+//    CHECK EDIT VALIDATION
+// ========================= */
+// const canEditPlan = (plan) => {
+//   const today = new Date().toISOString().split("T")[0];
+//   const endDay = plan?.input_data?.return_date;
+
+//   if (!endDay) return true;
+//   return today <= endDay;
+// };
 
 // function HistoryComponent() {
 //   const [historyData, setHistoryData] = useState([]);
@@ -132,21 +32,17 @@
 //      LOAD HISTORY
 //   ========================= */
 //   useEffect(() => {
-//     const loadHistory = () => {
-//       const data = JSON.parse(localStorage.getItem("history")) || [];
+//     const data = JSON.parse(localStorage.getItem("history")) || [];
 
-//       const sorted = data.sort(
-//         (a, b) => new Date(b.created_at) - new Date(a.created_at)
-//       );
+//     const sorted = data.sort(
+//       (a, b) => new Date(b.created_at) - new Date(a.created_at)
+//     );
 
-//       setHistoryData(sorted);
-//     };
-
-//     loadHistory();
+//     setHistoryData(sorted);
 //   }, []);
 
 //   /* =========================
-//      OPEN PLAN
+//      OPEN PLAN (VIEW / EDIT)
 //   ========================= */
 //   const openPlan = (id, mode = "view") => {
 //     const plan = JSON.parse(localStorage.getItem(`plan_${id}`));
@@ -156,7 +52,7 @@
 //       return;
 //     }
 
-//     // nếu đã lock mà vẫn cố edit
+//     // nếu cố edit nhưng đã lock
 //     if (mode === "change" && plan.is_locked) {
 //       toast.error("Kế hoạch đã được chốt, chỉ có thể xem");
 //       mode = "view";
@@ -165,13 +61,13 @@
 //     navigate("/my-trip/output", {
 //       state: {
 //         data: plan,
-//         mode,
+//         mode, // "view" | "change"
 //       },
 //     });
 //   };
 
 //   /* =========================
-//      DELETE HISTORY
+//      DELETE PLAN
 //   ========================= */
 //   const handleDelete = async (id) => {
 //     try {
@@ -190,7 +86,6 @@
 //         return;
 //       }
 
-//       // REAL BACKEND
 //       const res = await fetch(`history/${id}`, {
 //         method: "DELETE",
 //       });
@@ -198,7 +93,7 @@
 //       if (!res.ok) throw new Error();
 
 //       setHistoryData((prev) => prev.filter((item) => item.id !== id));
-//       toast.success("Deleted from backend");
+//       toast.success("Deleted");
 //     } catch (err) {
 //       console.error(err);
 //       toast.error("Xóa thất bại");
@@ -218,12 +113,13 @@
 //         ) : (
 //           historyData.map((item) => (
 //             <div key={item.id} className="history-card">
-              
+
 //               {/* INFO */}
 //               <div onClick={() => openPlan(item.id, "view")}>
 //                 <h3>
 //                   {item.location || "Unknown"} {item.is_locked && "🔒"}
 //                 </h3>
+
 //                 <p>
 //                   {item.created_at
 //                     ? new Date(item.created_at).toLocaleString()
@@ -233,16 +129,28 @@
 
 //               {/* ACTIONS */}
 //               <div className="actions">
+//                 {/* VIEW */}
 //                 <button onClick={() => openPlan(item.id, "view")}>
 //                   View
 //                 </button>
 
+//                 {/* EDIT */}
 //                 {!item.is_locked && (
-//                   <button onClick={() => openPlan(item.id, "change")}>
+//                   <button
+//                     onClick={() => {
+//                       if (!canEditPlan(item)) {
+//                         toast.error("Đã quá hạn chỉnh sửa");
+//                         return;
+//                       }
+
+//                       openPlan(item.id, "change");
+//                     }}
+//                   >
 //                     Continue Editing
 //                   </button>
 //                 )}
 
+//                 {/* DELETE */}
 //                 <button onClick={() => handleDelete(item.id)}>
 //                   Delete
 //                 </button>
@@ -259,22 +167,31 @@
 // export default HistoryComponent;
 
 
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authorizedFetch } from "../../../api";
 import { toast } from "sonner";
 import Header from "./Header";
 import "./History.css";
 
-/* =========================
-   MODE
-========================= */
+/* =========================================================
+   CONFIG
+========================================================= */
+
 const MODE = "JSON_SERVER";
 
 const JSON_API = "http://localhost:3001/history";
 
-/* =========================
+const REAL_API = {
+  getHistory: "history/",
+  deleteHistory: "history/",
+};
+
+/* =========================================================
    CHECK EDIT VALIDATION
-========================= */
+========================================================= */
+
 const canEditPlan = (plan) => {
   const today = new Date().toISOString().split("T")[0];
   const endDay = plan?.input_data?.return_date;
@@ -283,25 +200,97 @@ const canEditPlan = (plan) => {
   return today <= endDay;
 };
 
+/* =========================================================
+   API
+========================================================= */
+
+const api = {
+  /* =========================
+     GET HISTORY
+  ========================= */
+  getHistory: async () => {
+    try {
+      if (MODE === "REAL_BACKEND") {
+        const res = await authorizedFetch(REAL_API.getHistory, {
+          method: "GET",
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          return data.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          );
+        }
+      } else {
+        const res = await fetch(JSON_API);
+        if (!res.ok) return [];
+
+        const data = await res.json();
+        return data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
+  /* =========================
+     DELETE HISTORY
+  ========================= */
+  deleteHistory: async (id) => {
+    try {
+      if (!id) return false;
+
+      if (MODE === "REAL_BACKEND") {
+        const res = await authorizedFetch(
+          `${REAL_API.deleteHistory}${id}/`,
+          { method: "DELETE" }
+        );
+        return res.ok;
+      } else {
+        const res = await fetch(`${JSON_API}/${id}`, {
+          method: "DELETE",
+        });
+        return res.ok;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  },
+};
+
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 function HistoryComponent() {
   const [historyData, setHistoryData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   /* =========================
      LOAD HISTORY
   ========================= */
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("history")) || [];
-
-    const sorted = data.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
-
-    setHistoryData(sorted);
+    loadHistory();
   }, []);
 
+  const loadHistory = async () => {
+    setLoading(true);
+    try {
+      const data = await api.getHistory();
+      setHistoryData(data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /* =========================
-     OPEN PLAN (VIEW / EDIT)
+     OPEN PLAN (GIỮ NGUYÊN LOGIC CŨ)
   ========================= */
   const openPlan = (id, mode = "view") => {
     const plan = JSON.parse(localStorage.getItem(`plan_${id}`));
@@ -311,7 +300,7 @@ function HistoryComponent() {
       return;
     }
 
-    // nếu cố edit nhưng đã lock
+    // lock check
     if (mode === "change" && plan.is_locked) {
       toast.error("Kế hoạch đã được chốt, chỉ có thể xem");
       mode = "view";
@@ -320,43 +309,30 @@ function HistoryComponent() {
     navigate("/my-trip/output", {
       state: {
         data: plan,
-        mode, // "view" | "change"
+        mode, // 🔥 QUAN TRỌNG
       },
     });
   };
 
   /* =========================
-     DELETE PLAN
+     DELETE
   ========================= */
   const handleDelete = async (id) => {
-    try {
-      if (MODE === "JSON_SERVER") {
-        await fetch(`${JSON_API}/${id}`, {
-          method: "DELETE",
-        });
+    const success = await api.deleteHistory(id);
 
-        const updated = historyData.filter((item) => item.id !== id);
-        setHistoryData(updated);
-
-        localStorage.removeItem(`plan_${id}`);
-        localStorage.setItem("history", JSON.stringify(updated));
-
-        toast.success("Đã xóa kế hoạch");
-        return;
-      }
-
-      const res = await fetch(`history/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error();
-
-      setHistoryData((prev) => prev.filter((item) => item.id !== id));
-      toast.success("Deleted");
-    } catch (err) {
-      console.error(err);
+    if (!success) {
       toast.error("Xóa thất bại");
+      return;
     }
+
+    // update UI
+    const updated = historyData.filter((item) => item.id !== id);
+    setHistoryData(updated);
+
+    // xoá local detail
+    localStorage.removeItem(`plan_${id}`);
+
+    toast.success("Đã xóa kế hoạch");
   };
 
   /* =========================
@@ -367,57 +343,62 @@ function HistoryComponent() {
       <Header />
 
       <div className="history-list">
-        {historyData.length === 0 ? (
+        {loading && <p>Loading...</p>}
+
+        {!loading && historyData.length === 0 && (
           <p>Chưa có lịch sử nào</p>
-        ) : (
-          historyData.map((item) => (
-            <div key={item.id} className="history-card">
+        )}
 
-              {/* INFO */}
-              <div onClick={() => openPlan(item.id, "view")}>
-                <h3>
-                  {item.location || "Unknown"} {item.is_locked && "🔒"}
-                </h3>
+        {historyData.map((item) => (
+          <div key={item.id} className="history-card">
 
-                <p>
-                  {item.created_at
-                    ? new Date(item.created_at).toLocaleString()
-                    : "No date"}
-                </p>
-              </div>
+            {/* INFO */}
+            <div onClick={() => openPlan(item.id, "view")}>
+              <h3>
+                {item.location || "Unknown"}{" "}
+                {item.is_locked && "🔒"}
+              </h3>
 
-              {/* ACTIONS */}
-              <div className="actions">
-                {/* VIEW */}
-                <button onClick={() => openPlan(item.id, "view")}>
-                  View
+              <p>
+                {item.created_at
+                  ? new Date(item.created_at).toLocaleString()
+                  : "No date"}
+              </p>
+            </div>
+
+            {/* ACTIONS */}
+            <div className="actions">
+
+              {/* VIEW */}
+              <button onClick={() => openPlan(item.id, "view")}>
+                View
+              </button>
+
+              {/* EDIT */}
+              {!item.is_locked && (
+                <button
+                  onClick={() => {
+                    if (!canEditPlan(item)) {
+                      toast.error("Đã quá hạn chỉnh sửa");
+                      return;
+                    }
+
+                    openPlan(item.id, "change"); // 🔥 mode vẫn giữ
+                  }}
+                >
+                  Continue Editing
                 </button>
+              )}
 
-                {/* EDIT */}
-                {!item.is_locked && (
-                  <button
-                    onClick={() => {
-                      if (!canEditPlan(item)) {
-                        toast.error("Đã quá hạn chỉnh sửa");
-                        return;
-                      }
-
-                      openPlan(item.id, "change");
-                    }}
-                  >
-                    Continue Editing
-                  </button>
-                )}
-
-                {/* DELETE */}
-                <button onClick={() => handleDelete(item.id)}>
-                  Delete
-                </button>
-              </div>
+              {/* DELETE */}
+              <button onClick={() => handleDelete(item.id)}>
+                Delete
+              </button>
 
             </div>
-          ))
-        )}
+
+          </div>
+        ))}
       </div>
     </>
   );

@@ -8,11 +8,21 @@ const LocationDetail = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const raw = state?.detail || null;
-
+   console.log("RAW DETAIL:", raw);
   const location = raw
     ? {
         ...raw,
+      name:
+          raw.name ||
+          raw.place_name ||
+          raw.title ||
+          raw.places?.[0]?.name || // 🔥 fallback cho case nested
+          "No name",
 
+        address:
+          raw.address ||
+          raw.places?.[0]?.address ||
+          "No address",
         
         // operatingHours: raw.active_hours
         //   ? JSON.parse(raw.active_hours)
@@ -99,7 +109,8 @@ const validAnnouncements = Array.isArray(location?.announcements)
             />
 
             <div className="image-overlay">
-              <h1>{location.name}</h1>
+              {/* <h1>{location.name}</h1> */}
+               <h1>{location.name}</h1>
 
               <div className="quick-info">
                 <span>{location.address}</span>
@@ -146,7 +157,9 @@ const validAnnouncements = Array.isArray(location?.announcements)
 
                         <div className="dish-header">
                           <h4 className="dish-name">
-                            {item.dish_name || item.name || "No name"}
+                            {/* {item.dish_name || item.name || "No name"} */}
+                             {item.dish_name || item.name || item.type_name || "No name"}
+
                           </h4>
 
                           <span className="dish-price">
