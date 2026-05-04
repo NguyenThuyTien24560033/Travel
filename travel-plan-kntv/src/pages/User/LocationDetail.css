@@ -1,275 +1,219 @@
-/* =========================================
-   TỔNG THỂ NỀN XÁM NHẠT
-   ========================================= */
+/* Tổng thể wrapper */
 .location-detail-wrapper {
-    background-color: #f0f2f5;
-    min-height: 100vh;
-    padding: 30px 15px;
-    font-family: 'Inter', -apple-system, sans-serif;
-    color: #2d3748;
+  width: 100%;
+  height: 100vh; /* Cố định chiều cao màn hình */
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  overflow: hidden; /* Ngăn cuộn toàn trang web */
 }
 
+/* Container chính */
 .location-detail-container {
-    max-width: 1100px;
-    margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  position: relative;
 }
 
-/* =========================================
-   HEADER & IMAGE
-   ========================================= */
-.detail-header {
-    margin-bottom: 25px;
-    position: relative;
-}
-
+/* NÚT QUAY LẠI - Góc trái trên cùng */
 .back-btn {
-    margin-bottom: 20px;
-    background: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    font-weight: 600;
-    color: #4a5568;
-    transition: all 0.2s ease;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100; /* Luôn nằm trên cùng */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  transition: all 0.3s ease;
 }
 
 .back-btn:hover {
-    transform: translateX(-5px);
-    background: #edf2f7;
+  background: #fff;
+  transform: translateX(-5px);
+}
+
+/* HEADER (Ảnh và Overlay) */
+.detail-header {
+  position: relative;
+  flex-shrink: 0; /* Không cho header bị co lại */
 }
 
 .image-container {
-    height: 400px;
-    border-radius: 24px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
 }
 
 .image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .image-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 40px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-    color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 20px 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
 }
 
-.image-overlay h1 { 
-    margin: 0; 
-    font-size: 2.5rem; 
-    font-weight: 800;
-    letter-spacing: -0.5px;
+.image-overlay h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 
-.quick-info { 
-    margin-top: 12px; 
-    display: flex; 
-    gap: 20px; 
-    font-size: 0.95rem;
-    font-weight: 500;
-    flex-wrap: wrap;
+.quick-info {
+  display: flex;
+  gap: 20px;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
-/* =========================================
-   BỐ CỤC CHIA CỘT
-   ========================================= */
+/* GRID NỘI DUNG - Chia cột và cho phép cuộn */
 .detail-grid {
-    display: grid;
-    grid-template-columns: 1.7fr 1fr;
-    gap: 30px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 350px; /* Trái rộng, phải sidebar */
+  gap: 20px;
+  padding: 20px;
+  flex: 1; /* Chiếm hết phần còn lại */
+  overflow-y: auto; /* KÍCH HOẠT SCROLL DOWN Ở ĐÂY */
+  background: #fff;
 }
 
-/* Style chung cho các khối trắng (Cards) */
+/* Khối thông tin chung */
 .info-block, .promo-block, .reviews-block {
-    background: white;
-    padding: 28px;
-    border-radius: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-.info-block h3, .promo-block h3, .reviews-block h3, .reviews-header h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #f7fafc;
-    color: #1a202c;
-    font-size: 1.25rem;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.clickable-h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: #2d3436;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #f1f1f1;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-.clickable-h3 { cursor: pointer; user-select: none; }
-.clickable-h3:hover { color: #3182ce; }
-
-/* =========================================
-   SCROLL VIEW CONFIGURATION (Chống tràn vỡ)
-   ========================================= */
-.content-list, .comments-container {
-    max-height: 500px; /* Chiều cao tối đa trước khi xuất hiện thanh cuộn */
-    overflow-y: auto;
-    padding-right: 8px; /* Khoảng cách cho thanh cuộn */
+/* Danh sách món ăn/dịch vụ */
+.content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* Tinh chỉnh thanh cuộn cho hiện đại */
-.content-list::-webkit-scrollbar, 
-.comments-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.content-list::-webkit-scrollbar-track, 
-.comments-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.content-list::-webkit-scrollbar-thumb, 
-.comments-container::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
-    border-radius: 10px;
-}
-
-.content-list::-webkit-scrollbar-thumb:hover, 
-.comments-container::-webkit-scrollbar-thumb:hover {
-    background: #a0aec0;
-}
-
-/* =========================================
-   CHI TIẾT CÁC THÀNH PHẦN
-   ========================================= */
-
-/* Menu Card */
 .dish-card {
-    padding: 16px;
-    border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid #f1f5f9;
-    margin-bottom: 12px;
-    transition: all 0.2s;
-}
-
-.dish-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
-    border-color: #e2e8f0;
+  padding: 15px;
+  background: #fdfdfd;
+  border-left: 4px solid #ff7675;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .dish-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
 }
 
-.dish-name { font-size: 16px; font-weight: 700; color: #2d3748; margin: 0; }
-.dish-price { color: #e11d48; font-weight: 700; font-size: 16px; }
-.dish-desc { font-size: 14px; color: #718096; margin-top: 8px; line-height: 1.5; }
+.dish-name { font-weight: bold; color: #d63031; }
+.dish-price { color: #2ecc71; font-weight: 600; }
+.dish-desc { font-size: 0.85rem; color: #636e72; }
 
-/* Announcements */
-.announce-card {
-    background: #f8fafc;
-    border-left: 4px solid #3182ce;
-    padding: 16px;
-    border-radius: 12px;
-    margin-bottom: 15px;
+/* SIDEBAR & REVIEWS */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.announce-title { margin: 0 0 8px 0; font-weight: 700; color: #2c5282; }
-.announce-meta { display: flex; gap: 15px; margin-top: 10px; font-size: 12px; color: #a0aec0; }
-
-/* Promo/Discount (Sidebar) */
 .promo-card {
-    background: #fffaf0;
-    border: 1px dashed #f6ad55;
-    padding: 16px;
-    border-radius: 15px;
-    margin-bottom: 12px;
+  background: #fff9db;
+  border: 1px dashed #f1c40f;
+  padding: 10px;
+  border-radius: 8px;
 }
-
-.promo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
-.promo-title { margin: 0; color: #c05621; font-weight: 700; font-size: 15px; }
-.promo-value { color: #dd6b20; font-weight: 800; font-size: 14px; background: #feebc8; padding: 2px 8px; border-radius: 6px; }
-.promo-desc { font-size: 13px; color: #7b341e; margin: 5px 0; }
-.promo-meta { font-size: 11px; color: #9c4221; line-height: 1.4; }
-
-/* Reviews & Comments */
-.reviews-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.write-review-btn {
-    background: #3182ce;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
-}
-
-.write-review-btn:hover { background: #2b6cb0; }
 
 .comment-card {
-    background: #f8fafc;
-    padding: 18px;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #edf2f7;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
 }
 
 .comment-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
 }
 
-.comment-top strong { color: #2d3748; font-size: 14px; font-weight: 700; }
 .stars { display: flex; gap: 2px; }
-.comment-card p { margin: 0; font-size: 14px; line-height: 1.5; color: #4a5568; }
 
-/* =========================================
-   MOBILE RESPONSIVE
-   ========================================= */
+/* Phân trang đánh giá */
+.review-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.review-pagination button {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.review-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Viết bình luận button */
+.write-review-btn {
+  background: #0984e3;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Responsive cho Mobile */
 @media (max-width: 768px) {
-    .detail-grid { grid-template-columns: 1fr; gap: 20px; }
-    
-    .image-container { 
-        height: 300px; 
-        border-radius: 0; 
-        margin: -30px -15px 20px -15px; 
-    }
-    
-    .image-overlay { padding: 20px; }
-    .image-overlay h1 { font-size: 1.8rem; }
-    
-    .location-detail-wrapper { padding: 15px 10px; }
-    
-    .content-list, .comments-container {
-        max-height: 400px; /* Giảm chiều cao cuộn trên mobile */
-    }
-    
-    .info-block, .promo-block, .reviews-block {
-        padding: 20px;
-    }
+  .detail-grid {
+    grid-template-columns: 1fr; /* Chuyển thành 1 cột */
+  }
+  
+  .image-container {
+    height: 250px;
+  }
+
+  .back-btn {
+    top: 10px;
+    left: 10px;
+    padding: 6px 12px;
+  }
 }

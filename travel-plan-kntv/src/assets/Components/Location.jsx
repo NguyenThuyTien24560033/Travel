@@ -145,7 +145,7 @@ function LocationComponent() {
         try {
             let data = await api.getLocations();
 
-            // 🔥 FIX 2: flatten backend → mảng chung
+        
             if (MODE === "REAL_BACKEND") {
                 data = [
                     ...(data.Hotels || []).map(i => ({ ...i, type: 1 })),
@@ -154,7 +154,6 @@ function LocationComponent() {
                 ];
             }
 
-            // 🔥 FIX 3: pre-normalize để search nhanh
             data = data.map(item => ({
                 ...item,
                 _name: item.name?.toLowerCase().replaceAll(" ", "")
@@ -184,7 +183,7 @@ function LocationComponent() {
     };
 
     /* =========================
-       SEARCH (🔥 FIX CHÍNH)
+ 
     ========================= */
  
 const handleSearch = async (input = {}) => {
@@ -192,7 +191,7 @@ const handleSearch = async (input = {}) => {
 
         try {
             if (MODE === "REAL_BACKEND") {
-                // ✅ gọi backend filter
+  
                 let data = await api.getLocations(input);
 
                 data = [
@@ -204,7 +203,7 @@ const handleSearch = async (input = {}) => {
                 setLocationData(data);
 
             } else {
-                // ✅ JSON SERVER filter local
+          
                 let result = [...locationDataOriginal];
 
                 const normalize = (str) =>
@@ -240,7 +239,7 @@ const handleSearch = async (input = {}) => {
         }
     };
 
-    // 🔥 FIX 5: reset KHÔNG gọi lại API
+ 
     const resetSearch = () => {
         setMode(null);
         setIsMenuOpen(false);
@@ -248,47 +247,8 @@ const handleSearch = async (input = {}) => {
         setLocationData(locationDataOriginal);
     };
 
-    
-// Lấy xong rồi mới truyền vào navigate để đến giao diện detail
-    // const handleNavigate = (id) => navigate(`/places/${id}`);
-    // const HandleClick = async (id, type) => {
-    // if (MODE === "JSON_SERVER") {
-    //     // nhanh cho fake backend
-    //     navigate(`/places/${id}`);
-    //     return;
-    // }
-
-    // // REAL_BACKEND → fetch detail thật
-    // setLoading(true);
-    // // try {
-    // //     const data = await api.getDetail(id, type);
-
-    // //     if (!data) {
-    // //         toast.error("No detail found");
-    // //         return;
-    // //     }
-
-    // //     // tuỳ bạn: lưu state hoặc navigate
-    // //     navigate(`/places/${id}`, { state: data });
-
-    // // } catch (err) {
-    // //     toast.error("Server error");
-    // // } finally {
-    // //     setLoading(false);
-    // // }
-    //  setLoading(true);
-
-    //     try {
-    //         const data = await api.getDetail(id, type);
-    //         setdetailData(data);
-    //     } catch (err) {
-    //         toast.error("Server error");
-    //         return false;
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-const HandleClick = async (id, type) => { // ✅ FIX FULL
+ 
+const HandleClick = async (id, type) => { 
         setLoading(true);
 
         try {
@@ -299,11 +259,14 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
                 return;
             }
 
+   
             navigate(`/places/${id}`, {
-                state: {
-                    detail: data
-                }
-            });
+    state: {
+        id,
+        type,       
+        detail: data
+    }
+});
 
         } catch {
             toast.error("Server error");
@@ -311,63 +274,7 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
             setLoading(false);
         }
     };
-    /* =========================
-       GROUP DATA (🔥 FIX SẠCH)
-    ========================= */
-    // let groupedData = {};
-    // if (MODE === "REAL_BACKEND"){
-    //     groupedData = {
-    //         // Duyệt qua mảng Hotels, giữ nguyên dữ liệu cũ (...item) và thêm type: 1
-    //         Hotels: locationData.Hotels?.map(item => ({ ...item, type: 1 })) || [],
-            
-    //         // Thêm type: 2 cho Restaurants
-    //         Restaurants: locationData.Restaurants?.map(item => ({ ...item, type: 2 })) || [],
-            
-    //         // Thêm type: 3 cho Attractions
-    //         Attractions: locationData.Attractions?.map(item => ({ ...item, type: 3 })) || []
-    //     };
-    // } else {
-    //     groupedData = {
-    //         Hotels: locationData.filter(item => Number(item.type) === 1),
-    //         Restaurants: locationData.filter(item => Number(item.type) === 2),
-    //         Attractions: locationData.filter(item => Number(item.type) === 3),
-    //     };
-    // }
-
-    const groupedData = {
-    Hotels: locationData.filter(item => item.type === 1),
-    Restaurants: locationData.filter(item => item.type === 2),
-    Attractions: locationData.filter(item => item.type === 3),
-};
-
-    /* =========================
-       OPTIONS
-    ========================= */
-    const accommodationOptions = { 1: "Hotel", 2: "Motel", 3: "Homestay", 4: "Resort", 5: "Villa" };
-    const foodOptions = { 1: "Meat", 2: "Seafood", 3: "Vegetarian", 4: "Family-style", 5: "Set meals", 6: "Hotpot" };
-    const travelOptions = { 1: "Relax", 2: "Adventure", 3: "Food tour", 4: "Cultural", 5: "Playground", 6: "History", 7: "Thrill", 8: "Beach", 9: "Take picture" };
-
-    /* =========================
-       RENDER LIST
-    ========================= */
-    // const renderList = (list) => {
-    //     if (!list || list.length === 0) {
-    //         return <p className="empty">No data</p>;
-    //     }
-
-    //     return (
-    //         <div className="list">
-    //             {list.map(item => (
-    //                 <div key={item.id} className="card" onClick={() => handleNavigate(item.id)}>
-    //                     <img src={item.image || "https://placehold.co/300x200"} alt={item.name} />
-    //                     <h3>{item.name}</h3>
-    //                     <p>{item.address}</p>
-    //                     <p>⭐ {item.rating}</p>
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     );
-    // };
+    
     const renderList = (list) => {
     if (!list || list.length === 0) {
          return null;
@@ -394,62 +301,7 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
         <div className="location-container">
             <Header />
 
-            {/* <div className="search-section">
-
-                <div className="search-bar-trigger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                    🔍 {mode ? `Category: ${mode}` : "What are you looking for?"}
-                    {mode && (
-                        <button onClick={(e) => { e.stopPropagation(); resetSearch(); }}>✕</button>
-                    )}
-                </div>
-
-                {isMenuOpen && (
-                    <div className="search-mode-menu">
-                        <button onClick={() => { setMode("name"); setIsMenuOpen(false); }}>Search by Name</button>
-                        <button onClick={() => { setMode("accommodation_type"); setIsMenuOpen(false); }}>Hotel Types</button>
-                        <button onClick={() => { setMode("food_type"); setIsMenuOpen(false); }}>Food Types</button>
-                        <button onClick={() => { setMode("travel_style"); setIsMenuOpen(false); }}>Travel Styles</button>
-                    </div>
-                )}
-
-                <div className="search-control-area">
-
-                    {mode === "name" && (
-                        <input
-                            className="search-input-field"
-                            autoFocus
-                            type="text"
-                            placeholder="Type a location name..."
-                            value={nameInput}
-                            onChange={(e) => setNameInput(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleSearch({ name: nameInput });
-                                }
-                            }}
-                        />
-                    )}
-
-                    {mode && mode !== "name" && (
-                        <div className="options-grid">
-                            {Object.entries(
-                                mode === "accommodation_type" ? accommodationOptions :
-                                mode === "food_type" ? foodOptions : travelOptions
-                            ).map(([k, v]) => (
-                                <button
-                                    key={k}
-                                    onClick={() => handleSearch({ [mode]: Number(k) })}
-                                >
-                                    {v}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                </div>
-            </div>
-
-            {loading && <p>Searching...</p>} */}
+          
 <div className="search-section">
 
     {/* SEARCH BAR */}
@@ -538,27 +390,10 @@ const HandleClick = async (id, type) => { // ✅ FIX FULL
     </div>
 </div>
 
-{/* LOADING */}
-{/* {loading && <div className="loading">Searching...</div>}
-            <div className="results-section">
-                <h2>Hotels</h2>
-                {renderList(groupedData.Hotels)}
 
-                <h2>Restaurants</h2>
-                {renderList(groupedData.Restaurants)}
-
-                <h2>Attractions</h2>
-                {renderList(groupedData.Attractions)}
-            </div>
-        </div>
-    );
-}
-
-export default LocationComponent; */}
 <div className="results-section">
 
-                {/* 🔥 FIX 4: chỉ render title nếu có data */}
-
+               
                 {groupedData.Hotels.length > 0 && (
                     <>
                         <h2>Hotels</h2>

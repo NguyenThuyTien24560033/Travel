@@ -147,7 +147,8 @@
       "description": "Khách sạn sang trọng với view nhìn ra Hồ Xuân Hương, đầy đủ tiện nghi.",
       "image": "https://picsum.photos/800/400",
       "active_hours": [
-        "24/7"
+        1,
+        2
       ],
       "accommodation_type": 1,
       "travel_style": 1,
@@ -236,6 +237,36 @@
           "commenter": "ThuyTien",
           "rating": 4,
           "content": "56"
+        },
+        {
+          "comment_id": "1777863304269",
+          "commenter": "ThuyTien",
+          "rating": 2,
+          "content": "ty"
+        },
+        {
+          "comment_id": "1777863346372",
+          "commenter": "ThuyTien",
+          "rating": 2,
+          "content": "0000"
+        },
+        {
+          "comment_id": "1777864048982",
+          "commenter": "ThuyTien",
+          "rating": 5,
+          "content": "cá"
+        },
+        {
+          "comment_id": "1777864098696",
+          "commenter": "ThuyTien",
+          "rating": 3,
+          "content": "yh"
+        },
+        {
+          "comment_id": "1777864295042",
+          "commenter": "ThuyTien",
+          "rating": 5,
+          "content": "tro"
         }
       ],
       "announcements": [
