@@ -9,6 +9,7 @@ import {
     MessageCircle,
     LogOut,
 } from "lucide-react";
+import { usePartner } from '../Layouts/PartnerLayout';
 import './PartnerSiderbar.css'
 
 
