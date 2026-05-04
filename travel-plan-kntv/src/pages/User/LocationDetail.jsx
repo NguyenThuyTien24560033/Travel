@@ -35,13 +35,8 @@ const LocationDetail = () => {
     : null;
 
   const comments = location?.reviews || [];
-  const averageRating =
-  comments.length > 0
-    ? (
-        comments.reduce((sum, c) => sum + (c.rating || 0), 0) /
-        comments.length
-      ).toFixed(1)
-    : 4.5;
+  const averageRating = location?.rating || 4.0;
+
 const [reviewPage, setReviewPage] = useState(0);
 const REVIEWS_PER_PAGE = 3;
 const start = reviewPage * REVIEWS_PER_PAGE;
