@@ -10,11 +10,11 @@ import Header from "./Header";
    CONFIG
 ========================================================= */
 
-// const MODE = "JSON_SERVER"; 
+const MODE = "JSON_SERVER"; 
 
 const JSON_API = "http://localhost:3001/places";
 
-const MODE = "REAL_BACKEND"
+// const MODE = "REAL_BACKEND"
 const REAL_API = {
     getLocations: "places/browse/",
     getHotel: "places/hotels/",

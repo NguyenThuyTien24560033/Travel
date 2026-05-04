@@ -16,11 +16,11 @@ export const usePartner = () => useContext(PartnerContext);
    PHẦN 2: API LAYER (CHỈ SỬA MODE)
 ========================================================= */
 
-// const MODE = "JSON_SERVER"; 
-// const JSON_API = "http://localhost:3001/users";
+const MODE = "JSON_SERVER"; 
+const JSON_API = "http://localhost:3001/users";
 
 //Đình Khang đổi đường dẫn tại đây
-const MODE = "REAL_BACKEND"; 
+// const MODE = "REAL_BACKEND"; 
 const REAL_API = {
     login: "http://localhost:8000/travel/api/login/",
     register: "http://localhost:8000/travel/users/",
