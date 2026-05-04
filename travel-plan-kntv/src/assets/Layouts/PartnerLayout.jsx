@@ -173,7 +173,7 @@ function PartnerLayout() {
     };
 
     /* 🔹 UI */
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div style={{ margin: "20px" }}>Loading...</div>;
 
     return (
         <PartnerContext.Provider value={value}>

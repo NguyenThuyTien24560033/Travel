@@ -1,201 +1,103 @@
-/* Container chính */
+.menu-page {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.menu-page h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+
+    border-left: 5px solid #22c55e;
+    padding-left: 12px;
+}
+
+/* grid */
 .menu-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  font-family: 'Inter', sans-serif;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
 }
 
-/* Header: Title và Nút Add */
-.menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 15px;
-}
-
-.menu-header h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin: 0;
-}
-
-.menu-header button {
-  background-color: #ff4757;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.menu-header button:hover {
-  background-color: #e84118;
-}
-
-/* Grid danh sách món ăn */
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
-}
-
-/* Card món ăn */
+/* card */
 .menu-card {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
+    background: white;
+    padding: 1.2rem;
+
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    transition: 0.2s;
 }
 
 .menu-card:hover {
-  transform: translateY(-5px);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(0,0,0,0.1);
 }
 
-.menu-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background-color: #f8f9fa;
+/* header */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
 }
 
-.menu-card h4 {
-  margin: 15px 15px 5px;
-  font-size: 1.2rem;
-  color: #2d3436;
+.menu-title {
+    font-weight: 700;
+    color: #1e293b;
 }
 
-.menu-card p {
-  margin: 0 15px 10px;
-  font-size: 0.9rem;
-  color: #636e72;
-  flex-grow: 1; /* Để phần mô tả chiếm không gian trống */
+.menu-price {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #22c55e;
+    font-weight: 600;
 }
 
-.menu-card b {
-  margin: 0 15px 15px;
-  display: block;
-  color: #2ecc71;
-  font-size: 1.1rem;
+/* desc */
+.menu-desc {
+    font-size: 0.9rem;
+    color: #475569;
 }
 
-/* Nút bấm trong Card (Edit/Delete) */
-.actions {
-  display: flex;
-  border-top: 1px solid #eee;
+/* actions */
+.menu-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    cursor: pointer;
 }
 
-.actions button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
+/* form */
+.menu-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
 }
 
-.actions button:first-child {
-  color: #0984e3;
-  border-right: 1px solid #eee;
+.menu-form input,
+.menu-form textarea {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
 }
 
-.actions button:last-child {
-  color: #d63031;
-}
+.menu-form button {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: none;
 
-.actions button:hover {
-  background-color: #f8f9fa;
-}
-
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(3px);
-}
-
-/* Nội dung Modal */
-.modal {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 450px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.modal h3 {
-  margin-top: 0;
-  text-align: center;
-  color: #333;
-}
-
-.modal input, 
-.modal textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.modal input:focus, 
-.modal textarea:focus {
-  border-color: #ff4757;
-}
-
-.modal textarea {
-  height: 100px;
-  resize: none;
-}
-
-/* Nút trong Modal */
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.modal-actions button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.modal-actions button:first-child {
-  background-color: #2ecc71;
-  color: white;
-}
-
-.modal-actions button:last-child {
-  background-color: #bdc3c7;
-  color: white;
-}
-
-.modal-actions button:hover {
-  opacity: 0.9;
+    background: #22c55e;
+    color: white;
+    font-weight: 600;
 }

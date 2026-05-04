@@ -1,253 +1,113 @@
-import { useState, useEffect } from "react";
-import { usePartner } from '../../../assets/Layouts/PartnerLayout';
-import { Toaster, toast } from "sonner";
-import './Menu.css';
+import { useEffect, useState } from "react";
+import { usePartner } from "../../../assets/Layouts/PartnerLayout.jsx";
+import { Banknote, FileText, Pencil, Trash2 } from "lucide-react";
+import { authorizedFetch } from "../../../../api.js";
+import "./Menu.css";
 
-/* ========================= */
-// const MODE = "JSON_SERVER";
-// const JSON_API = "http://localhost:3001/users";
-
-
-const MODE = "REAL_BACKEND";
-const REAL_API = {
-    // Cái này phải gắn thêm id và "menu" vào cuối
-    Dish: 'places/restaurants'
-};
-/* ========================= */
-
-const DEFAULT_IMAGE = "https://placehold.co/300x200";
-
+import AddDish from "./Menu_Add";
+import EditDish from "./Menu_Edit";
 
 const Menu = () => {
-    const { user, setUser, location } = usePartner();
+    const { location } = usePartner();
+
     const [dishes, setDishes] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({
-        dish_name: "",
-        price: "",
-        description: "",
-        image: ""
-    });
-
-    const isOwner = user?.role === "OWNER";
-
+    const [showAdd, setShowAdd] = useState(false);
+    const [editDish, setEditDish] = useState(null);
 
     useEffect(() => {
-        setDishes(location?.dishes || []);
+        const data =
+            typeof location?.dishes === "string"
+                ? JSON.parse(location.dishes)
+                : location?.dishes || [];
+
+        setDishes(data);
     }, [location]);
 
-
-    /* ================= INPUT ================= */
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
+    const handleAdd = (dish) => {
+        setDishes(prev => [dish, ...prev]);
+        setShowAdd(false);
     };
 
-    /* ================= SAVE ================= */
-    const handleSave = async () => {
-        if (!isOwner) return toast.error("Không có quyền!");
+    const handleEdit = (updated) => {
+        setDishes(prev =>
+            prev.map(d => d.dish_id === updated.dish_id ? updated : d)
+        );
+        setEditDish(null);
+    };
 
+    const handleDelete = async (id) => {
         try {
-            let updatedUser;
-            // 1. Xác định URL: places/restaurants/<location_id>/menu/
-            const locationId = location.id;
-            const url = `${REAL_API.Dish}/${locationId}/menu/`;
+            await authorizedFetch(
+                `places/restaurants/${location.id}/menu/`,
+                {
+                    method: "DELETE",
+                    body: JSON.stringify({ dish_id: id })
+                }
+            );
 
-            try {
-            setLoading(true);
-            let res;
-
-            if (editingId) {
-                // --- UPDATE (SỬA MÓN) ---
-                // Backend dùng logic: d_id = request.data.get('dish_id')
-                res = await authorizedFetch(url, {
-                    method: "PUT",
-                    body: JSON.stringify({
-                        ...form,
-                        dish_id: editingId, // Truyền ID món vào body để backend nhận diện
-                    }),
-                });
-            } else {
-                // --- CREATE (THÊM MỚI) ---
-                res = await authorizedFetch(url, {
-                    method: "POST",
-                    body: JSON.stringify(form),
-                });
-            }
-
-            // Kiểm tra phản hồi
-            if (res.ok) {
-                const data = await res.json();
-                console.log("Thao tác Menu thành công:", data);
-                return data;
-            } else {
-                const errorData = await res.json();
-                console.error("Lỗi thao tác Menu:", errorData.message);
-            }
-
-            } catch (err) {
-                console.error("Lỗi kết nối API Menu:", err);
-            } finally {
-                setLoading(false);
-            }
-
-            /* ================= SYNC ================= */
-            // localStorage.setItem("user", JSON.stringify(updatedUser));
-            // setUser(updatedUser);
-
-            // setShowModal(false);
-            // setEditingId(null);
-
-            // setForm({
-            // dish_name: "",
-            // price: "",
-            // description: "",
-            // image: ""
-            // });
-
-            // toast.success("Saved!");
+            setDishes(prev => prev.filter(d => d.dish_id !== id));
         } catch (err) {
             console.error(err);
-            toast.error("Lỗi!");
         }
     };
 
-    /* ================= DELETE ================= */
-    // Mấy cái handle này có cái bị trùng rồi. làm lại từ đầu đi
-    const handleDelete = async (id) => {
-        if (!isOwner) return toast.error("Không có quyền!");
+    if (!location) return <div style={{ padding: 20 }}>No data</div>;
 
-        try {
-            let updatedUser;
-            const locationId = location.id;
-            const url = `${REAL_API.Dish}/${locationId}/menu/`;
-
-            try {
-            setLoading(true);
-
-            // 2. Gọi authorizedFetch với method DELETE
-            // Lưu ý: ID của món ăn cần xóa (id) phải được bỏ vào body JSON
-            const res = await authorizedFetch(url, {
-                method: "DELETE",
-                body: JSON.stringify({
-                dish_id: id // 'id' này là ID của món ăn bạn truyền vào hàm delete
-                }),
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || "Xóa món thất bại");
-            }
-
-            const data = await res.json();
-            console.log("Xóa món thành công:", data);
-            
-            // Trả về data để cập nhật lại state UI (nếu cần)
-            return data;
-
-            } catch (err) {
-            console.error("Lỗi khi xóa món:", err);
-            } finally {
-            setLoading(false);
-            }
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
-
-    toast.success("Deleted!");
-    } catch {
-    toast.error("Xóa thất bại!");
-    }
-    };
-
-    /* ================= EDIT ================= */
-    const handleEdit = (dish) => {
-    setForm({
-    dish_name: dish.dish_name,
-    price: dish.price,
-    description: dish.description,
-    image: dish.image || ""
-    });
-    setEditingId(dish.dish_id);
-    setShowModal(true);
-    };
-
-    /* ================= UI ================= */
     return (
-        <div className="menu-container">
-            <Toaster position="top-center" richColors />
+        <div className="menu-page">
+            <h2>Menu</h2>
 
-            <div className="menu-header">
-                <h2>Menu Management</h2>
+            <button className="add-btn" onClick={() => setShowAdd(true)}>
+                + Add Dish
+            </button>
 
-                {isOwner && (
-                    <button onClick={() => setShowModal(true)}>+ Add Dish</button>
+            <div className="menu-container">
+                {dishes.length > 0 ? (
+                    dishes.map(d => (
+                        <div key={d.dish_id} className="menu-card">
+
+                            <div className="menu-header">
+                                <div className="menu-title">{d.dish_name}</div>
+
+                                <div className="menu-price">
+                                    <Banknote size={16} />
+                                    {d.price.toLocaleString()}đ
+                                </div>
+                            </div>
+
+                            <div className="menu-desc">
+                                <FileText size={16} />
+                                {d.description || "No description"}
+                            </div>
+
+                            <div className="menu-actions">
+                                <Pencil size={16} onClick={() => setEditDish(d)} />
+                                <Trash2 size={16} onClick={() => handleDelete(d.dish_id)} />
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="empty">No dishes yet</div>
                 )}
             </div>
 
-            <div className="menu-grid">
-                {dishes.length === 0 ? ( <p>No dishes</p> ) : ( dishes.map(d => (
-                    <div key={d.dish_id} className="menu-card">
-                        <img src={d.image || DEFAULT_IMAGE} alt={d.dish_name}/>
-
-                        <h4>{d.dish_name}</h4>
-                        <p>{d.description}</p>
-                        <b>{d.price} VND</b>
-
-                        {isOwner && (
-                            <div className="actions">
-                                <button onClick={() => handleEdit(d)}>Edit</button>
-                                <button onClick={() => handleDelete(d.dish_id)}>Delete</button>
-                            </div>
-                        )}
-                    </div>
-                )))}
-            </div>
-
-            {/* MODAL */}
-            {showModal && (
+            {/* MODALS */}
+            {showAdd && (
                 <div className="modal-overlay">
-                    <div className="modal">
-                        <h3>{editingId ? "Edit Dish" : "Add Dish"}</h3>
+                    <div className="modal-content">
+                        <AddDish onSuccess={handleAdd} onClose={() => setShowAdd(false)} />
+                    </div>
+                </div>
+            )}
 
-                        <input
-                            name="dish_name"
-                            value={form.dish_name}
-                            onChange={handleChange}
-                            placeholder="Name"
+            {editDish && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <EditDish
+                            dish={editDish}
+                            onSuccess={handleEdit}
+                            onClose={() => setEditDish(null)}
                         />
-
-                        <input
-                            name="price"
-                            value={form.price}
-                            onChange={handleChange}
-                            placeholder="Price"
-                        />
-
-                        <input
-                            name="image"
-                            value={form.image}
-                            onChange={handleChange}
-                            placeholder="Image URL"
-                        />
-
-                        <textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleChange}
-                            placeholder="Description"
-                        />
-
-                        <div className="modal-actions">
-                            <button onClick={handleSave}>
-                                {editingId ? "Update" : "Create"}
-                            </button>
-                            <button onClick={() => setShowModal(false)}>
-                                Cancel
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}

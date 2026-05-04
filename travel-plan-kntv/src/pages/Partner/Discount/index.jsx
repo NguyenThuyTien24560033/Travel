@@ -1,18 +1,24 @@
-import { Percent, CalendarDays, FileText } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { usePartner } from "../../../assets/Layouts/PartnerLayout.jsx";
+import { Percent, CalendarDays, FileText, Pencil, Trash2 } from "lucide-react";
+import { authorizedFetch } from "../../../../api.js";
 import './Discount.css';
-import { usePartner } from '../../../assets/Layouts/PartnerLayout.jsx';
+
 import AddDiscount from "./Discount_Add";
+import EditDiscount from "./Discount_Edit";
+
 
 const Discount = () => {
     const { location } = usePartner();
+
     const [discounts, setDiscounts] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [editDiscount, setEditDiscount] = useState(null);
 
     useEffect(() => {
         const data =
             typeof location?.discounts === "string"
-                ? JSON.parse(location.discount)
+                ? JSON.parse(location.discounts)
                 : location?.discounts || [];
 
         setDiscounts(data);
@@ -21,6 +27,29 @@ const Discount = () => {
     const handleAddSuccess = (newDiscount) => {
         setDiscounts(prev => [newDiscount, ...prev]); // thêm lên đầu
         setShowModal(false);
+    };
+
+    const handleEditSuccess = (updated) => {
+        setDiscounts(prev =>
+            prev.map(d => d.discount_id === updated.discount_id ? updated : d)
+        );
+        setEditDiscount(null);
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await authorizedFetch(
+                `places/restaurants/${location.id}/discounts/`,
+                {
+                    method: "DELETE",
+                    body: JSON.stringify({ discount_id: id }),
+                }
+            );
+
+            setDiscounts(prev => prev.filter(d => d.discount_id !== id));
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const formatDate = (dateStr) => {
@@ -91,6 +120,11 @@ const Discount = () => {
                                 {isExpired && (
                                     <div className="discount-badge">Expired</div>
                                 )}
+
+                                <div className="discount-actions">
+                                    <Pencil size={16} onClick={() => setEditDiscount(d)} />
+                                    <Trash2 size={16} onClick={() => handleDelete(d.discount_id)} />
+                                </div>
                             </div>
                         );
                     })
@@ -106,6 +140,18 @@ const Discount = () => {
                             <AddDiscount
                                 onSuccess={handleAddSuccess}
                                 onClose={() => setShowModal(false)}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {editDiscount && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <EditDiscount
+                                discount={editDiscount}
+                                onSuccess={handleEditSuccess}
+                                onClose={() => setEditDiscount(null)}
                             />
                         </div>
                     </div>
