@@ -9,8 +9,8 @@ import "./Comment.css";
 /* =========================================================
    MODE CONFIG
 ========================================================= */
-const MODE = "JSON_SERVER";
-// const MODE = "REAL_BACKEND";
+// const MODE = "JSON_SERVER";
+const MODE = "REAL_BACKEND";
 
 const JSON_API = "http://localhost:3001/places";
 
@@ -37,7 +37,7 @@ const CommentPage = () => {
   const username = user?.username || user?.email || "Anonymous";
 
  
-  console.log("TYPE:", type);
+  // console.log("TYPE:", type);
 
   /* =========================================================
      SUBMIT COMMENT
@@ -93,7 +93,11 @@ const CommentPage = () => {
             return;
         }
 
+        // delete content[]
      
+        console.log("Dữ liệu gửi đi nè: ", JSON.stringify(content));
+        return;
+
         await authorizedFetch(url, {
           method: "POST",
           headers: {

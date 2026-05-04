@@ -179,10 +179,11 @@ import "./History.css";
    CONFIG
 ========================================================= */
 
-const MODE = "JSON_SERVER";
+// const MODE = "JSON_SERVER";
 
 const JSON_API = "http://localhost:3001/history";
 
+const MODE = "REAL_BACKEND";
 const REAL_API = {
   getHistory: "history/",
   deleteHistory: "history/",
@@ -217,9 +218,9 @@ const api = {
 
         if (res.ok) {
           const data = await res.json();
-          return data.sort(
-            (a, b) => new Date(b.created_at) - new Date(a.created_at)
-          );
+
+          console.log("Dữ liệu lịch sử nè: ", data);
+          return data;
         }
       } else {
         const res = await fetch(JSON_API);
@@ -349,7 +350,7 @@ function HistoryComponent() {
           <p>Chưa có lịch sử nào</p>
         )}
 
-        {historyData.map((item) => (
+        {Array.isArray(historyData) && historyData.map((item) => (
           <div key={item.id} className="history-card">
 
             {/* INFO */}

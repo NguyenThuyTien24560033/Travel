@@ -10,11 +10,11 @@ import Header from "./Header";
    CONFIG
 ========================================================= */
 
-const MODE = "JSON_SERVER"; 
+// const MODE = "JSON_SERVER"; 
 
 const JSON_API = "http://localhost:3001/places";
 
-// const MODE = "REAL_BACKEND"
+const MODE = "REAL_BACKEND"
 const REAL_API = {
     getLocations: "places/browse/",
     getHotel: "places/hotels/",
@@ -274,7 +274,21 @@ const HandleClick = async (id, type) => {
             setLoading(false);
         }
     };
+
+    const groupedData = {
+        Hotels: locationData.filter(item => item.type === 1),
+        Restaurants: locationData.filter(item => item.type === 2),
+        Attractions: locationData.filter(item => item.type === 3),
+    };
+
+    /* =========================
+       OPTIONS
+    ========================= */
+    const accommodationOptions = { 1: "Hotel", 2: "Motel", 3: "Homestay", 4: "Resort", 5: "Villa" };
+    const foodOptions = { 1: "Meat", 2: "Seafood", 3: "Vegetarian", 4: "Family-style", 5: "Set meals", 6: "Hotpot" };
+    const travelOptions = { 1: "Relax", 2: "Adventure", 3: "Food tour", 4: "Cultural", 5: "Playground", 6: "History", 7: "Thrill", 8: "Beach", 9: "Take picture" };
     
+
     const renderList = (list) => {
     if (!list || list.length === 0) {
          return null;
