@@ -29,6 +29,8 @@ const PartnerSidebar = ({ onLogout }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = usePartner();
+
+    
     if (!user) {
         return <div>Loading...</div>; 
     }

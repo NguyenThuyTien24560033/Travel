@@ -16,8 +16,8 @@ export const usePartner = () => useContext(PartnerContext);
    PHẦN 2: API LAYER (CHỈ SỬA MODE)
 ========================================================= */
 
-const MODE = "JSON_SERVER"; 
-const JSON_API = "http://localhost:3001/users";
+// const MODE = "JSON_SERVER"; 
+// const JSON_API = "http://localhost:3001/users";
 
 //Đình Khang đổi đường dẫn tại đây
 // const MODE = "REAL_BACKEND"; 
@@ -121,6 +121,8 @@ function PartnerLayout() {
                 return;
             }
 
+            setUser(savedUser);
+
             const loc = await api.getLocation();
             setLocation(loc);
 
@@ -178,7 +180,7 @@ function PartnerLayout() {
         <div className="partner-layout" style={{ display: "flex", minHeight: "100vh" }}>
 
             {/* SIDEBAR */}
-            <PartnerSidebar onLogout={logout} />
+            {user && <PartnerSidebar onLogout={logout} />}
 
             {/* CONTENT */}
             {/* <div className="content">

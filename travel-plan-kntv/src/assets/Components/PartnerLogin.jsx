@@ -48,9 +48,9 @@ const PartnerLogin = () => {
 
   return (
     <div className="login-container">
-      <h2>Partner Login</h2>
-
       <form onSubmit={handleSubmit}>
+        <h2>Partner Login</h2>
+        
         <input
           type="email"
           placeholder="Partner Email"

@@ -58,7 +58,7 @@ const AddDiscount = ({ onSuccess, onClose  }) => {
 
             if (!res.ok) throw new Error("Failed");
 
-            onSuccess && onSuccess(data); // 🔥 trả về discount mới
+            onSuccess && onSuccess(data.discount); // 🔥 trả về discount mới
 
         } catch (err) {
             console.error(err);

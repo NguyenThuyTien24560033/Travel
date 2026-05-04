@@ -17,7 +17,7 @@ const DashBoard = () => {
         return <div style={{ padding: 20 }}>No data available</div>;
     }
 
-
+    // Giờ mở cửa
     const activeHours =
         typeof location?.active_hours === "string"
             ? JSON.parse(location.active_hours)
@@ -31,11 +31,7 @@ const DashBoard = () => {
         4: "Night",
     };
 
-    const tags =
-    typeof location?.tags === "string"
-        ? JSON.parse(location.tags)
-        : location?.tags;
-
+    // Tags (chung)
     const TAGS_MAP = {
         1: "relax",
         2: "adventure",
@@ -47,6 +43,56 @@ const DashBoard = () => {
         8: "beach",
         9: "take picture",
     };
+
+    const CUISINE_MAP = {
+        1: "meat",
+        2: "seafood",
+        3: "vegetarian",
+        4: "family-style",
+        5: "set meals",
+        6: "hotpot",
+    };
+
+    const HOTEL_MAP = {
+        1: "hotel",
+        2: "motel",
+        3: "homestay",
+        4: "resort",
+        5: "villa",
+    };
+
+    const parseArray = (data) => {
+        if (!data) return [];
+
+        if (typeof data === "string") {
+            try {
+                return JSON.parse(data);
+            } catch {
+                return [];
+            }
+        }
+
+        return Array.isArray(data) ? data : [];
+    };
+
+    // 👇 logic chính
+    let tags = [];
+
+    if (location?.tags || location?.cuisine_types) {
+        // 👉 dùng chung parser
+        const raw = location.tags || location.cuisine_types;
+
+        const mapSource = location.tags ? TAGS_MAP : CUISINE_MAP;
+
+        tags = parseArray(raw)
+            .map(id => mapSource[id])
+            .filter(Boolean);
+    } 
+    else if (location?.hotel_type) {
+        tags = [HOTEL_MAP[location.hotel_type]];
+    }
+
+
 
     return (
         <div className="dashboard">
@@ -90,8 +136,8 @@ const DashBoard = () => {
                     <div>
                         <h4>Tags</h4>
                         <p>
-                            {Array.isArray(tags)
-                                ? tags.map(t => TAGS_MAP[t]).join(", ")
+                            {Array.isArray(tags) && tags.length > 0
+                                ? tags.join(", ")
                                 : "No tags"}
                         </p>
                     </div>

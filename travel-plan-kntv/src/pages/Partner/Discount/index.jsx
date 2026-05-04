@@ -11,9 +11,9 @@ const Discount = () => {
 
     useEffect(() => {
         const data =
-            typeof location?.discount === "string"
+            typeof location?.discounts === "string"
                 ? JSON.parse(location.discount)
-                : location?.discount || [];
+                : location?.discounts || [];
 
         setDiscounts(data);
     }, [location]);
