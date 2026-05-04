@@ -10,11 +10,11 @@ import Header from "./Header";
    CONFIG
 ========================================================= */
 
-const MODE = "JSON_SERVER"; 
+// const MODE = "JSON_SERVER"; 
 
 const JSON_API = "http://localhost:3001/places";
 
-// const MODE = "REAL_BACKEND"
+const MODE = "REAL_BACKEND"
 const REAL_API = {
     getLocations: "places/browse/",
     getHotel: "places/hotels/",
@@ -169,15 +169,19 @@ function LocationComponent() {
     };
 
     const getAverageRating = (item) => {
-    const reviews = item.comments || item.reviews || [];
+        const reviews = item.comments || item.reviews || [];
 
-    if (!reviews || reviews.length === 0) return 4.5;
+        if (item.rating){
+            return item.rating;
+        }
 
-    return (
-        reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
-        reviews.length
-    ).toFixed(1);
-};
+        if (!reviews || reviews.length === 0) return 4.5;
+        
+        return (
+            reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
+            reviews.length
+        ).toFixed(1);
+    };
 
     /* =========================
        SEARCH (🔥 FIX CHÍNH)

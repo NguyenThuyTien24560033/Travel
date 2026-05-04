@@ -2,10 +2,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
+import { authorizedFetch } from '../../../api'
 import "./Output.css";
 
-const MODE = "JSON_SERVER"; 
+// const MODE = "JSON_SERVER"; 
 
+const MODE = "REAL_BACKEND"; 
 const REAL_API = {
     plan: "travel-output/",
 };
@@ -27,9 +29,18 @@ const REAL_API = {
 // };
 const savePlanToServer = async (payload) => {
   try {
+    const data = {
+      "summary_info": payload.Summary_info, 
+      "budget_breakdown": payload.budget_breakdown, 
+      "input_id": payload.input_id, 
+      "schedule": payload.schedule
+    }
+
+    console.log("Dữ liệu save kế hoạch nè: ", data);
+
     const res = await authorizedFetch(REAL_API.plan, {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(data),
     });
 
     if (!res.ok) throw new Error("Save failed");

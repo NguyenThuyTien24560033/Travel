@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { usePartner } from '../../assets/Layouts/PartnerLayout.jsx';
+import { usePartner } from '../../../assets/Layouts/PartnerLayout';
 import { Toaster, toast } from "sonner";
 import './Menu.css';
 
@@ -18,7 +18,7 @@ const REAL_API = {
 const DEFAULT_IMAGE = "https://placehold.co/300x200";
 
 
-const PartnerMenu = () => {
+const Menu = () => {
     const { user, setUser, location } = usePartner();
     const [dishes, setDishes] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -255,4 +255,4 @@ const PartnerMenu = () => {
     );
 };
 
-export default PartnerMenu;
+export default Menu;

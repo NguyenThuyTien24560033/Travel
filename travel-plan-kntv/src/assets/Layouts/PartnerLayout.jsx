@@ -44,8 +44,6 @@ const api = {
             if (!res.ok) return { success: false };
 
             const data = await res.json();
-            localStorage.setItem("access_token", data.access);
-
 
             return {
                 success: true,
@@ -164,7 +162,9 @@ function PartnerLayout() {
 
     /* 🔹 CONTEXT */
     const value = {
+        user,
         location,
+        setLocation,
         loading,
         login,
         logout,

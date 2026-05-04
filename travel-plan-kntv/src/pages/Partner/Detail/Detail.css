@@ -1,0 +1,259 @@
+/* =========================================================
+   📦 GLOBAL LAYOUT
+   ========================================================= */
+
+.detail-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* =========================================================
+   🧭 HEADER
+   ========================================================= */
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.actions .save {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* =========================================================
+   🧱 CARD BASE (DÙNG CHUNG CHO SECTION)
+   ========================================================= */
+
+.section,
+.price-box,
+.location-box {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================================
+   🏷 SECTION TITLE (DÙNG CHUNG)
+   ========================================================= */
+
+.section h3,
+.price-box h3,
+.location-box h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* =========================================================
+   📐 GRID SYSTEM (FIX BUG OVERRIDE)
+   ========================================================= */
+
+/* GRID 2 CỘT (default) */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* GRID DỌC (dùng cho price box nếu cần) */
+.grid--column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* =========================================================
+   📝 INPUT / TEXTAREA / SELECT
+   ========================================================= */
+
+input,
+textarea,
+select {
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #3b82f6;
+}
+
+/* =========================================================
+   📊 READONLY INFO
+   ========================================================= */
+
+.readonly {
+    display: flex;
+    gap: 2rem;
+    color: #64748b;
+}
+
+/* =========================================================
+   🧾 FOOTER SAVE BUTTON
+   ========================================================= */
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.footer button {
+    background: #2563eb; /* xanh đẹp */
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    margin-left: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+/* 🔥 Hover */
+.footer button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔥 Click (active) */
+.footer button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔥 Focus (khi tab vào) */
+.footer button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+}
+
+/* =========================================================
+   🏷 TAG SYSTEM (HOURS / TAGS / WEEKDAYS)
+   ========================================================= */
+
+.tag-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.tag {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    border-color: #2d7ff9;
+    transform: translateY(-1px);
+}
+
+.tag.active {
+    background: #2d7ff9;
+    color: white;
+    border-color: #2d7ff9;
+}
+
+/* =========================================================
+   📍 LOCATION BOX
+   ========================================================= */
+
+.location-box {
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+    transition: all 0.2s ease;
+}
+
+.location-box:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ❌ FIX: tránh style tất cả div con */
+.location-box .info-text {
+    font-size: 14px;
+    color: #374151;
+}
+
+.location-box h4 {
+    margin: 5px 0;
+}
+
+/* MAP LINK (tách riêng thay vì .section a) */
+.map-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.map-link:hover {
+    text-decoration: underline;
+}
+
+/* =========================================================
+   💰 PRICE BOX
+   ========================================================= */
+
+.price-box input,
+.price-box select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.price-box input:focus,
+.price-box select:focus {
+    border-color: #3b82f6;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #374151;
+}
