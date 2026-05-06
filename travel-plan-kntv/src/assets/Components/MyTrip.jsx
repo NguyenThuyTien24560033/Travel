@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { authorizedFetch } from '../../../api'
 import "./MyTrip.css";
+import Header from "./Header";
+
 
 /* =========================
    MODE
@@ -222,6 +224,9 @@ const MyTripInput = () => {
   ========================= */
 
   return (
+    <>
+    <Header />
+    
     <div className="trip-container">
       <div className="trip-card">
         <h2 className="trip-title">Plan Your Trip</h2>
@@ -386,6 +391,7 @@ const MyTripInput = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 
