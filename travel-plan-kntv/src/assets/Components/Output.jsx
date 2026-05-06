@@ -3,8 +3,11 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { authorizedFetch } from '../../../api';
 import "./Output.css";
+import Header from '../Components/Header.jsx'
 
-const MODE = "JSON_SERVER";
+// const MODE = "JSON_SERVER";
+
+const MODE = "REAL_BACKEND";
 const REAL_API = {
     plan: "travel-output/",
 };
@@ -12,13 +15,14 @@ const REAL_API = {
 const savePlanToServer = async (payload) => {
     try {
         const data = {
-            "summary_info": payload.Summary_info,
+            "summary_info": payload.summary_info,
             "budget_breakdown": payload.budget_breakdown,
             "input_id": payload.input_id,
             "schedule": payload.schedule,
             "hotels": payload.hotels
         };
-
+        console.log("Dữ liệu save chuyển đi nè: ", data)
+        // return;
         const res = await authorizedFetch(REAL_API.plan, {
             method: "POST",
             body: JSON.stringify(data),
@@ -200,6 +204,7 @@ const MyTripOutput = () => {
             if (MODE !== "JSON_SERVER") {
                 await savePlanToServer(savedPlan);
             }
+            // return;
             updateHistoryStorage(savedPlan, false);
             toast.success("Đã lưu kế hoạch thành công!");
             navigate("/history");
@@ -362,6 +367,9 @@ const MyTripOutput = () => {
     if (!currentPlan) return <div className="no-data">No plan data available</div>;
 
     return (
+    <>
+        <Header />
+    
         <div className="output-container">
             <div className="output-header">
                 <button className="close-btn" onClick={handleClose}>✖</button>
@@ -476,6 +484,7 @@ const MyTripOutput = () => {
                 </div>
             )}
         </div>
+    </>
     );
 };
 
