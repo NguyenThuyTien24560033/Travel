@@ -5,9 +5,9 @@ import { authorizedFetch } from '../../../api';
 import "./Output.css";
 import Header from '../Components/Header.jsx'
 
-// const MODE = "JSON_SERVER";
+const MODE = "JSON_SERVER";
 
-const MODE = "REAL_BACKEND";
+// const MODE = "REAL_BACKEND";
 const REAL_API = {
     plan: "travel-output/",
 };
@@ -22,8 +22,18 @@ const savePlanToServer = async (payload) => {
         };
         console.log("Dữ liệu save chuyển đi nè: ", data)
         // return;
+        // const res = await authorizedFetch(REAL_API.plan, {
+        //     method: "POST",
+            
+        //     body: JSON.stringify(data),
+        // });
         const res = await authorizedFetch(REAL_API.plan, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            credentials: "include", 
             body: JSON.stringify(data),
         });
 
@@ -35,21 +45,51 @@ const savePlanToServer = async (payload) => {
     }
 };
 
+// const handleUpdate = async (id, payload) => {
+//     try {
+//         const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
+//             method: "PATCH",
+//             body: JSON.stringify(payload)
+//         });
+
+//         if (res.ok) {
+//             return await res.json();
+//         }
+//     } catch (err) {
+//         console.error(err);
+//     }
+// };
 const handleUpdate = async (id, payload) => {
     try {
-        const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
-            method: "PATCH",
-            body: JSON.stringify(payload)
-        });
+        const data = {
+            summary_info: payload.summary_info,
+            budget_breakdown: payload.budget_breakdown,
+            input_id: payload.input_id,
+            schedule: payload.schedule,
+        };
 
-        if (res.ok) {
-            return await res.json();
-        }
+        // const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
+        //     method: "PATCH",
+        //     body: JSON.stringify(data)
+        // });
+        const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
+              method: "PATCH",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+              },
+              credentials: "include",
+              body: JSON.stringify(data)
+          });
+
+        if (!res.ok) throw new Error("Update failed");
+
+        return await res.json();
     } catch (err) {
         console.error(err);
+        throw err;
     }
 };
-
 const TRAVEL_STYLE = [
     { label: "Relax", value: 1 }, { label: "Adventure", value: 2 },
     { label: "Food tour", value: 3 }, { label: "Cultural", value: 4 },
@@ -108,22 +148,6 @@ const MyTripOutput = () => {
     const navigate = useNavigate();
     const [isDirty, setIsDirty] = useState(false);
 
-    // const [plans, setPlans] = useState(() => {
-    //     const initialData = state?.data;
-    //     if (!initialData) return [];
-
-    //     const base = {
-    //         ...initialData,
-    //         input_id: initialData.input_id || Date.now(),
-    //         is_locked: initialData.is_locked ?? false,
-    //         input: initialData.input || state?.input || {}
-    //     };
-
-    //     if (initialData.all_versions && initialData.all_versions.length > 0) {
-    //         return initialData.all_versions;
-    //     }
-    //     return [base];
-    // });
 
     const [plans, setPlans] = useState(() => {
     const initialData = state?.data;
@@ -136,16 +160,25 @@ const MyTripOutput = () => {
         place_pool: initialData.attractions || initialData.place_pool || [],
         // Backend trả về 'restaurants_breakfast' -> Frontend dùng 'breakfast_pool'
         breakfast_pool: initialData.restaurants_breakfast || initialData.breakfast_pool || [],
-        // Backend trả về 'hotels' -> Frontend dùng 'hotel_pool'
-        hotel_pool: initialData.hotels || initialData.hotel_pool || [],
-        
-        // Giữ các pool khác nếu có, hoặc tạo mảng rỗng để tránh crash
         lunch_pool: initialData.restaurants_lunch || initialData.lunch_pool || [],
-        dinner_pool: initialData.restaurants_dinner || initialData.dinner_pool || []
+        dinner_pool: initialData.restaurants_dinner || initialData.dinner_pool || [],
+        summary_info: {
+        ...initialData.summary_info,
+        hotel: initialData.summary_info?.hotel 
+    || (Array.isArray(initialData.hotels)
+        ? initialData.hotels[0]
+        : initialData.hotels || null)
+    },
+
+    // 👇 pool dùng để swap
+    hotel_pool: Array.isArray(initialData.hotels)
+        ? initialData.hotels.slice(1)
+        : (initialData.hotel_pool || [])
     };
 
     const base = {
         ...normalizedData,
+        id: initialData.id || null,
         input_id: initialData.input_id || Date.now(),
         is_locked: initialData.is_locked ?? false,
         input: initialData.input || state?.input || state?.data?.input || state?.input || {}
@@ -197,21 +230,55 @@ const MyTripOutput = () => {
         localStorage.setItem(`plan_${summaryItem.id}`, JSON.stringify(detailedData));
     };
 
-    const handleSave = async () => {
-        try {
-            const savedPlan = { ...currentPlan };
-            if (MODE !== "JSON_SERVER") {
-                await savePlanToServer(savedPlan);
-            }
-            // return;
-            updateHistoryStorage(savedPlan, false);
-            toast.success("Đã lưu kế hoạch thành công!");
-            navigate("/history");
-        } catch (err) {
-            toast.error("Lưu thất bại");
-        }
-    };
+    // const handleSave = async () => {
+    //     try {
+    //         const savedPlan = { ...currentPlan };
+    //         if (MODE !== "JSON_SERVER") {
+    //             await savePlanToServer(savedPlan);
+    //         }
+    //         // return;
+    //         updateHistoryStorage(savedPlan, false);
+    //         toast.success("Đã lưu kế hoạch thành công!");
+    //         navigate("/history");
+    //     } catch (err) {
+    //         toast.error("Lưu thất bại");
+    //     }
+    // };
+const handleSave = async () => {
+    try {
+        const savedPlan = { ...currentPlan };
 
+        if (MODE !== "JSON_SERVER") {
+            let res;
+
+            if (savedPlan.id) {
+                res = await handleUpdate(savedPlan.id, savedPlan);
+            } else {
+                res = await savePlanToServer(savedPlan);
+                if (res?.id) {
+                    
+                    setPlans(prev => {
+                        const newPlans = [...prev];
+                        newPlans[currentIndex] = {
+                            ...newPlans[currentIndex],
+                            id: res.id
+                        };
+                        return newPlans;
+                    });
+                    savedPlan.id = res.id;
+                }
+            }
+        }
+
+        updateHistoryStorage(savedPlan, false);
+        toast.success("Đã lưu kế hoạch thành công!");
+        navigate("/history");
+
+    } catch (err) {
+        console.error(err);
+        toast.error("Lưu thất bại");
+    }
+};
     const handleClose = () => {
         if (isDirty) {
             const ok = window.confirm("Bạn có thay đổi chưa lưu. Thoát?");
@@ -274,30 +341,30 @@ const MyTripOutput = () => {
     });
     setIsDirty(true);
 };
-    const handleSwapHotel = () => {
-        setPlans(prev => {
-            const newPlans = [...prev];
-            const plan = { ...newPlans[currentIndex] };
-            const pool = [...(plan.hotel_pool || [])];
-            const current = plan.hotels?.[0];
+    // const handleSwapHotel = () => {
+    //     setPlans(prev => {
+    //         const newPlans = [...prev];
+    //         const plan = { ...newPlans[currentIndex] };
+    //         const pool = [...(plan.hotel_pool || [])];
+    //         const current = plan.hotels?.[0];
 
-            if (!pool.length) {
-                toast.error("Không còn khách sạn");
-                return prev;
-            }
+    //         if (!pool.length) {
+    //             toast.error("Không còn khách sạn");
+    //             return prev;
+    //         }
 
-            const next = pool[0];
-            const exists = current && pool.some(p => p.id === current.id);
-            const newPool = exists || !current ? pool : [...pool, current];
-            const finalPool = newPool.filter(p => p.id !== next.id);
+    //         const next = pool[0];
+    //         const exists = current && pool.some(p => p.id === current.id);
+    //         const newPool = exists || !current ? pool : [...pool, current];
+    //         const finalPool = newPool.filter(p => p.id !== next.id);
 
-            const newHotels = [next]; 
+    //         const newHotels = [next]; 
 
-            newPlans[currentIndex] = { ...plan, hotels: newHotels, hotel_pool: finalPool };
-            return newPlans;
-        });
-        setIsDirty(true);
-    };
+    //         newPlans[currentIndex] = { ...plan, hotels: newHotels, hotel_pool: finalPool };
+    //         return newPlans;
+    //     });
+    //     setIsDirty(true);
+    // };
 
     const handleSwapPlace = (dayIndex, placeIndex) => {
         setPlans(prev => {
@@ -329,18 +396,59 @@ const MyTripOutput = () => {
         setIsDirty(true);
     };
 
+    const handleSwapHotel = () => {
+    setPlans(prev => {
+        const newPlans = [...prev];
+        const plan = { ...newPlans[currentIndex] };
+
+        const pool = [...(plan.hotel_pool || [])];
+        const current = plan.summary_info?.hotel; // ✅ dùng source chính
+
+        if (!pool.length) {
+            toast.error("Không còn khách sạn");
+            return prev;
+        }
+
+        const next = pool[0];
+
+        // update pool
+        // const newPool = [
+        //     ...pool.filter(p => p.id !== next.id),
+        //     ...(current ? [current] : [])
+        // ];
+        const newPool = [
+    ...pool.filter(p => p.id !== next.id && p.id !== current?.id),
+    ...(current ? [current] : [])
+];
+
+        newPlans[currentIndex] = {
+            ...plan,
+            hotel_pool: newPool,
+
+            // 🔥 SOURCE OF TRUTH DUY NHẤT
+            summary_info: {
+                ...plan.summary_info,
+                hotel: next
+            }
+        };
+
+        return newPlans;
+    });
+
+    setIsDirty(true);
+};
     const isExpired = currentPlan?.input?.return_date
         ? new Date(currentPlan.input.return_date) < new Date()
         : false;
     const canShowEdit = mode === "change" && !isExpired;
 
     // Lấy hotel tùy thuộc vào mode
-    let currentHotel;
-    if (mode === "change")
-        currentHotel = currentPlan?.hotels?.[0];
-    else    
-        currentHotel = currentPlan?.summary_info.hotel;
-
+    // let currentHotel;
+    // if (mode === "change")
+    //     currentHotel = currentPlan?.hotels?.[0];
+    // else    
+    //     currentHotel = currentPlan?.summary_info.hotel;
+const currentHotel = currentPlan?.summary_info?.hotel;
     if (!currentPlan) return <div className="no-data">No plan data available</div>;
 
     return (
