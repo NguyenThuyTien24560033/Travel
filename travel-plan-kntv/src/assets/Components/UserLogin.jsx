@@ -65,9 +65,9 @@ const UserLogin = () => {
 
   return (
     <div className="login-container">
-      <h2>{isLogin ? "Login" : "Register"}</h2>
-
       <form onSubmit={handleSubmit}>
+        <h2>{isLogin ? "Login" : "Register"}</h2>
+
         {/* USERNAME (chỉ khi register) */}
         {!isLogin && (
           <input
@@ -95,17 +95,17 @@ const UserLogin = () => {
         <button type="submit" disabled={loading}>
           {loading ? "Processing..." : isLogin ? "Login" : "Register"}
         </button>
-      </form>
 
-      <p>
-        {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}
-        <span
-          style={{ color: "blue", cursor: "pointer", marginLeft: 5 }}
-          onClick={() => setIsLogin(!isLogin)}
-        >
-          {isLogin ? "Đăng ký" : "Đăng nhập"}
-        </span>
-      </p>
+        <p>
+          {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}
+          <span
+            style={{ color: "blue", cursor: "pointer", marginLeft: 5 }}
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin ? "Đăng ký" : "Đăng nhập"}
+          </span>
+        </p>
+      </form>
     </div>
   );
 };

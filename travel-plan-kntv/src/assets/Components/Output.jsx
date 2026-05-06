@@ -30,7 +30,7 @@ const REAL_API = {
 const savePlanToServer = async (payload) => {
   try {
     const data = {
-      "summary_info": payload.Summary_info, 
+      "summary_info": payload.summary_info, 
       "budget_breakdown": payload.budget_breakdown, 
       "input_id": payload.input_id, 
       "schedule": payload.schedule

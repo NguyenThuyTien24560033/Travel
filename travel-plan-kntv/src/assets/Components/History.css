@@ -1,10 +1,37 @@
+/* ===== HEADER ===== */
+.history-header {
+  padding: 24px 24px 0;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f6f7fb;
+}
+
+.history-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.history-header p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ===== LIST ===== */
 .history-list {
-  padding: 24px;
+  padding: 15px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   background: #f6f7fb;
   min-height: 100vh;
+}
+
+.history-list p {
+  text-align: center;
+  color: #9ca3af;
+  margin-top: 40px;
 }
 
 /* ===== CARD ===== */
@@ -20,9 +47,13 @@
   transition: all 0.2s ease;
 }
 
+.history-card > div:first-child {
+  cursor: pointer;
+}
+
 .history-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
 }
 
 /* ===== LEFT CONTENT ===== */
@@ -58,6 +89,12 @@
   cursor: pointer;
   font-size: 13px;
   transition: 0.2s ease;
+}
+
+.actions button:disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed;
 }
 
 /* View button */
@@ -102,4 +139,14 @@
     width: 100%;
     justify-content: space-between;
   }
+}
+
+.unknown {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.end-date {
+  font-size: 13px;
+  color: #6b7280;
 }
