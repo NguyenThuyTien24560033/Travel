@@ -10,8 +10,8 @@ import Header from "./Header";
    MODE
 ========================= */
 // Đình Khang nhớ đổi trạng thái nhé
-// const MODE = "JSON_SERVER";
-const MODE = "REAL_BACKEND";
+const MODE = "JSON_SERVER";
+// const MODE = "REAL_BACKEND";
 
 //Đình Khang thêm path vào đây
 const REAL_API = {
@@ -399,36 +399,100 @@ const MyTripInput = () => {
 /* =========================
    FAKE DATA (UPDATED FROM IMAGE)
 ========================= */
-const fakeData = (input) => {
-  // Hàm bổ trợ tạo object địa điểm ăn uống/tham quan giống ảnh
-  // const createPlace = (name, tags = [1, 2]) => ({
-  //   id: Math.random().toString(16).slice(2, 26), // Tạo id giả 24 ký tự
-  //   name: name,
-  //   img: null,
-  //   has_surge_price: surge,
-  //   tag: tags,
-  // });
-  const createPlace = (name, tags = [1, 2], surge = false) => ({
-  id: Math.random().toString(16).slice(2, 26),
-  name: name,
-  img: null,
-  has_surge_price: surge,
-  tag: tags,
-});
 
+// const fakeData = (input) => {
+//   return {
+//     Summary_info: {
+//       Main_location: input.area == 4 ? "Thành phố Đà Lạt" : "Nha Trang",
+//     },
+
+//     budget_breakdown: {
+//       food: 1400000,
+//       hotel: 1200000,
+//       other: 1200000,
+//     },
+
+//     can_change: true,
+//     input_id: input.input_id || 3,
+//     is_locked: false,
+
+//     // 1. Dữ liệu Hotels (Key: hotels) - Khớp ảnh image_9317f5.png
+//     hotels: [
+//       { id: "69ead2de25ee2ea9a979b0e5", name: "Yolo Camping House", has_surge_price: false, img: null, tag: [3] },
+//       { id: "69ead2dd25ee2ea9a979b0db", name: "Đà Lạt Wind Homestay", has_surge_price: false, img: null, tag: [3] },
+//       { id: "69ead2de25ee2ea9a979b0e2", name: "The Shelter Homestay", has_surge_price: true, img: null, tag: [3] },
+//       { id: "69ead2de25ee2ea9a979b0e8", name: "Nhà Nàng Homestay", has_surge_price: false, img: null, tag: [3] },
+//       { id: "69ead2df25ee2ea9a979b0ea", name: "Motel Minh Hải", has_surge_price: false, img: null, tag: [2] },
+//     ],
+
+//     // 2. Dữ liệu Breakfast (Key: restaurants_breakfast) - Khớp ảnh image_931813.png
+//     restaurants_breakfast: [
+//       { id: "69f193172fa735b1cfd932f6", name: "Mì Gia Vĩnh Lợi", has_surge_price: false, img: null, tag: [5] },
+//       { id: "69f193172fa735b1cfd932f2", name: "Bánh Ướt Lòng Gà Long", has_surge_price: false, img: null, tag: [5] },
+//       { id: "69f193162fa735b1cfd932e6", name: "Gia Gia Dimsum", has_surge_price: false, img: null, tag: [5] },
+//       { id: "69f193162fa735b1cfd932ea", name: "Tiệm Mì Tàu Cao", has_surge_price: false, img: null, tag: [5] },
+//       { id: "69f193162fa735b1cfd932e8", name: "Bánh Mì Xíu Mại Ri", has_surge_price: false, img: null, tag: [5] },
+//     ],
+
+//     // 2. Lunch Pool (Đã bổ sung)
+//     restaurants_lunch: [
+//       { id: "69f193182fa735b1cfd933a1", name: "Cơm Niêu Thuận Gia", has_surge_price: true, img: null, tag: [2, 6] },
+//       { id: "69f193182fa735b1cfd933a5", name: "Lẩu Cá Tầm Chu Gia", has_surge_price: false, img: null, tag: [2] },
+//       { id: "69f193182fa735b1cfd933a9", name: "Gà Nướng cơm lam Ayun", has_surge_price: false, img: null, tag: [1, 2] },
+//       { id: "69f193192fa735b1cfd933b2", name: "Tiệm Cơm Hồi Đó", has_surge_price: false, img: null, tag: [2] },
+//       { id: "69f193192fa735b1cfd933b8", name: "Bếp 1985", has_surge_price: false, img: null, tag: [2] },
+//     ],
+
+//     // 3. Dinner Pool (Đã bổ sung)
+//     restaurants_dinner: [
+//       { id: "69f193202fa735b1cfd944c1", name: "Lẩu Gà Lá É Tao Ngộ", has_surge_price: true, img: null, tag: [6] },
+//       { id: "69f193202fa735b1cfd944c5", name: "Buffet Rau Leguda", has_surge_price: false, img: null, tag: [1, 6] },
+//       { id: "69f193212fa735b1cfd944ca", name: "Nướng Ngói Cu Đức", has_surge_price: false, img: null, tag: [3] },
+//       { id: "69f193212fa735b1cfd944d2", name: "Túi Mơ To Garden Dinner", has_surge_price: true, img: null, tag: [1, 3] },
+//       { id: "69f193222fa735b1cfd944d8", name: "Sashimi Garden", has_surge_price: false, img: null, tag: [1] },
+//     ],
+//     // 3. Dữ liệu Attractions (Key: attractions) - Khớp ảnh image_931832.png
+//     attractions: [
+//       { id: "69ead571744ada25b7bfab29", name: "Chợ Đêm Đà Lạt", has_surge_price: false, img: null, tag: [3, 9] },
+//       { id: "69ead571744ada25b7bfab2c", name: "Nhà thờ Con Gà", has_surge_price: false, img: null, tag: [4] },
+//       { id: "69ead571744ada25b7bfab2b", name: "Dinh III Bảo Đại", has_surge_price: false, img: null, tag: [6] },
+//       { id: "69ead572744ada25b7bfab34", name: "Thiền viện Trúc Lâm", has_surge_price: false, img: null, tag: [4] },
+//       { id: "69ead573744ada25b7bfab36", name: "Hồ Tuyền Lâm", has_surge_price: false, img: null, tag: [8] },
+//       { id: "69ead572744ada25b7bfab30", name: "Chùa Linh Phước", has_surge_price: false, img: null, tag: [6] },
+//     ],
+
+//     // // Mock thêm lunch và dinner vì backend chưa thấy trong ảnh
+//     // restaurants_lunch: [],
+//     // restaurants_dinner: [],
+
+//     schedule: [
+//       {
+//         Date: input.departure_date || "2026-05-06",
+//         // Lấy thử phần tử đầu tiên của các mảng trên làm mặc định
+//         Breakfast: { id: "69f193172fa735b1cfd932f6", name: "Mì Gia Vĩnh Lợi", has_surge_price: false, tag: [5] },
+//         Lunch: { id: "mock_l1", name: "Cơm Niêu", has_surge_price: true, tag: [4] },
+//         Dinner: { id: "mock_d1", name: "Lẩu Gà Lá É", has_surge_price: false, tag: [6] },
+//         Place: [
+//           { id: "69ead571744ada25b7bfab29", name: "Chợ Đêm Đà Lạt", has_surge_price: false, tag: [3, 9] },
+//           { id: "69ead571744ada25b7bfab2c", name: "Nhà thờ Con Gà", has_surge_price: false, tag: [4] },
+//         ],
+//       }
+//     ],
+
+//     input_data: {
+//       budget: input.budget || 5000000,
+//       num_people: input.num_people || 2,
+//       area: input.area || 4,
+//       departure_date: input.departure_date || "2026-04-30",
+//       return_date: input.return_date || "2026-05-02",
+//       location: input.location || "Đà Lạt",
+//     }
+//   };
+// };
+const fakeData = (input) => {
   return {
     Summary_info: {
-      Hotel: {
-        id: "69ead2dd25ee2ea9a979b0d8",
-        name: "Hotel Colline",
-        has_surge_price: false,
-        tag: [1, 4],
-      },
-      Main_location: input.area == 4 ? "Thành phố Đà Lạt" : "Nha Trang",
-      attractions: [
-        { name: "Hồ Xuân Hương", id: "attr_1" },
-        { name: "Chợ Đà Lạt", id: "attr_2" },
-      ],
+      Main_location: input.area === 4 ? "Thành phố Đà Lạt" : "Nha Trang",
     },
 
     budget_breakdown: {
@@ -438,153 +502,89 @@ const fakeData = (input) => {
     },
 
     can_change: true,
-    input_id: 3,
-    
-    // Các mảng bổ trợ (trong ảnh có nhưng đang rỗng hoặc chứa list)
-    hotels: [
-        { id: "h1", name: "Hotel Colline",  has_surge_price: true  },
-        { id: "h2", name: "Dalat Palace",  has_surge_price: false }
-    ],
-    restaurants_breakfast: [],
-    restaurants_lunch: [],
-    restaurants_dinner: [],
+    input_id: input.input_id || 3,
+    is_locked: false,
 
+    // 1. Dữ liệu Hotels (Key: hotels)
+    hotels: [
+      { id: "69ead2de25ee2ea9a979b0e5", name: "Yolo Camping House", has_surge_price: false, img: null, tag: [3] },
+      { id: "69ead2dd25ee2ea9a979b0db", name: "Đà Lạt Wind Homestay", has_surge_price: false, img: null, tag: [3] },
+      { id: "69ead2de25ee2ea9a979b0e2", name: "The Shelter Homestay", has_surge_price: true, img: null, tag: [3] },
+      { id: "69ead2de25ee2ea9a979b0e8", name: "Nhà Nàng Homestay", has_surge_price: false, img: null, tag: [3] },
+      { id: "69ead2df25ee2ea9a979b0ea", name: "Motel Minh Hải", has_surge_price: false, img: null, tag: [2] },
+    ],
+
+    // 2. Breakfast Pool (Key: restaurants_breakfast)
+    restaurants_breakfast: [
+      { id: "69f193172fa735b1cfd932f6", name: "Mì Gia Vĩnh Lợi", has_surge_price: false, img: null, tag: [5] },
+      { id: "69f193172fa735b1cfd932f2", name: "Bánh Ướt Lòng Gà Long", has_surge_price: false, img: null, tag: [5] },
+      { id: "69f193162fa735b1cfd932e6", name: "Gia Gia Dimsum", has_surge_price: false, img: null, tag: [5] },
+      { id: "69f193162fa735b1cfd932ea", name: "Tiệm Mì Tàu Cao", has_surge_price: false, img: null, tag: [5] },
+      { id: "69f193162fa735b1cfd932e8", name: "Bánh Mì Xíu Mại Ri", has_surge_price: false, img: null, tag: [5] },
+    ],
+
+    // 3. Lunch Pool (Key: restaurants_lunch)
+    restaurants_lunch: [
+      { id: "69f193182fa735b1cfd933a1", name: "Cơm Niêu Thuận Gia", has_surge_price: true, img: null, tag: [2, 6] },
+      { id: "69f193182fa735b1cfd933a5", name: "Lẩu Cá Tầm Chu Gia", has_surge_price: false, img: null, tag: [2] },
+      { id: "69f193182fa735b1cfd933a9", name: "Gà Nướng cơm lam Ayun", has_surge_price: false, img: null, tag: [1, 2] },
+      { id: "69f193192fa735b1cfd933b2", name: "Tiệm Cơm Hồi Đó", has_surge_price: false, img: null, tag: [2] },
+      { id: "69f193192fa735b1cfd933b8", name: "Bếp 1985", has_surge_price: false, img: null, tag: [2] },
+    ],
+
+    // 4. Dinner Pool (Key: restaurants_dinner)
+    restaurants_dinner: [
+      { id: "69f193202fa735b1cfd944c1", name: "Lẩu Gà Lá É Tao Ngộ", has_surge_price: true, img: null, tag: [6] },
+      { id: "69f193202fa735b1cfd944c5", name: "Buffet Rau Leguda", has_surge_price: false, img: null, tag: [1, 6] },
+      { id: "69f193212fa735b1cfd944ca", name: "Nướng Ngói Cu Đức", has_surge_price: false, img: null, tag: [3] },
+      { id: "69f193212fa735b1cfd944d2", name: "Túi Mơ To Garden Dinner", has_surge_price: true, img: null, tag: [1, 3] },
+      { id: "69f193222fa735b1cfd944d8", name: "Sashimi Garden", has_surge_price: false, img: null, tag: [1] },
+    ],
+
+    // 5. Dữ liệu Attractions (Key: attractions)
+    attractions: [
+      { id: "69ead571744ada25b7bfab29", name: "Chợ Đêm Đà Lạt", has_surge_price: false, img: null, tag: [3, 9] },
+      { id: "69ead571744ada25b7bfab2c", name: "Nhà thờ Con Gà", has_surge_price: false, img: null, tag: [4] },
+      { id: "69ead571744ada25b7bfab2b", name: "Dinh III Bảo Đại", has_surge_price: false, img: null, tag: [6] },
+      { id: "69ead572744ada25b7bfab34", name: "Thiền viện Trúc Lâm", has_surge_price: false, img: null, tag: [4] },
+      { id: "69ead573744ada25b7bfab36", name: "Hồ Tuyền Lâm", has_surge_price: false, img: null, tag: [8] },
+      { id: "69ead572744ada25b7bfab30", name: "Chùa Linh Phước", has_surge_price: false, img: null, tag: [6] },
+    ],
+
+    // 6. Schedule (Lịch trình chi tiết)
     schedule: [
       {
-        Date: input.departure_date || "2026-04-30",
-        Breakfast: createPlace("Bánh Canh Xuân An", [5, 2], true),
-        Lunch: createPlace("Hải Sản Phố Biển", [2, 6], false),
-        Dinner: createPlace("Sashimi Garden", [1, 3],true),
+        Date: input.departure_date || "2026-05-06",
+        // Đồng bộ ID với pool bên trên để tránh lỗi "Không còn lựa chọn"
+        Breakfast: { id: "69f193172fa735b1cfd932f6", name: "Mì Gia Vĩnh Lợi", has_surge_price: false, tag: [5] },
+        Lunch: { id: "69f193182fa735b1cfd933a1", name: "Cơm Niêu Thuận Gia", has_surge_price: true, tag: [2, 6] },
+        Dinner: { id: "69f193202fa735b1cfd944c1", name: "Lẩu Gà Lá É Tao Ngộ", has_surge_price: true, tag: [6] },
         Place: [
-          createPlace("Quảng trường Lâm Viên"),
-          createPlace("Dinh Bảo Đại"),
+          { id: "69ead571744ada25b7bfab29", name: "Chợ Đêm Đà Lạt", has_surge_price: false, tag: [3, 9] },
+          { id: "69ead571744ada25b7bfab2c", name: "Nhà thờ Con Gà", has_surge_price: false, tag: [4] },
         ],
       },
       {
-        Date: "2026-05-01",
-        Breakfast: createPlace("Bánh mì xíu mại"),
-        Lunch: createPlace("Cơm niêu Thuận Gia",  [2, 6], true),
-        Dinner: createPlace("Lẩu gà lá é Tao Ngộ"),
+        Date: input.departure_date || "2026-05-06",
+        // Đồng bộ ID với pool bên trên để tránh lỗi "Không còn lựa chọn"
+        Breakfast: { id: "69f193172fa735b1cfd932f5", name: "Cá", has_surge_price: false, tag: [5] },
+        Lunch: { id: "69f193182fa735b1cfd933a2", name: " Gia", has_surge_price: true, tag: [2, 6] },
+        Dinner: { id: "69f193202fa735b1cfd944e1", name: "Lẩu Gà", has_surge_price: false, tag: [6] },
         Place: [
-          createPlace("Thung lũng Tình Yêu"),
-          createPlace("LangBiang"),
+          { id: "69ead571744ada25b7bfab19", name: "Chợ Đ", has_surge_price: false, tag: [3, 9] },
+          { id: "69ead571744ada25b7bfab3c", name: " Con Gà", has_surge_price: false, tag: [4] },
         ],
-      },
-      {
-        Date: input.return_date || "2026-05-02",
-        Breakfast: createPlace("Phở Thìn"),
-        Lunch: createPlace("Bún bò bốc khói"),
-        Dinner: createPlace("Tiệc nướng BBQ"),
-        Place: [
-          createPlace("Chùa Linh Phước"),
-          createPlace("Thác Datanla"),
-        ],
-      },
+      }
     ],
 
-    // input_data: input,
     input_data: {
-  budget: input.budget,
-  num_people: input.num_people,
-  area: input.area,
-  departure_date: input.departure_date,
-  return_date: input.return_date,
-  location: input.location,
-  
-}
+      budget: input.budget || 5000000,
+      num_people: input.num_people || 2,
+      area: input.area || 4,
+      departure_date: input.departure_date || "2026-04-30",
+      return_date: input.return_date || "2026-05-02",
+      location: input.location || "Đà Lạt",
+    }
   };
 };
-
-// const fakeData = (input) => {
-//   // Hàm bổ trợ tạo object địa điểm giống thực tế
-//   const createPlace = (name, tags = [1, 2]) => ({
-//     id: Math.random().toString(16).slice(2, 26),
-//     name: name,
-//     img: "https://via.placeholder.com/150",
-//     has_surge_price: Math.random() > 0.8, // Ngẫu nhiên có tăng giá hay không
-//     tag: tags,
-//   });
-
-//   // Tạo mảng giả lập với số lượng phần tử khớp với ảnh (ví dụ attractions: 12, dinner: 16...)
-//   const generateList = (baseName, count) => 
-//     Array.from({ length: count }, (_, i) => createPlace(`${baseName} gợi ý ${i + 1}`));
-
-//   return {
-//     Summary_info: {
-//       Hotel: {
-//         id: "69ead2dd25ee2ea9a979b0d8",
-//         name: "Hotel Colline",
-//         has_surge_price: false,
-//       },
-//       Main_location: input.area == 4 ? "Thành phố Đà Lạt" : "Nha Trang",
-//     },
-
-//     // 1. Theo ảnh: attractions có 12 địa điểm
-//     attractions: generateList("Địa điểm tham quan", 12),
-
-//     budget_breakdown: {
-//       food: 1400000,
-//       hotel: 1200000,
-//       other: 1200000,
-//     },
-
-//     can_change: true,
-//     input_id: 3,
-    
-//     // 2. Theo ảnh: hotels có 10 lựa chọn
-//     hotels: Array.from({ length: 10 }, (_, i) => ({
-//         id: `h${i}`,
-//         name: i === 0 ? "Hotel Colline" : `Khách sạn cao cấp ${i + 1}`,
-//         has_surge_price: false
-//     })),
-
-//     // 3. Các mảng nhà hàng để "Switch" (Khớp số lượng trong ảnh)
-//     restaurants_breakfast: generateList("Quán ăn sáng", 5), // Ảnh ghi (1..), lấy tạm 5
-//     restaurants_lunch: generateList("Nhà hàng trưa", 10),    // Ảnh ghi (10)
-//     restaurants_dinner: generateList("Nhà hàng tối", 16),   // Ảnh ghi (16)
-
-//     schedule: [
-//       {
-//         Date: input.departure_date || "2026-04-30",
-//         Breakfast: createPlace("Bánh Canh Xuân An", [5, 2]),
-//         Lunch: createPlace("Hải Sản Phố Biển", [2, 6]),
-//         Dinner: createPlace("Sashimi Garden", [1, 3]),
-//         Place: [
-//           createPlace("Quảng trường Lâm Viên"),
-//           createPlace("Dinh Bảo Đại"),
-//         ],
-//       },
-//       {
-//         Date: "2026-05-01",
-//         Breakfast: createPlace("Bánh mì xíu mại"),
-//         Lunch: createPlace("Cơm niêu Thuận Gia"),
-//         Dinner: createPlace("Lẩu gà lá é Tao Ngộ"),
-//         Place: [
-//           createPlace("Thung lũng Tình Yêu"),
-//           createPlace("LangBiang"),
-//         ],
-//       },
-//       {
-//         Date: input.return_date || "2026-05-02",
-//         Breakfast: createPlace("Phở Thìn"),
-//         Lunch: createPlace("Bún bò bốc khói"),
-//         Dinner: createPlace("Tiệc nướng BBQ"),
-//         Place: [
-//           createPlace("Chùa Linh Phước"),
-//           createPlace("Thác Datanla"),
-//         ],
-//       },
-//     ],
-
-//     success: true, // Thêm success: true như cuối ảnh
-//     input_data: {
-//       budget: input.budget,
-//       num_people: input.num_people,
-//       area: input.area,
-//       departure_date: input.departure_date,
-//       return_date: input.return_date,
-//       location: input.location,
-//     }
-//   };
-// };
 export default MyTripInput;
