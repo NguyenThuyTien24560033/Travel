@@ -9,11 +9,11 @@ import "./History.css";
    CONFIG
 ========================================================= */
 
-const MODE = "JSON_SERVER";
+// const MODE = "JSON_SERVER";
 
 const JSON_API = "http://localhost:3001/history";
 
-// const MODE = "REAL_BACKEND";
+const MODE = "REAL_BACKEND";
 const REAL_API = {
   getHistory: "history/",
   getDetail: (id) => `plan/${id}/`,

@@ -117,7 +117,7 @@ const MyTripOutput = () => {
     //         ...initialData,
     //         input_id: initialData.input_id || Date.now(),
     //         is_locked: initialData.is_locked ?? false,
-    //         input_data: initialData.input_data || state?.input_data || {}
+    //         input: initialData.input || state?.input || {}
     //     };
 
     //     if (initialData.all_versions && initialData.all_versions.length > 0) {
@@ -149,7 +149,7 @@ const MyTripOutput = () => {
         ...normalizedData,
         input_id: initialData.input_id || Date.now(),
         is_locked: initialData.is_locked ?? false,
-        input_data: initialData.input_data || state?.input_data || state?.data?.input_data || state?.input || {}
+        input: initialData.input || state?.input || state?.data?.input || state?.input || {}
     };
 
     if (initialData.all_versions && initialData.all_versions.length > 0) {
@@ -186,7 +186,7 @@ const MyTripOutput = () => {
         const summaryItem = {
             id: planToSave.input_id,
             created_at: new Date(),
-            location: planToSave.Summary_info?.main_location || "Unknown",
+            location: planToSave.summary_info?.main_location || "Unknown",
             is_locked: isFinalSave
         };
 
@@ -330,11 +330,17 @@ const MyTripOutput = () => {
         setIsDirty(true);
     };
 
-    const isExpired = currentPlan?.input_data?.return_date
-        ? new Date(currentPlan.input_data.return_date) < new Date()
+    const isExpired = currentPlan?.input?.return_date
+        ? new Date(currentPlan.input.return_date) < new Date()
         : false;
     const canShowEdit = mode === "change" && !isExpired;
-    const currentHotel = currentPlan?.hotels?.[0];
+
+    // Lấy hotel tùy thuộc vào mode
+    let currentHotel;
+    if (mode === "change")
+        currentHotel = currentPlan?.hotels?.[0];
+    else    
+        currentHotel = currentPlan?.summary_info.hotel;
 
     if (!currentPlan) return <div className="no-data">No plan data available</div>;
 
@@ -421,7 +427,7 @@ const MyTripOutput = () => {
                         </div>
                         <br />
                         <div>
-                            <strong>Điểm chính:</strong> {currentPlan.Summary_info?.main_location || "Chưa xác định"}
+                            <strong>Điểm chính:</strong> {currentPlan.summary_info?.main_location || "Chưa xác định"}
                         </div>
                         <h4 style={{ marginTop: "20px" }}>Dự toán chi phí</h4>
                         <ul className="budget-list">
@@ -433,16 +439,16 @@ const MyTripOutput = () => {
 
                     <div className="input-box locked">
                         <h4>Yêu cầu ban đầu (🔒)</h4>
-                        {currentPlan.input_data?.budget && <div><br />Ngân sách: {currentPlan.input_data.budget.toLocaleString()} VNĐ</div>}
-                        {currentPlan.input_data?.num_people && <div><br />Số người: {currentPlan.input_data.num_people}</div>}
-                        {currentPlan.input_data?.departure_date && (
-              <div><br />Ngày đi: {currentPlan.input_data.departure_date}</div>
+                        {currentPlan.input?.budget && <div><br />Ngân sách: {currentPlan.input.budget.toLocaleString()} VNĐ</div>}
+                        {currentPlan.input?.num_people && <div><br />Số người: {currentPlan.input.num_people}</div>}
+                        {currentPlan.input?.departure_date && (
+              <div><br />Ngày đi: {currentPlan.input.departure_date}</div>
             )}
 
-            {currentPlan.input_data?.return_date && (
-              <div><br />Ngày về: {currentPlan.input_data.return_date}</div>
+            {currentPlan.input?.return_date && (
+              <div><br />Ngày về: {currentPlan.input.return_date}</div>
             )}
-                        {currentPlan.input_data?.location && <div><br />Địa điểm: {currentPlan.input_data.location}</div>}
+                        {currentPlan.input?.location && <div><br />Địa điểm: {currentPlan.input.location}</div>}
                     </div>
 
 

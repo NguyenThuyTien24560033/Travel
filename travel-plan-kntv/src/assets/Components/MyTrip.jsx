@@ -10,8 +10,8 @@ import Header from "./Header";
    MODE
 ========================= */
 // Đình Khang nhớ đổi trạng thái nhé
-const MODE = "JSON_SERVER";
-// const MODE = "REAL_BACKEND";
+// const MODE = "JSON_SERVER";
+const MODE = "REAL_BACKEND";
 
 //Đình Khang thêm path vào đây
 const REAL_API = {
