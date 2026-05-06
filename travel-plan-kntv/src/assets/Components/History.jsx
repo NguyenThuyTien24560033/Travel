@@ -171,7 +171,12 @@ function HistoryComponent() {
         }
 
         const data = await res.json();
-        console.log("Dữ liệu view output nè: ", data);
+        if (mode === "view")
+          console.log("Dữ liệu view output nè: ", data);
+        else
+          console.log("Dữ liệu edit output nè: ", data);
+
+
         navigate("/my-trip/output", {
           state: {
             data,

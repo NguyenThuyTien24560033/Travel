@@ -5,9 +5,9 @@ import { authorizedFetch } from '../../../api';
 import "./Output.css";
 import Header from '../Components/Header.jsx'
 
-const MODE = "JSON_SERVER";
+// const MODE = "JSON_SERVER";
 
-// const MODE = "REAL_BACKEND";
+const MODE = "REAL_BACKEND";
 const REAL_API = {
     plan: "travel-output/",
 };
@@ -22,20 +22,20 @@ const savePlanToServer = async (payload) => {
         };
         console.log("Dữ liệu save chuyển đi nè: ", data)
         // return;
-        // const res = await authorizedFetch(REAL_API.plan, {
-        //     method: "POST",
-            
-        //     body: JSON.stringify(data),
-        // });
         const res = await authorizedFetch(REAL_API.plan, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            credentials: "include", 
+            
             body: JSON.stringify(data),
         });
+        // const res = await authorizedFetch(REAL_API.plan, {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         "Authorization": `Bearer ${token}`
+        //     },
+        //     credentials: "include", 
+        //     body: JSON.stringify(data),
+        // });
 
         if (!res.ok) throw new Error("Save failed");
         return await res.json();
@@ -72,13 +72,12 @@ const handleUpdate = async (id, payload) => {
         //     method: "PATCH",
         //     body: JSON.stringify(data)
         // });
+        console.log("Dữ liệu update chuyển đi nè: ", data)
+        // return;
+
         const res = await authorizedFetch(`${REAL_API.plan}${id}/`, {
               method: "PATCH",
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-              },
-              credentials: "include",
+    
               body: JSON.stringify(data)
           });
 
@@ -248,11 +247,11 @@ const handleSave = async () => {
     try {
         const savedPlan = { ...currentPlan };
 
-        if (MODE !== "JSON_SERVER") {
+        if (MODE === "REAL_BACKEND") {
             let res;
 
-            if (savedPlan.id) {
-                res = await handleUpdate(savedPlan.id, savedPlan);
+            if (savedPlan.plan_id) {
+                res = await handleUpdate(savedPlan.plan_id, savedPlan);
             } else {
                 res = await savePlanToServer(savedPlan);
                 if (res?.id) {
@@ -269,7 +268,7 @@ const handleSave = async () => {
                 }
             }
         }
-
+        // return;
         updateHistoryStorage(savedPlan, false);
         toast.success("Đã lưu kế hoạch thành công!");
         navigate("/history");
