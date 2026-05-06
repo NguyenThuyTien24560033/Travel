@@ -19,7 +19,6 @@ const savePlanToServer = async (payload) => {
             "budget_breakdown": payload.budget_breakdown,
             "input_id": payload.input_id,
             "schedule": payload.schedule,
-            "hotels": payload.hotels
         };
         console.log("Dữ liệu save chuyển đi nè: ", data)
         // return;
