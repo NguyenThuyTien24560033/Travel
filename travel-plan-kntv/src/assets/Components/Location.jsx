@@ -311,101 +311,104 @@ const HandleClick = async (id, type) => {
         </div>
     );
 };
+
+
     return (
+    <>
+        <Header />
+        
         <div className="location-container">
-            <Header />
-
           
-<div className="search-section">
+            <div className="search-section">
 
-    {/* SEARCH BAR */}
-    <div className="search-bar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-        <span className="search-icon">🔍</span>
+                {/* SEARCH BAR */}
+                <div className="search-bar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <span className="search-icon">🔍</span>
 
-        <span className="search-text">
-            {mode ? `Search by ${mode.replace("_", " ")}` : "What are you looking for?"}
-        </span>
+                    <span className="search-text">
+                        {mode ? `Search by ${mode.replace("_", " ")}` : "What are you looking for?"}
+                    </span>
 
-        {mode && (
-            <button
-                className="clear-btn"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    resetSearch();
-                }}
-            >
-                ✕
-            </button>
-        )}
-    </div>
+                    {mode && (
+                        <button
+                            className="clear-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                resetSearch();
+                            }}
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
 
-    {/* DROPDOWN MENU */}
-    {isMenuOpen && (
-        <div className="search-dropdown">
-            <button onClick={() => { setMode("name"); setIsMenuOpen(false); }}>
-                Search by Name
-            </button>
+                {/* DROPDOWN MENU */}
+                {isMenuOpen && (
+                    <div className="search-dropdown">
+                        <button onClick={() => { setMode("name"); setIsMenuOpen(false); }}>
+                            Search by Name
+                        </button>
 
-            <button onClick={() => { setMode("accommodation_type"); setIsMenuOpen(false); }}>
-                Hotel Types
-            </button>
+                        <button onClick={() => { setMode("accommodation_type"); setIsMenuOpen(false); }}>
+                            Hotel Types
+                        </button>
 
-            <button onClick={() => { setMode("food_type"); setIsMenuOpen(false); }}>
-                Food Types
-            </button>
+                        <button onClick={() => { setMode("food_type"); setIsMenuOpen(false); }}>
+                            Food Types
+                        </button>
 
-            <button onClick={() => { setMode("travel_style"); setIsMenuOpen(false); }}>
-                Travel Styles
-            </button>
-        </div>
-    )}
+                        <button onClick={() => { setMode("travel_style"); setIsMenuOpen(false); }}>
+                            Travel Styles
+                        </button>
+                    </div>
+                )}
 
-    {/* CONTROL AREA */}
-    <div className="search-control">
+                {/* CONTROL AREA */}
+                <div className="search-control">
 
-        {/* INPUT NAME */}
-        {mode === "name" && (
-            <input
-                className="search-input"
-                autoFocus
-                type="text"
-                placeholder="Type a location name and press Enter..."
-                value={nameInput}
-                onChange={(e) => setNameInput(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        handleSearch({ name: nameInput });
-                    }
-                }}
-            />
-        )}
+                    {/* INPUT NAME */}
+                    {mode === "name" && (
+                        <input
+                            className="search-input"
+                            autoFocus
+                            type="text"
+                            placeholder="Type a location name and press Enter..."
+                            value={nameInput}
+                            onChange={(e) => setNameInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch({ name: nameInput });
+                                }
+                            }}
+                        />
+                    )}
 
-        {/* OPTIONS BUTTON */}
-        {mode && mode !== "name" && (
-            <div className="options-grid">
-                {Object.entries(
-                    mode === "accommodation_type"
-                        ? accommodationOptions
-                        : mode === "food_type"
-                        ? foodOptions
-                        : travelOptions
-                ).map(([k, v]) => (
-                    <button
-                        key={k}
-                        className="option-chip"
-                        onClick={() => handleSearch({ [mode]: Number(k) })}
-                    >
-                        {v}
-                    </button>
-                ))}
+                    {/* OPTIONS BUTTON */}
+                    {mode && mode !== "name" && (
+                        <div className="options-grid">
+                            {Object.entries(
+                                mode === "accommodation_type"
+                                    ? accommodationOptions
+                                    : mode === "food_type"
+                                    ? foodOptions
+                                    : travelOptions
+                            ).map(([k, v]) => (
+                                <button
+                                    key={k}
+                                    className="option-chip"
+                                    onClick={() => handleSearch({ [mode]: Number(k) })}
+                                >
+                                    {v}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
             </div>
-        )}
-
-    </div>
-</div>
 
 
-<div className="results-section">
+            <div className="results-section">
 
                
                 {groupedData.Hotels.length > 0 && (
@@ -431,6 +434,7 @@ const HandleClick = async (id, type) => {
 
             </div>
         </div>
+    </>  
     );
 }
 
