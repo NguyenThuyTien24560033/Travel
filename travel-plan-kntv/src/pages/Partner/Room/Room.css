@@ -1,0 +1,99 @@
+.room-page {
+    padding: 2rem;
+    max-width: 1100px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.room-page h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+
+    border-left: 5px solid #22c55e;
+    padding-left: 12px;
+}
+
+.room-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+}
+
+.room-card {
+    background: white;
+    padding: 1.2rem;
+
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    transition: 0.2s;
+}
+
+.room-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(0,0,0,0.1);
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.room-title {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.room-price {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.room-desc {
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.room-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+.room-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.room-form input,
+.room-form textarea {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+}
+
+.room-form button {
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: none;
+
+    background: #22c55e;
+    color: white;
+    font-weight: 600;
+}
