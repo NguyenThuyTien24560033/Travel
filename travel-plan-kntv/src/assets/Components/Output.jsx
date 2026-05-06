@@ -145,7 +145,7 @@ const MyTripOutput = () => {
         ...normalizedData,
         input_id: initialData.input_id || Date.now(),
         is_locked: initialData.is_locked ?? false,
-        input_data: initialData.input_data || state?.input_data || {}
+        input_data: initialData.input_data || state?.input_data || state?.data?.input_data || state?.input || {}
     };
 
     if (initialData.all_versions && initialData.all_versions.length > 0) {
@@ -182,7 +182,7 @@ const MyTripOutput = () => {
         const summaryItem = {
             id: planToSave.input_id,
             created_at: new Date(),
-            location: planToSave.Summary_info?.Main_location || "Unknown",
+            location: planToSave.Summary_info?.main_location || "Unknown",
             is_locked: isFinalSave
         };
 
@@ -218,34 +218,6 @@ const MyTripOutput = () => {
         }
         navigate("/history");
     };
-
-    // const handleSwap = (dayIndex, field, poolKey) => {
-    //     setPlans(prev => {
-    //         const newPlans = [...prev];
-    //         const plan = { ...newPlans[currentIndex] };
-    //         const pool = [...(plan[poolKey] || [])];
-    //         const currentItem = plan.schedule?.[dayIndex]?.[field];
-
-    //         const available = pool.filter(p => !usedSet.has(p.id));
-    //         if (available.length === 0) {
-    //             toast.error("Không còn lựa chọn");
-    //             return prev;
-    //         }
-
-    //         const next = available[0];
-    //         const exists = currentItem && pool.some(p => p.id === currentItem.id);
-    //         const newPool = exists || !currentItem ? pool : [...pool, currentItem];
-    //         const finalPool = newPool.filter(p => p.id !== next.id);
-
-    //         const newSchedule = plan.schedule.map((d, i) =>
-    //             i === dayIndex ? { ...d, [field]: next } : d
-    //         );
-
-    //         newPlans[currentIndex] = { ...plan, [poolKey]: finalPool, schedule: newSchedule };
-    //         return newPlans;
-    //     });
-    //     setIsDirty(true);
-    // };
 
     const handleSwap = (dayIndex, field, poolKey) => {
     setPlans(prev => {
@@ -441,7 +413,7 @@ const MyTripOutput = () => {
                         </div>
                         <br />
                         <div>
-                            <strong>Điểm chính:</strong> {currentPlan.Summary_info?.Main_location || "Chưa xác định"}
+                            <strong>Điểm chính:</strong> {currentPlan.Summary_info?.main_location || "Chưa xác định"}
                         </div>
                         <h4 style={{ marginTop: "20px" }}>Dự toán chi phí</h4>
                         <ul className="budget-list">

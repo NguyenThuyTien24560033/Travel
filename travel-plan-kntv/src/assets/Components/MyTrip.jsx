@@ -486,7 +486,7 @@ const MyTripInput = () => {
 const fakeData = (input) => {
   return {
     Summary_info: {
-      Main_location: input.area === 4 ? "Thành phố Đà Lạt" : "Nha Trang",
+      main_location: input.area === 4 ? "Thành phố Đà Lạt" : "Nha Trang",
     },
 
     budget_breakdown: {
