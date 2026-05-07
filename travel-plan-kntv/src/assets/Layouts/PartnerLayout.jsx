@@ -92,7 +92,11 @@ const api = {
 
             if (res.ok) {
                 const data = await res.json();
-                return data;
+                return {
+                    ...data,
+                    id: data.business_id,
+                    business_id: data.id,
+                };
             }
         } catch (err) {
             console.error(err);
@@ -124,6 +128,7 @@ function PartnerLayout() {
             setUser(savedUser);
 
             const loc = await api.getLocation();
+            console.log("Dữ liệu địa điểm của tôi: ", loc);
             setLocation(loc);
 
             setLoading(false);

@@ -18,7 +18,7 @@ const EditDiscount = ({ discount, onSuccess, onClose }) => {
                 return "restaurants";
             case "ACCOMMODATION":
                 return "hotels";
-            case "ATTRACTION":
+            case "ENTERTAINMENT":
                 return "attractions";
             default:
                 return null;

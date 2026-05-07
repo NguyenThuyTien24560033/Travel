@@ -25,7 +25,7 @@ const AddDiscount = ({ onSuccess, onClose  }) => {
                 return "restaurants";
             case "ACCOMMODATION":
                 return "hotels";
-            case "ATTRACTION":
+            case "ENTERTAINMENT":
                 return "attractions";
             default:
                 return null;
@@ -43,7 +43,7 @@ const AddDiscount = ({ onSuccess, onClose  }) => {
                 percent: Number(form.percent),
             };
 
-            // console.log("Dữ liệu gửi đi nè: ", payload);
+            console.log("Dữ liệu gửi đi nè: ", payload);
             // return;
 
             const res = await authorizedFetch(

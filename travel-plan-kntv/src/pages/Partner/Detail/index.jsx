@@ -150,14 +150,8 @@ const Detail = () => {
             setLocation(form);
             toast.success("Updated successfully!");
 
-            setForm({
-                ...location,
-                off_dates: safeArray(location.off_dates),
-                off_weekdays: safeArray(location.off_weekdays),
-                active_hours: safeArray(location.active_hours),
-                cuisine_types: safeArray(cuisine_types),
-                tags: safeArray(tags),
-            });
+            setForm(form);
+            
         } catch (err) {
             toast.error("Update failed!");
         } finally {
