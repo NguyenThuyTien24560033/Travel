@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { authorizedFetch } from '../../../api';
 import "./Output.css";
 import Header from '../Components/Header.jsx'
+import LocationDetail from '../../pages/User/LocationDetail.jsx'
 
 // const MODE = "JSON_SERVER";
 
@@ -42,6 +43,35 @@ const savePlanToServer = async (payload) => {
     } catch (err) {
         console.error("savePlanToServer error:", err);
         throw err;
+    }
+};
+
+const fetchDetail = async (id, type) => {
+    try {
+        let endpoint = "";
+
+        switch (type) {
+            case 1:
+                endpoint = "places/hotels/";
+                break;
+            case 2:
+                endpoint = "places/restaurants/";
+                break;
+            case 3:
+                endpoint = "places/attractions/";
+                break;
+            default:
+                return null;
+        }
+
+        const res = await authorizedFetch(`${endpoint}${id}/`);
+
+        if (!res.ok) return null;
+
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+        return null;
     }
 };
 
@@ -146,52 +176,77 @@ const MyTripOutput = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
     const [isDirty, setIsDirty] = useState(false);
+    const [selectedDetail, setSelectedDetail] = useState(null);
 
+
+    useEffect(() => {
+        if (state?.data) {
+            localStorage.setItem(
+                "current_output",
+                JSON.stringify(state.data)
+            );
+        }
+    }, [state?.data]);
 
     const [plans, setPlans] = useState(() => {
-    const initialData = state?.data;
-    if (!initialData) return [];
+        const initialData =
+            state?.data ||
+            JSON.parse(localStorage.getItem("current_output")) ||
+            null;
+        if (!initialData) return [];
 
-    // Bước quan trọng: Map dữ liệu backend sang tên biến frontend dùng
-    const normalizedData = {
-        ...initialData,
-        // Backend trả về 'attractions' -> Frontend dùng 'place_pool'
-        place_pool: initialData.attractions || initialData.place_pool || [],
-        // Backend trả về 'restaurants_breakfast' -> Frontend dùng 'breakfast_pool'
-        breakfast_pool: initialData.restaurants_breakfast || initialData.breakfast_pool || [],
-        lunch_pool: initialData.restaurants_lunch || initialData.lunch_pool || [],
-        dinner_pool: initialData.restaurants_dinner || initialData.dinner_pool || [],
-        summary_info: {
-        ...initialData.summary_info,
-        hotel: initialData.summary_info?.hotel 
-    || (Array.isArray(initialData.hotels)
-        ? initialData.hotels[0]
-        : initialData.hotels || null)
-    },
+        // Bước quan trọng: Map dữ liệu backend sang tên biến frontend dùng
+        const normalizedData = {
+            ...initialData,
+            // Backend trả về 'attractions' -> Frontend dùng 'place_pool'
+            place_pool: initialData.attractions || initialData.place_pool || [],
+            // Backend trả về 'restaurants_breakfast' -> Frontend dùng 'breakfast_pool'
+            breakfast_pool: initialData.restaurants_breakfast || initialData.breakfast_pool || [],
+            lunch_pool: initialData.restaurants_lunch || initialData.lunch_pool || [],
+            dinner_pool: initialData.restaurants_dinner || initialData.dinner_pool || [],
+            summary_info: {
+                ...initialData.summary_info,
+                hotel: 
+                    initialData.summary_info?.hotel || 
+                    (Array.isArray(initialData.hotels)
+                    ? initialData.hotels[0]
+                    : initialData.hotels || null)
+            },
 
-    // 👇 pool dùng để swap
-    hotel_pool: Array.isArray(initialData.hotels)
-        ? initialData.hotels.slice(1)
-        : (initialData.hotel_pool || [])
-    };
+            // 👇 pool dùng để swap
+            hotel_pool: Array.isArray(initialData.hotels)
+                ? initialData.hotels.slice(1)
+                : (initialData.hotel_pool || [])
+        };
 
-    const base = {
-        ...normalizedData,
-        id: initialData.id || null,
-        input_id: initialData.input_id || Date.now(),
-        is_locked: initialData.is_locked ?? false,
-        input: initialData.input || state?.input || state?.data?.input || state?.input || {}
-    };
+        const base = {
+            ...normalizedData,
+            id: initialData.id || null,
+            input_id: initialData.input_id || Date.now(),
+            is_locked: initialData.is_locked ?? false,
+            input: initialData.input || state?.input || state?.data?.input || state?.input || {}
+        };
 
-    if (initialData.all_versions && initialData.all_versions.length > 0) {
-        return initialData.all_versions;
-    }
-    return [base];
-});
+        if (initialData.all_versions && initialData.all_versions.length > 0) {
+            return initialData.all_versions;
+        }
+        return [base];
+    });
 
     const [currentIndex, setCurrentIndex] = useState(plans.length - 1);
     const mode = state?.mode || "change";
     const maxEdit = state?.maxEdit || 5;
+
+    if (!plans.length) {
+        return (
+            <div style={{ padding: 20 }}>
+                <h3>Không có dữ liệu kế hoạch</h3>
+                <button onClick={() => navigate("/history")}>
+                    Quay lại
+                </button>
+            </div>
+        );
+    }
     const currentPlan = plans[currentIndex];
 
     const usedSet = useMemo(() => {
@@ -243,41 +298,42 @@ const MyTripOutput = () => {
     //         toast.error("Lưu thất bại");
     //     }
     // };
-const handleSave = async () => {
-    try {
-        const savedPlan = { ...currentPlan };
+    const handleSave = async () => {
+        try {
+            const savedPlan = { ...currentPlan };
 
-        if (MODE === "REAL_BACKEND") {
-            let res;
+            if (MODE === "REAL_BACKEND") {
+                let res;
 
-            if (savedPlan.plan_id) {
-                res = await handleUpdate(savedPlan.plan_id, savedPlan);
-            } else {
-                res = await savePlanToServer(savedPlan);
-                if (res?.id) {
-                    
-                    setPlans(prev => {
-                        const newPlans = [...prev];
-                        newPlans[currentIndex] = {
-                            ...newPlans[currentIndex],
-                            id: res.id
-                        };
-                        return newPlans;
-                    });
-                    savedPlan.id = res.id;
+                if (savedPlan.plan_id) {
+                    res = await handleUpdate(savedPlan.plan_id, savedPlan);
+                } else {
+                    res = await savePlanToServer(savedPlan);
+                    if (res?.id) {
+                        
+                        setPlans(prev => {
+                            const newPlans = [...prev];
+                            newPlans[currentIndex] = {
+                                ...newPlans[currentIndex],
+                                id: res.id
+                            };
+                            return newPlans;
+                        });
+                        savedPlan.id = res.id;
+                    }
                 }
             }
-        }
-        // return;
-        updateHistoryStorage(savedPlan, false);
-        toast.success("Đã lưu kế hoạch thành công!");
-        navigate("/history");
+            // return;
+            updateHistoryStorage(savedPlan, false);
+            toast.success("Đã lưu kế hoạch thành công!");
+            navigate("/history");
 
-    } catch (err) {
-        console.error(err);
-        toast.error("Lưu thất bại");
-    }
-};
+        } catch (err) {
+            console.error(err);
+            toast.error("Lưu thất bại");
+        }
+    };
+
     const handleClose = () => {
         if (isDirty) {
             const ok = window.confirm("Bạn có thay đổi chưa lưu. Thoát?");
@@ -396,46 +452,47 @@ const handleSave = async () => {
     };
 
     const handleSwapHotel = () => {
-    setPlans(prev => {
-        const newPlans = [...prev];
-        const plan = { ...newPlans[currentIndex] };
+        setPlans(prev => {
+            const newPlans = [...prev];
+            const plan = { ...newPlans[currentIndex] };
 
-        const pool = [...(plan.hotel_pool || [])];
-        const current = plan.summary_info?.hotel; // ✅ dùng source chính
+            const pool = [...(plan.hotel_pool || [])];
+            const current = plan.summary_info?.hotel; // ✅ dùng source chính
 
-        if (!pool.length) {
-            toast.error("Không còn khách sạn");
-            return prev;
-        }
-
-        const next = pool[0];
-
-        // update pool
-        // const newPool = [
-        //     ...pool.filter(p => p.id !== next.id),
-        //     ...(current ? [current] : [])
-        // ];
-        const newPool = [
-    ...pool.filter(p => p.id !== next.id && p.id !== current?.id),
-    ...(current ? [current] : [])
-];
-
-        newPlans[currentIndex] = {
-            ...plan,
-            hotel_pool: newPool,
-
-            // 🔥 SOURCE OF TRUTH DUY NHẤT
-            summary_info: {
-                ...plan.summary_info,
-                hotel: next
+            if (!pool.length) {
+                toast.error("Không còn khách sạn");
+                return prev;
             }
-        };
 
-        return newPlans;
-    });
+            const next = pool[0];
 
-    setIsDirty(true);
-};
+            // update pool
+            // const newPool = [
+            //     ...pool.filter(p => p.id !== next.id),
+            //     ...(current ? [current] : [])
+            // ];
+            const newPool = [
+                ...pool.filter(p => p.id !== next.id && p.id !== current?.id),
+                ...(current ? [current] : [])
+            ];
+
+            newPlans[currentIndex] = {
+                ...plan,
+                hotel_pool: newPool,
+
+                // 🔥 SOURCE OF TRUTH DUY NHẤT
+                summary_info: {
+                    ...plan.summary_info,
+                    hotel: next
+                }
+            };
+
+            return newPlans;
+        });
+
+        setIsDirty(true);
+    };
+
     const isExpired = currentPlan?.input?.return_date
         ? new Date(currentPlan.input.return_date) < new Date()
         : false;
@@ -483,21 +540,60 @@ const currentHotel = currentPlan?.summary_info?.hotel;
                                     <ul>
                                         <li className="item-row">
                                             <span>Sáng:</span>
-                                            <RenderItem item={day.Breakfast} typeScope="food" />
+                                            <div
+                                                style={{ flex: 1, cursor: "pointer" }}
+                                                onClick={async () => {
+                                                    const data = await fetchDetail(day.Breakfast.id, 2);
+                                                    console.log("Địa điểm chi tiết nè: ", data);
+
+                                                    setSelectedDetail({
+                                                        data,
+                                                        type: 2
+                                                    });
+                                                }}
+                                            >
+                                                <RenderItem item={day.Breakfast} typeScope="food" />
+                                            </div>
                                             {canShowEdit && (
                                                 <button onClick={() => handleSwap(i, "Breakfast", "breakfast_pool")}>+</button>
                                             )}
                                         </li>
                                         <li className="item-row">
                                             <span>Trưa:</span>
-                                            <RenderItem item={day.Lunch} typeScope="food" />
+                                            <div
+                                                style={{ flex: 1, cursor: "pointer" }}
+                                                onClick={async () => {
+                                                    const data = await fetchDetail(day.Lunch.id, 2);
+                                                    console.log("Địa điểm chi tiết nè: ", data);
+
+                                                    setSelectedDetail({
+                                                        data,
+                                                        type: 2
+                                                    });
+                                                }}
+                                            >
+                                                <RenderItem item={day.Lunch} typeScope="food" />
+                                            </div>
                                             {canShowEdit && (
                                                 <button onClick={() => handleSwap(i, "Lunch", "lunch_pool")}>+</button>
                                             )}
                                         </li>
                                         <li className="item-row">
                                             <span>Tối:</span>
-                                            <RenderItem item={day.Dinner} typeScope="food" />
+                                            <div
+                                                style={{ flex: 1, cursor: "pointer" }}
+                                                onClick={async () => {
+                                                    const data = await fetchDetail(day.Dinner.id, 2);
+                                                    console.log("Địa điểm chi tiết nè: ", data);
+
+                                                    setSelectedDetail({
+                                                        data,
+                                                        type: 2
+                                                    });
+                                                }}
+                                            >
+                                                <RenderItem item={day.Dinner} typeScope="food" />
+                                            </div>
                                             {canShowEdit && (
                                                 <button onClick={() => handleSwap(i, "Dinner", "dinner_pool")}>+</button>
                                             )}
@@ -508,7 +604,20 @@ const currentHotel = currentPlan?.summary_info?.hotel;
                                     <strong>Tham quan:</strong>
                                     {day.Place?.map((place, idx) => (
                                         <div key={idx} className="item-row">
-                                            <RenderItem item={place} typeScope="attraction" />
+                                            <div
+                                                style={{ flex: 1, cursor: "pointer" }}
+                                                onClick={async () => {
+                                                    const data = await fetchDetail(place.id, 3);
+                                                    console.log("Địa điểm chi tiết nè: ", data);
+
+                                                    setSelectedDetail({
+                                                        data,
+                                                        type: 3
+                                                    });
+                                                }}
+                                            >
+                                                <RenderItem item={place} typeScope="attraction" />
+                                            </div>
                                             {canShowEdit && (
                                                 <button onClick={() => handleSwapPlace(i, idx)}>+</button>
                                             )}
@@ -526,7 +635,19 @@ const currentHotel = currentPlan?.summary_info?.hotel;
                         <br />
                         <div>
                             <strong>Khách sạn:</strong>
-                            <RenderItem item={currentHotel} typeScope="hotel" />
+                            <div style={{ cursor: "pointer" }}
+                                onClick={async () => {
+                                    const data = await fetchDetail(currentHotel.id, 1);
+
+                                    setSelectedDetail({
+                                        data,
+                                        type: 1
+                                    });
+                                }}
+                            >
+                                <RenderItem item={currentHotel} typeScope="hotel" />
+                            </div>
+
                             {canShowEdit && (
                                 <button onClick={handleSwapHotel}>+</button>
                             )}
@@ -568,6 +689,17 @@ const currentHotel = currentPlan?.summary_info?.hotel;
                 </div>
             )}
         </div>
+
+        {selectedDetail && (
+            <div className="overlay">
+                <LocationDetail
+                    mode="embedded"
+                    data={selectedDetail.data}
+                    type={selectedDetail.type}
+                    onClose={() => setSelectedDetail(null)}
+                />
+            </div>
+        )}
     </>
     );
 };

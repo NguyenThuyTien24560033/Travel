@@ -62,7 +62,7 @@ const api = {
         }
     },
 
-
+    // chuyển sang fetch ở trang detail
     getDetail: async (id, type) => {
         try {
             if (MODE === "REAL_BACKEND") {
@@ -124,7 +124,7 @@ function LocationComponent() {
     const [nameInput, setNameInput] = useState("");
 
     const navigate = useNavigate();
-     const hasLoaded = useRef(false); 
+    const hasLoaded = useRef(false); 
     /* =========================
        LOAD INIT
     ========================= */
@@ -132,12 +132,11 @@ function LocationComponent() {
     // useEffect(() => {
     //     loadData();
     // }, []);
-     useEffect(() => {
+    useEffect(() => {
         if (hasLoaded.current) return; 
         hasLoaded.current = true;      
         loadData();
     }, []);
-
 
 
     const loadData = async () => {
@@ -167,26 +166,28 @@ function LocationComponent() {
         }
     };
 
+    
     const getAverageRating = (item) => {
         const reviews = item.comments || item.reviews || [];
 
-        if (item.rating){
+        if (item.rating !== undefined && item.rating !== null) {
             return item.rating;
         }
 
         if (!reviews || reviews.length === 0) return 4.5;
-        
+
         return (
             reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
             reviews.length
         ).toFixed(1);
     };
 
+
     /* =========================
  
     ========================= */
  
-const handleSearch = async (input = {}) => {
+    const handleSearch = async (input = {}) => {
         setLoading(true);
 
         try {
@@ -248,32 +249,16 @@ const handleSearch = async (input = {}) => {
     };
 
  
-const HandleClick = async (id, type) => { 
-        setLoading(true);
-
-        try {
-            const data = await api.getDetail(id, type);
-
-            if (!data) {
-                toast.error("No detail found");
-                return;
+    const handleClick = (id, type) => {
+        navigate(`/places/${id}`, {
+            state: {
+                id,
+                type,
+                from: "library" // 🔥 thêm cái này
             }
-
-   
-            navigate(`/places/${id}`, {
-    state: {
-        id,
-        type,       
-        detail: data
-    }
-});
-
-        } catch {
-            toast.error("Server error");
-        } finally {
-            setLoading(false);
-        }
+        });
     };
+
 
     const groupedData = {
         Hotels: locationData.filter(item => item.type === 1),
@@ -300,7 +285,7 @@ const HandleClick = async (id, type) => {
                 <div
                     key={item.id}
                     className="card"
-                    onClick={() => HandleClick(item.id, item.type)}
+                    onClick={() => handleClick(item.id, item.type)}
                 >
                     <img src={item.image || "https://placehold.co/300x200"} />
                     <h3>{item.name}</h3>
@@ -439,3 +424,47 @@ const HandleClick = async (id, type) => {
 }
 
 export default LocationComponent;
+
+
+
+    // const HandleClick = async (id, type) => { 
+    //     setLoading(true);
+
+    //     try {
+    //         const data = await api.getDetail(id, type);
+
+    //         if (!data) {
+    //             toast.error("No detail found");
+    //             return;
+    //         }
+
+
+    //         navigate(`/places/${id}`, {
+    //             state: {
+    //                 id,
+    //                 type,       
+    //                 detail: data
+    //             }
+    //         });
+
+    //     } catch {
+    //         toast.error("Server error");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    // const getAverageRating = (item) => {
+    //     const reviews = item.comments || item.reviews || [];
+
+    //     if (item.rating){
+    //         return item.rating;
+    //     }
+
+    //     if (!reviews || reviews.length === 0) return 4.5;
+        
+    //     return (
+    //         reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
+    //         reviews.length
+    //     ).toFixed(1);
+    // };

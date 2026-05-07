@@ -1,6 +1,440 @@
-// import { useState } from "react";
+import { useState, useEffect, useRef  } from "react"; 
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { Star, ArrowLeft } from "lucide-react";
+import { authorizedFetch } from "../../../api";
+import "./LocationDetail.css";
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const MODE = "REAL_BACKEND"; // hoặc "JSON_SERVER"
+
+const JSON_API = "http://localhost:3001/places";
+
+const REAL_API = {
+  getHotel: "places/hotels/",
+  getRestaurant: "places/restaurants/",
+  getAttraction: "places/attractions/",
+};
+
+/* =========================================================
+   API
+========================================================= */
+
+const getDetail = async (id, type) => {
+  try {
+    if (MODE === "REAL_BACKEND") {
+      let endpoint = "";
+
+      switch (type) {
+        case 1:
+          endpoint = REAL_API.getHotel;
+          break;
+        case 2:
+          endpoint = REAL_API.getRestaurant;
+          break;
+        case 3:
+          endpoint = REAL_API.getAttraction;
+          break;
+        default:
+          console.error("Loại không hợp lệ:", type);
+          return null;
+      }
+
+      const url = `${endpoint}${id}/`;
+
+      const response = await authorizedFetch(url, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        console.error("Fetch fail:", response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      
+      console.log("Dữ liệu chi tiết của địa điểm nè: ", data);
+
+      return data;
+    } else {
+      const res = await fetch(`${JSON_API}/${id}`);
+      if (!res.ok) return null;
+      return await res.json();
+    }
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+/* =========================================================
+   COMPONENT
+========================================================= */
+
+const OPERATING_LABELS = {
+  0: "Cả ngày",
+  1: "Sáng",
+  2: "Trưa",
+  3: "Tối",
+  4: "Nửa đêm",
+};
+
+const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const [searchParams] = useSearchParams();
+  const [openSection, setOpenSection] = useState("menu");
+  const [openDiscount, setOpenDiscount] = useState(false);
+  const [reviewPage, setReviewPage] = useState(0);
+
+  const REVIEWS_PER_PAGE = 3;
+  const start = reviewPage * REVIEWS_PER_PAGE;
+
+  // ✅ lấy type từ state hoặc query
+  const type =
+    mode === "embedded"
+      ? propType
+      : state?.type || Number(searchParams.get("type"));
+
+  const [raw, setRaw] = useState(
+    mode === "embedded" ? data : state?.detail || null
+  );
+
+  /* =========================
+     FETCH
+  ========================= */
+  const fetchDetail = async () => {
+    if (!type) {
+      console.error("Thiếu type");
+      return;
+    }
+
+    const data = await getDetail(id, type);
+    if (data) setRaw(data);
+  };
+
+  const fetchedRef = useRef(false);
+  useEffect(() => {
+    if (mode === "embedded") return;
+    if (!id || !type) return;
+    if (fetchedRef.current) return;
+
+    fetchedRef.current = true;
+    fetchDetail();
+  }, [id, type]);
+
+  /* =========================
+     BACK
+  ========================= */
+  const handleBack = () => {
+    if (mode === "embedded") {
+      onClose?.(); // 🔥 đóng modal
+      return;
+    }
+
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/places");
+    }
+  };
+
+  /* =========================
+     NORMALIZE
+  ========================= */
+  const location = raw
+    ? {
+        ...raw,
+        name:
+          raw.name ||
+          raw.place_name ||
+          raw.title ||
+          raw.places?.[0]?.name ||
+          "No name",
+
+        address:
+          raw.address ||
+          raw.places?.[0]?.address ||
+          "No address",
+
+        operatingHours: (() => {
+          try {
+            let hours =
+              raw.active_hours ??
+              raw.places?.[0]?.active_hours ??
+              raw.operatingHours;
+
+            if (typeof hours === "string") {
+              hours = JSON.parse(hours);
+            }
+
+            if (!Array.isArray(hours)) return [];
+
+            return hours.map(Number).filter((h) => !isNaN(h));
+          } catch {
+            return [];
+          }
+        })(),
+
+        menu: raw.room_types || raw.dishes || [],
+        reviews: raw.comments || raw.reviews || [],
+        promotions: raw.discounts || raw.promotions || [],
+      }
+    : null;
+
+  if (!location) {
+    return (
+      <div style={{ padding: 20 }}>
+        <p>Không có dữ liệu</p>
+        <button onClick={handleBack}>Quay lại</button>
+      </div>
+    );
+  }
+
+  const comments = location.reviews || [];
+  const averageRating = location.rating || 4.0;
+
+  const now = new Date();
+  const validDiscounts = location.promotions.filter(
+    (d) => !d.end_date || new Date(d.end_date) >= now
+  );
+
+  const visibleReviews = comments.slice(start, start + REVIEWS_PER_PAGE);
+  const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE); 
+
+  /* =========================
+     RENDER
+  ========================= */
+  return (
+    <div className="location-detail-wrapper">
+      <div className="location-detail-container">
+
+        <div className="detail-header">
+          <button className="back-btn" onClick={handleBack}>
+            <ArrowLeft size={18} /> Quay lại
+          </button>
+
+          <div className="image-container">
+            <img
+              src={location.image || "https://placehold.co/800x400"}
+              alt={location.name}
+            />
+
+            <div className="image-overlay">
+              <h1>{location.name}</h1>
+
+              <div className="quick-info">
+                <span>{location.address}</span>
+                <span>⭐ {averageRating}</span>
+
+                <span>
+                  {location.operatingHours.length > 0
+                    ? location.operatingHours.includes(0)
+                      ? "Buổi: Cả ngày"
+                      : `Buổi: ${location.operatingHours
+                          .map((h) => OPERATING_LABELS[h] || "?")
+                          .join(", ")}`
+                    : "Not updated"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="detail-grid">
+
+          {/* LEFT */}
+          <div className="main-content">
+
+            {/* DESCRIPTION */}
+            <div className="info-block">
+              <h3>Description</h3>
+              <p>{location.description}</p>
+            </div>
+
+            {/* MENU */}
+            <div className="info-block">
+              <h3
+                onClick={() => setOpenSection(openSection === "menu" ? null : "menu")}
+                className="clickable-h3"
+              >
+                Menu & Services {openSection === "menu" ? "▲" : "▼"}
+              </h3>
+
+              {openSection === "menu" && (
+                <div className="content-list">
+                  {location.menu.length > 0 ? (
+                    location.menu.map((item, i) => (
+                      <div key={item.dish_id || i} className="dish-card">
+
+                        <div className="dish-header">
+                          <h4 className="dish-name">
+                            {item.dish_name || item.name || item.type_name || "No name"}
+                          </h4>
+
+                          <span className="dish-price">
+                            {item.price ? `${item.price.toLocaleString()}đ` : "0đ"}
+                          </span>
+                        </div>
+
+                        <p className="dish-desc">
+                          {item.description?.trim() || "Không có mô tả"}
+                        </p>
+
+                      </div>
+                    ))
+                  ) : (
+                    <p>Chưa có thông tin</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* RIGHT */}
+          <div className="sidebar">
+
+            {/* DISCOUNT */}
+            <div className="promo-block">
+
+              <h3
+                className="clickable-h3"
+                onClick={() => setOpenDiscount(!openDiscount)}
+              >
+                Discount {openDiscount ? "▲" : "▼"}
+              </h3>
+
+              {openDiscount && (
+                <div className="content-list">
+
+                  {validDiscounts.length > 0 ? (
+                    validDiscounts.map((d) => (
+                      <div key={d.discount_id} className="promo-card">
+
+                        <div className="promo-header">
+                          <h4 className="promo-title">{d.title}</h4>
+
+                          <span className="promo-value">
+                            {d.percent ? `${d.percent}%` : ""}
+                          </span>
+                        </div>
+
+                        <p className="promo-desc">
+                          {d.description || "Không có mô tả"}
+                        </p>
+
+                        <div className="promo-meta">
+                          {d.start_date && <small>Từ: {d.start_date}</small>}
+                          <br />
+                          {d.end_date && <small>Đến: {d.end_date}</small>}
+                        </div>
+
+                      </div>
+                    ))
+                  ) : (
+                    <p>No valid discount</p>
+                  )}
+
+                </div>
+              )}
+            </div>
+
+            {/* REVIEWS */}
+            <div className="reviews-block">
+
+              <div className="reviews-header">
+                <h3>Đánh giá ({comments.length})</h3>
+
+                <button
+                  className="write-review-btn"
+                  onClick={() => {
+                    if (mode === "embedded") return;
+
+                    navigate(`/places/${id}/comments`, {
+                      state: {
+                        comments: location.reviews || [],
+                      },
+                    });
+                  }}
+                >
+                  Comment
+                </button>
+              </div>
+
+              <div className="comments-container">
+
+                {comments.length === 0 ? (
+                  <p>Chưa có đánh giá</p>
+                ) : (
+                  visibleReviews.map((c, index) => (
+                    <div key={c.comment_id || index} className="comment-card">
+
+                      <div className="comment-top">
+                        <strong>{c.commenter || c.user}</strong>
+
+                        <div className="stars">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              size={12}
+                              fill={i < (c.rating || 0) ? "#fbbf24" : "none"}
+                              color="#fbbf24"
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <p>{c.comment || c.content}</p>
+
+                    </div>
+                  ))
+                )}
+
+                {comments.length > 2 && (
+                  <div className="review-pagination">
+
+                    <button
+                      disabled={reviewPage === 0}
+                      onClick={() => setReviewPage((p) => p - 1)}
+                    >
+                      ◀ Prev
+                    </button>
+
+                    <span>
+                      {reviewPage + 1} / {totalPages}
+                    </span>
+
+                    <button
+                      disabled={reviewPage === totalPages - 1}
+                      onClick={() => setReviewPage((p) => p + 1)}
+                    >
+                      Next ▶
+                    </button>
+
+                  </div>
+                )}
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default LocationDetail;
+
+// import { useState, useEffect } from "react"; 
 // import { useParams, useNavigate, useLocation } from "react-router-dom";
 // import { Star, ArrowLeft } from "lucide-react";
+// import { authorizedFetch } from "../../../api"; 
 // import "./LocationDetail.css";
 
 // const OPERATING_LABELS = {
@@ -15,86 +449,93 @@
 //   const { id } = useParams();
 //   const navigate = useNavigate();
 //   const { state } = useLocation();
-//   const raw = state?.detail || null;
-//    console.log("RAW DETAIL:", raw);
+
+//   const [raw, setRaw] = useState(state?.detail || null);
+
+//   console.log("RAW DETAIL:", raw);
+
+
+//   const fetchDetail = async () => {
+//     try {
+//       let data;
+
+//       const res = await fetch(`http://localhost:3001/places/${id}`);
+//       if (!res.ok) return;
+//       data = await res.json();
+
+
+
+//       setRaw(data);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
+
+
+//   useEffect(() => {
+//   fetchDetail(); 
+// }, [id]);
+
 //   const location = raw
 //     ? {
 //         ...raw,
-//       name:
+//         name:
 //           raw.name ||
 //           raw.place_name ||
 //           raw.title ||
-//           raw.places?.[0]?.name || // 🔥 fallback cho case nested
+//           raw.places?.[0]?.name ||
 //           "No name",
 
 //         address:
 //           raw.address ||
 //           raw.places?.[0]?.address ||
 //           "No address",
-        
-      
-//   //  operatingHours: Array.isArray(raw.active_hours)
-//   //         ? raw.active_hours.map(Number)
-//   //         : raw.active_hours
-//   //         ? JSON.parse(raw.active_hours).map(Number)
-//   //         : raw.operatingHours || [],
-//   operatingHours: (() => {
-//   try {
-//     // let hours = raw.active_hours;
-// let hours =
-//   raw.active_hours ??
-//   raw.places?.[0]?.active_hours ??
-//   raw.operatingHours;
-//     // 🔥 Nếu là string → parse
-//     if (typeof hours === "string") {
-//       hours = JSON.parse(hours);
-//     }
 
-//     // 🔥 Nếu không phải array → bỏ
-//     if (!Array.isArray(hours)) return [];
+//         operatingHours: (() => {
+//           try {
+//             let hours =
+//               raw.active_hours ??
+//               raw.places?.[0]?.active_hours ??
+//               raw.operatingHours;
 
-//     // 🔥 Convert về number + lọc NaN
-//     return hours.map((h) => Number(h)).filter((h) => !isNaN(h));
-//   } catch (e) {
-//     console.log("Parse active_hours error:", e);
-//     return [];
-//   }
-// })(),
+//             if (typeof hours === "string") {
+//               hours = JSON.parse(hours);
+//             }
 
-      
+//             if (!Array.isArray(hours)) return [];
+
+//             return hours.map((h) => Number(h)).filter((h) => !isNaN(h));
+//           } catch (e) {
+//             console.log("Parse active_hours error:", e);
+//             return [];
+//           }
+//         })(),
+
 //         menu: raw.room_types || raw.dishes || [],
-
 //         reviews: raw.comments || raw.reviews || [],
-        
-        
 //         promotions: raw.discounts || raw.promotions || [],
-
 //         announcements: raw.announcements || [],
 //       }
 //     : null;
 
-
-//     console.log("FINAL HOURS:", location.operatingHours);
+//   console.log("FINAL HOURS:", location?.operatingHours);
 
 //   const comments = location?.reviews || [];
-//   const averageRating = location.rating || 4.0;
-// const [reviewPage, setReviewPage] = useState(0);
-// const REVIEWS_PER_PAGE = 3;
-// const start = reviewPage * REVIEWS_PER_PAGE;
-// const visibleReviews = comments.slice(
-//   start,
-//   start + REVIEWS_PER_PAGE
-// );
-// const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE);
-//   const [openSection, setOpenSection] = useState("menu");
+//   const averageRating = location?.rating || 4.0;
 
+//   const [reviewPage, setReviewPage] = useState(0);
+//   const REVIEWS_PER_PAGE = 3;
+//   const start = reviewPage * REVIEWS_PER_PAGE;
+//   const visibleReviews = comments.slice(start, start + REVIEWS_PER_PAGE);
+//   const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE);
+
+//   const [openSection, setOpenSection] = useState("menu");
 //   const toggleSection = (key) => {
 //     setOpenSection(openSection === key ? null : key);
 //   };
-// const [openDiscount, setOpenDiscount] = useState(false);
-//   /* =========================
-//      GUARD
-//   ========================= */
+
+//   const [openDiscount, setOpenDiscount] = useState(false);
+
 //   if (!location) {
 //     return (
 //       <div style={{ padding: 20 }}>
@@ -103,22 +544,15 @@
 //       </div>
 //     );
 //   }
+
 //   const now = new Date();
 
-// const validDiscounts = (location.promotions || []).filter((d) => {
-//   if (!d.end_date) return true; // nếu không có end_date thì vẫn show
+//   const validDiscounts = (location.promotions || []).filter((d) => {
+//     if (!d.end_date) return true;
+//     return new Date(d.end_date) >= now;
+//   });
 
-//   return new Date(d.end_date) >= now;
-// });
-// const validAnnouncements = Array.isArray(location?.announcements)
-//   ? location.announcements.filter((n) => {
-//       // nếu không có end_date → vẫn hiển thị
-//       if (!n.end_date) return true;
-
-//       return new Date(n.end_date) >= now;
-//     })
-//   : [];
-//   return (
+//    return (
 //     <div className="location-detail-wrapper">
 //       <div className="location-detail-container">
 
@@ -144,40 +578,19 @@
 //                <span>
 //   ⭐ {averageRating}
 // </span>
-//                 {/* <span>
-//                   {location.operatingHours
-//                     ? `Buổi: ${location.operatingHours.join(", ")}`
-//                     : "Not updated"}
-//                 </span> */}
-//                 {/* <span>
-//   {location.operatingHours && location.operatingHours.length > 0
-//     ? (() => {
-//         const hours = location.operatingHours.map(Number);
-
-//         // ✅ Nếu có 0 → chỉ lấy 0
-//         if (hours.includes(0)) {
-//           return "Buổi: Cả ngày";
-//         }
-
-//         // ❌ Không có 0 → map bình thường
-//         return `Buổi: ${hours
-//           .map((h) => OPERATING_LABELS[h] || "Không rõ")
-//           .join(", ")}`;
-//       })()
-//     : "Not updated"}
-// </span> */}
+                
 // <span>
 //                   {location.operatingHours &&
 //                   location.operatingHours.length > 0
 //                     ? (() => {
 //                         const hours = location.operatingHours;
 
-//                         // ✅ Nếu có 0 → chỉ hiển thị cả ngày
+                 
 //                         if (hours.includes(0)) {
 //                           return "Buổi: Cả ngày";
 //                         }
 
-//                         // ❌ Không có 0 → map bình thường
+                        
 //                         return `Buổi: ${hours
 //                           .map((h) => OPERATING_LABELS[h] || "Không rõ")
 //                           .join(", ")}`;
@@ -384,7 +797,7 @@
 //                     </div>
 //                   ))
 //                 )}
-//                 {comments.length > 3 && (
+//                 {comments.length > 2 && (
 //   <div className="review-pagination">
 
 //     <button
@@ -420,408 +833,4 @@
 // };
 
 // export default LocationDetail;
-
-
-import { useState, useEffect } from "react"; 
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Star, ArrowLeft } from "lucide-react";
-import { authorizedFetch } from "../../../api"; 
-import "./LocationDetail.css";
-
-const OPERATING_LABELS = {
-  0: "Cả ngày",
-  1: "Sáng",
-  2: "Trưa",
-  3: "Tối",
-  4: "Nửa đêm",
-};
-
-const LocationDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { state } = useLocation();
-
-  const [raw, setRaw] = useState(state?.detail || null);
-
-  console.log("RAW DETAIL:", raw);
-
-
-  const fetchDetail = async () => {
-    try {
-      let data;
-
-      const res = await fetch(`http://localhost:3001/places/${id}`);
-      if (!res.ok) return;
-      data = await res.json();
-
-
-
-      setRaw(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-
-  useEffect(() => {
-  fetchDetail(); 
-}, [id]);
-
-  const location = raw
-    ? {
-        ...raw,
-        name:
-          raw.name ||
-          raw.place_name ||
-          raw.title ||
-          raw.places?.[0]?.name ||
-          "No name",
-
-        address:
-          raw.address ||
-          raw.places?.[0]?.address ||
-          "No address",
-
-        operatingHours: (() => {
-          try {
-            let hours =
-              raw.active_hours ??
-              raw.places?.[0]?.active_hours ??
-              raw.operatingHours;
-
-            if (typeof hours === "string") {
-              hours = JSON.parse(hours);
-            }
-
-            if (!Array.isArray(hours)) return [];
-
-            return hours.map((h) => Number(h)).filter((h) => !isNaN(h));
-          } catch (e) {
-            console.log("Parse active_hours error:", e);
-            return [];
-          }
-        })(),
-
-        menu: raw.room_types || raw.dishes || [],
-        reviews: raw.comments || raw.reviews || [],
-        promotions: raw.discounts || raw.promotions || [],
-        announcements: raw.announcements || [],
-      }
-    : null;
-
-  console.log("FINAL HOURS:", location?.operatingHours);
-
-  const comments = location?.reviews || [];
-  const averageRating = location?.rating || 4.0;
-
-  const [reviewPage, setReviewPage] = useState(0);
-  const REVIEWS_PER_PAGE = 3;
-  const start = reviewPage * REVIEWS_PER_PAGE;
-  const visibleReviews = comments.slice(start, start + REVIEWS_PER_PAGE);
-  const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE);
-
-  const [openSection, setOpenSection] = useState("menu");
-  const toggleSection = (key) => {
-    setOpenSection(openSection === key ? null : key);
-  };
-
-  const [openDiscount, setOpenDiscount] = useState(false);
-
-  if (!location) {
-    return (
-      <div style={{ padding: 20 }}>
-        <p>Không có dữ liệu.</p>
-        <button onClick={() => navigate("/places")}>Quay lại</button>
-      </div>
-    );
-  }
-
-  const now = new Date();
-
-  const validDiscounts = (location.promotions || []).filter((d) => {
-    if (!d.end_date) return true;
-    return new Date(d.end_date) >= now;
-  });
-
-   return (
-    <div className="location-detail-wrapper">
-      <div className="location-detail-container">
-
-        {/* HEADER */}
-        <div className="detail-header">
-          <button className="back-btn" onClick={() => navigate("/places")}>
-            <ArrowLeft size={18} /> Quay lại
-          </button>
-
-          <div className="image-container">
-            <img
-              src={location.image || "https://placehold.co/800x400"}
-              alt={location.name}
-            />
-
-            <div className="image-overlay">
-              {/* <h1>{location.name}</h1> */}
-               <h1>{location.name}</h1>
-
-              <div className="quick-info">
-                <span>{location.address}</span>
-
-               <span>
-  ⭐ {averageRating}
-</span>
-                
-<span>
-                  {location.operatingHours &&
-                  location.operatingHours.length > 0
-                    ? (() => {
-                        const hours = location.operatingHours;
-
-                 
-                        if (hours.includes(0)) {
-                          return "Buổi: Cả ngày";
-                        }
-
-                        
-                        return `Buổi: ${hours
-                          .map((h) => OPERATING_LABELS[h] || "Không rõ")
-                          .join(", ")}`;
-                      })()
-                    : "Not updated"}
-                </span>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="detail-grid">
-
-          {/* LEFT */}
-          <div className="main-content">
-
-            {/* DESCRIPTION */}
-            <div className="info-block">
-              <h3>Description</h3>
-              <p>{location.description}</p>
-            </div>
-
-            {/* MENU */}
-            <div className="info-block">
-              <h3
-                onClick={() => toggleSection("menu")}
-                className="clickable-h3"
-              >
-                Menu & Services {openSection === "menu" ? "▲" : "▼"}
-              </h3>
-
-              {openSection === "menu" && (
-                <div className="content-list">
-                  {location.menu.length > 0 ? (
-                    location.menu.map((item, i) => (
-                      <div key={item.dish_id || i} className="dish-card">
-
-                        <div className="dish-header">
-                          <h4 className="dish-name">
-                            {/* {item.dish_name || item.name || "No name"} */}
-                             {item.dish_name || item.name || item.type_name || "No name"}
-
-                          </h4>
-
-                          <span className="dish-price">
-                            {item.price ? `${item.price.toLocaleString()}đ` : "0đ"}
-                          </span>
-                </div>
-
-          <p className="dish-desc">
-            {item.description?.trim() || "Không có mô tả"}
-          </p>
-
-        </div>
-      ))
-    ) : (
-      <p>Chưa có thông tin</p>
-    )}
-  </div>
-)}
-            </div>
-
-            {/* NOTIFICATION */}
-            {/* <div className="info-block">
-              <h3
-                onClick={() => toggleSection("notify")}
-                className="clickable-h3"
-              >
-                Notification {openSection === "notify" ? "▲" : "▼"}
-              </h3>
-
-              
-              {openSection === "notify" && (
-  <div className="content-list">
-
-    {Array.isArray(location?.announcements) &&
-    location.announcements.length > 0 ? (
-      location.announcements.map((n) => (
-        <div key={n.id} className="announce-card">
-
-          <h4 className="announce-title">
-            {n.title}
-          </h4>
-
-          <p className="announce-desc">
-            {n.description || n.content || n.desc || "Không có mô tả"}
-          </p>
-
-          <div className="announce-meta">
-            {n.start_date && <small>Từ: {n.start_date}</small>}
-            {n.end_date && <small>Đến: {n.end_date}</small>}
-          </div>
-
-        </div>
-      ))
-    ) : (
-      <p>Không có thông báo</p>
-    )}
-
-  </div>
-)}
-            </div> */}
-
-          </div>
-
-          {/* RIGHT */}
-          <div className="sidebar">
-
-            <div className="promo-block">
-
-  <h3
-    className="clickable-h3"
-    onClick={() => setOpenDiscount(!openDiscount)}
-  >
-    Discount {openDiscount ? "▲" : "▼"}
-  </h3>
-
-  {openDiscount && (
-    <div className="content-list">
-
-      {validDiscounts.length > 0 ? (
-        validDiscounts.map((d) => (
-          <div key={d.discount_id} className="promo-card">
-
-            <div className="promo-header">
-              <h4 className="promo-title">{d.title}</h4>
-
-              <span className="promo-value">
-                {d.percent ? `${d.percent}%` : ""}
-              </span>
-            </div>
-
-            <p className="promo-desc">
-              {d.description || "Không có mô tả"}
-            </p>
-
-            <div className="promo-meta">
-              {d.start_date && (
-                <small>Từ: {d.start_date}</small>
-              )}
-              <br />
-              {d.end_date && (
-                <small>Đến: {d.end_date}</small>
-              )}
-            </div>
-
-          </div>
-        ))
-      ) : (
-        <p>No valid discount</p>
-      )}
-
-    </div>
-  )}
-</div>
-
-            {/* REVIEWS */}
-            <div className="reviews-block">
-
-              <div className="reviews-header">
-                <h3>Đánh giá ({comments.length})</h3>
-
-                <button
-  className="write-review-btn"
-  onClick={() =>
-    navigate(`/places/${id}/comments`, {
-      state: {
-        comments: location.reviews || [],
-      },
-    })
-  }
->
-  Comment
-</button>
-              </div>
-
-              <div className="comments-container">
-
-                {comments.length === 0 ? (
-                  <p>Chưa có đánh giá</p>
-                ) : (
-                 visibleReviews.map((c, index) => (
-                    <div key={c.comment_id || index} className="comment-card">
-
-                      <div className="comment-top">
-        
-                        <strong>{c.commenter || c.user}</strong>
-
-                        <div className="stars">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              size={12}
-                              fill={i < (c.rating || 0) ? "#fbbf24" : "none"}
-                              color="#fbbf24"
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      <p>{c.comment || c.content}</p>
-
-                    </div>
-                  ))
-                )}
-                {comments.length > 2 && (
-  <div className="review-pagination">
-
-    <button
-      disabled={reviewPage === 0}
-      onClick={() => setReviewPage((p) => p - 1)}
-    >
-      ◀ Prev
-    </button>
-
-    <span>
-      {reviewPage + 1} / {totalPages}
-    </span>
-
-    <button
-      disabled={reviewPage === totalPages - 1}
-      onClick={() => setReviewPage((p) => p + 1)}
-    >
-      Next ▶
-    </button>
-
-  </div>
-)}
-
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default LocationDetail;
 
