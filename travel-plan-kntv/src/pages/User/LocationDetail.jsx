@@ -69,6 +69,51 @@ const getDetail = async (id, type) => {
   }
 };
 
+const postComment = async (id, type, content) => {
+  try {
+    let endpoint = "";
+
+    switch (type) {
+      case 1:
+        endpoint = REAL_API.getHotel;
+        break;
+
+      case 2:
+        endpoint = REAL_API.getRestaurant;
+        break;
+
+      case 3:
+        endpoint = REAL_API.getAttraction;
+        break;
+
+      default:
+        console.error("Loại không hợp lệ:", type);
+        return false;
+    }
+
+    const url = `${endpoint}${id}/comments/`;
+
+    const response = await authorizedFetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        content: content,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Comment fail:", response.status);
+      return null;
+    }
+
+    return await response.json();
+
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+
 /* =========================================================
    COMPONENT
 ========================================================= */
@@ -88,10 +133,7 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
   const [searchParams] = useSearchParams();
   const [openSection, setOpenSection] = useState("menu");
   const [openDiscount, setOpenDiscount] = useState(false);
-  const [reviewPage, setReviewPage] = useState(0);
-
-  const REVIEWS_PER_PAGE = 3;
-  const start = reviewPage * REVIEWS_PER_PAGE;
+  const [commentInput, setCommentInput] = useState("");
 
   // ✅ lấy type từ state hoặc query
   const type =
@@ -127,7 +169,7 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
   }, [id, type]);
 
   /* =========================
-     BACK
+     OTHER
   ========================= */
   const handleBack = () => {
     if (mode === "embedded") {
@@ -140,6 +182,34 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
     } else {
       navigate("/places");
     }
+  };
+
+  const handleSendComment = async () => {
+    if (!commentInput.trim()) return;
+
+    const result = await postComment(
+      location.business_id || location.id,
+      type,
+      commentInput
+    );
+
+    if (!result?.success) return;
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const newComment = {
+      comment_id: crypto.randomUUID(),
+      commenter: user?.username || "Bạn",
+      content: commentInput,
+      date: new Date().toISOString(),
+    };
+
+    setRaw(prev => ({
+      ...prev,
+      comments: [...(prev.comments || []), newComment],
+    }));
+
+    setCommentInput("");
   };
 
   /* =========================
@@ -180,7 +250,7 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
         })(),
 
         menu: raw.room_types || raw.dishes || [],
-        reviews: raw.comments || raw.reviews || [],
+        comments: raw.comments || raw.reviews || [],
         promotions: raw.discounts || raw.promotions || [],
       }
     : null;
@@ -194,237 +264,340 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
     );
   }
 
-  const comments = location.reviews || [];
   const averageRating = location.rating || 4.0;
+  const comments = location.comments || [];
 
   const now = new Date();
   const validDiscounts = location.promotions.filter(
     (d) => !d.end_date || new Date(d.end_date) >= now
   );
 
-  const visibleReviews = comments.slice(start, start + REVIEWS_PER_PAGE);
-  const totalPages = Math.ceil(comments.length / REVIEWS_PER_PAGE); 
-
   /* =========================
      RENDER
   ========================= */
   return (
-    <div className="location-detail-wrapper">
+    <div className="location-detail-page">
+      <button
+        className="floating-back-btn"
+        onClick={handleBack}
+      >
+        <ArrowLeft size={18} />
+        <span>Quay lại</span>
+      </button>
+
       <div className="location-detail-container">
 
-        <div className="detail-header">
-          <button className="back-btn" onClick={handleBack}>
-            <ArrowLeft size={18} /> Quay lại
-          </button>
+        {/* HERO */}
+        <div className="hero-section">
 
-          <div className="image-container">
-            <img
-              src={location.image || "https://placehold.co/800x400"}
-              alt={location.name}
-            />
+          <img
+            src={location.image || "https://placehold.co/1200x500"}
+            alt={location.name}
+            className="hero-image"
+          />
 
-            <div className="image-overlay">
-              <h1>{location.name}</h1>
+          <div className="hero-overlay">
 
-              <div className="quick-info">
-                <span>{location.address}</span>
-                <span>⭐ {averageRating}</span>
+            <h1 className="hero-title">
+              {location.name}
+            </h1>
 
-                <span>
-                  {location.operatingHours.length > 0
+            <div className="hero-info">
+              <span>📍 {location.address}</span>
+
+              <span>⭐ {averageRating}</span>
+
+              <span>
+                🕒 {
+                  location.operatingHours.length > 0
                     ? location.operatingHours.includes(0)
-                      ? "Buổi: Cả ngày"
-                      : `Buổi: ${location.operatingHours
+                      ? "Cả ngày"
+                      : location.operatingHours
                           .map((h) => OPERATING_LABELS[h] || "?")
-                          .join(", ")}`
-                    : "Not updated"}
-                </span>
-              </div>
+                          .join(", ")
+                    : "Chưa cập nhật"
+                }
+              </span>
             </div>
+
           </div>
         </div>
 
+
+        {/* GRID */}
         <div className="detail-grid">
 
           {/* LEFT */}
-          <div className="main-content">
+          <div className="left-panel">
 
             {/* DESCRIPTION */}
-            <div className="info-block">
-              <h3>Description</h3>
-              <p>{location.description}</p>
+            <div className="detail-card">
+
+              <h2 className="section-title">
+                Description
+              </h2>
+
+              <p className="description-text">
+                {location.description || "Chưa có mô tả"}
+              </p>
+
             </div>
+
 
             {/* MENU */}
-            <div className="info-block">
-              <h3
-                onClick={() => setOpenSection(openSection === "menu" ? null : "menu")}
-                className="clickable-h3"
-              >
-                Menu & Services {openSection === "menu" ? "▲" : "▼"}
-              </h3>
+            <div className="detail-card">
 
-              {openSection === "menu" && (
-                <div className="content-list">
-                  {location.menu.length > 0 ? (
-                    location.menu.map((item, i) => (
-                      <div key={item.dish_id || i} className="dish-card">
+              <h2 className="section-title">
+                Menu & Services
+              </h2>
 
-                        <div className="dish-header">
-                          <h4 className="dish-name">
-                            {item.dish_name || item.name || item.type_name || "No name"}
-                          </h4>
+              <div className="menu-scroll">
 
-                          <span className="dish-price">
-                            {item.price ? `${item.price.toLocaleString()}đ` : "0đ"}
-                          </span>
+                {location.menu.length > 0 ? (
+                  location.menu.map((item, i) => (
+
+                    <div
+                      key={item.dish_id || i}
+                      className="menu-item"
+                    >
+
+                      <div className="menu-top">
+
+                        <div className="menu-name">
+                          {
+                            item.dish_name ||
+                            item.name ||
+                            item.type_name ||
+                            "No name"
+                          }
                         </div>
 
-                        <p className="dish-desc">
-                          {item.description?.trim() || "Không có mô tả"}
-                        </p>
-
-                      </div>
-                    ))
-                  ) : (
-                    <p>Chưa có thông tin</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* RIGHT */}
-          <div className="sidebar">
-
-            {/* DISCOUNT */}
-            <div className="promo-block">
-
-              <h3
-                className="clickable-h3"
-                onClick={() => setOpenDiscount(!openDiscount)}
-              >
-                Discount {openDiscount ? "▲" : "▼"}
-              </h3>
-
-              {openDiscount && (
-                <div className="content-list">
-
-                  {validDiscounts.length > 0 ? (
-                    validDiscounts.map((d) => (
-                      <div key={d.discount_id} className="promo-card">
-
-                        <div className="promo-header">
-                          <h4 className="promo-title">{d.title}</h4>
-
-                          <span className="promo-value">
-                            {d.percent ? `${d.percent}%` : ""}
-                          </span>
-                        </div>
-
-                        <p className="promo-desc">
-                          {d.description || "Không có mô tả"}
-                        </p>
-
-                        <div className="promo-meta">
-                          {d.start_date && <small>Từ: {d.start_date}</small>}
-                          <br />
-                          {d.end_date && <small>Đến: {d.end_date}</small>}
+                        <div className="menu-price">
+                          {
+                            item.price
+                              ? `${item.price.toLocaleString()}đ`
+                              : "0đ"
+                          }
                         </div>
 
                       </div>
-                    ))
-                  ) : (
-                    <p>No valid discount</p>
-                  )}
 
-                </div>
-              )}
-            </div>
-
-            {/* REVIEWS */}
-            <div className="reviews-block">
-
-              <div className="reviews-header">
-                <h3>Đánh giá ({comments.length})</h3>
-
-                <button
-                  className="write-review-btn"
-                  onClick={() => {
-                    if (mode === "embedded") return;
-
-                    navigate(`/places/${id}/comments`, {
-                      state: {
-                        comments: location.reviews || [],
-                      },
-                    });
-                  }}
-                >
-                  Comment
-                </button>
-              </div>
-
-              <div className="comments-container">
-
-                {comments.length === 0 ? (
-                  <p>Chưa có đánh giá</p>
-                ) : (
-                  visibleReviews.map((c, index) => (
-                    <div key={c.comment_id || index} className="comment-card">
-
-                      <div className="comment-top">
-                        <strong>{c.commenter || c.user}</strong>
-
-                        <div className="stars">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              size={12}
-                              fill={i < (c.rating || 0) ? "#fbbf24" : "none"}
-                              color="#fbbf24"
-                            />
-                          ))}
-                        </div>
+                      <div className="menu-description">
+                        {item.description || "Không có mô tả"}
                       </div>
-
-                      <p>{c.comment || c.content}</p>
 
                     </div>
+
                   ))
-                )}
-
-                {comments.length > 2 && (
-                  <div className="review-pagination">
-
-                    <button
-                      disabled={reviewPage === 0}
-                      onClick={() => setReviewPage((p) => p - 1)}
-                    >
-                      ◀ Prev
-                    </button>
-
-                    <span>
-                      {reviewPage + 1} / {totalPages}
-                    </span>
-
-                    <button
-                      disabled={reviewPage === totalPages - 1}
-                      onClick={() => setReviewPage((p) => p + 1)}
-                    >
-                      Next ▶
-                    </button>
-
-                  </div>
+                ) : (
+                  <p>Không có dữ liệu menu</p>
                 )}
 
               </div>
+
+            </div>
+
+
+            {/* DISCOUNT */}
+            <div className="detail-card">
+
+              <h2 className="section-title">
+                Promotions
+              </h2>
+
+              <div className="discount-scroll">
+
+                {validDiscounts.length > 0 ? (
+                  validDiscounts.map((d, index) => (
+
+                    <div
+                      key={d.discount_id || index}
+                      className="discount-card"
+                    >
+
+                      <div className="discount-header">
+
+                        <div className="discount-title">
+                          {d.title}
+                        </div>
+
+                        <div className="discount-value">
+                          {d.percent ? `${d.percent}%` : ""}
+                        </div>
+
+                      </div>
+
+                      <div className="discount-description">
+                        {d.description}
+                      </div>
+
+                      <div className="discount-date">
+                        {d.start_date} - {d.end_date}
+                      </div>
+
+                    </div>
+
+                  ))
+                ) : (
+                  <p>Không có khuyến mãi</p>
+                )}
+
+              </div>
+
             </div>
 
           </div>
+
+
+          {/* RIGHT */}
+          <div className="right-panel">
+
+            {/* OVERVIEW */}
+            <div className="rating-card">
+
+              <div className="overview-top">
+
+                <div className="overview-score">
+                  {averageRating}
+                </div>
+
+                <div className="overview-star">
+                  <Star
+                    size={24}
+                    fill="#fbbc04"
+                    color="#fbbc04"
+                  />
+                </div>
+
+              </div>
+
+              <div className="rating-text">
+                Đánh giá trung bình từ người dùng
+              </div>
+
+            </div>
+
+
+            {/* USER RATING */}
+            <div className="rating-card">
+
+              <h2 className="section-title">
+                Đánh giá địa điểm
+              </h2>
+
+              <div className="star-picker">
+
+                {[1,2,3,4,5].map((star) => (
+                  <Star
+                    key={star}
+                    size={28}
+                    color="#fbbc04"
+
+                    /*
+                    fill={selectedRating >= star ? "#fbbc04" : "none"}
+
+                    onClick={() => {
+                      setSelectedRating(star)
+                    }}
+                    */
+                  />
+                ))}
+
+              </div>
+
+              <div className="rating-text">
+                Chọn số sao bạn muốn đánh giá
+              </div>
+
+              {/*
+                TODO:
+                submit rating API
+              */}
+
+            </div>
+
+
+            {/* COMMENTS */}
+            <div className="comment-card-wrapper">
+
+              <h2 className="section-title">
+                Comments ({comments.length})
+              </h2>
+
+
+              {/* LIST */}
+              <div className="comment-list">
+
+                {comments.length > 0 ? (
+                  comments.map((c, index) => (
+
+                    <div
+                      key={c.comment_id || index}
+                      className="comment-item"
+                    >
+
+                      <div className="comment-user">
+                        {c.commenter || "Ẩn danh"}
+                      </div>
+
+                      <div className="comment-content">
+                        {c.content || c.comment}
+                      </div>
+
+                      <div className="comment-date">
+                        {
+                          c.date
+                            ? new Date(c.date).toLocaleString("vi-VN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                day: "2-digit",
+                                month: "2-digit",
+                              })
+                            : ""
+                        }
+                      </div>
+
+                    </div>
+
+                  ))
+                ) : (
+                  <p>Chưa có bình luận</p>
+                )}
+
+              </div>
+
+
+              {/* COMMENT INPUT */}
+              <div className="comment-form">
+
+                <textarea
+                  className="comment-input"
+                  placeholder="Viết bình luận của bạn..."
+                  value={commentInput}
+                  onChange={(e) =>
+                    setCommentInput(e.target.value)
+                  }
+                />
+
+                <button
+                  className="comment-submit"
+
+                  onClick={handleSendComment}
+                  
+                >
+                  Gửi bình luận
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
+
     </div>
   );
 };

@@ -1,219 +1,565 @@
-/* Tổng thể wrapper */
-.location-detail-wrapper {
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
+
+.location-detail-page {
   width: 100%;
-  height: 100vh; /* Cố định chiều cao màn hình */
-  background-color: #f8f9fa;
+  min-height: 100vh;
+
+  background: #f3f5f9;
+
   display: flex;
   justify-content: center;
-  overflow: hidden; /* Ngăn cuộn toàn trang web */
+
+  padding: 24px;
+
+  box-sizing: border-box;
 }
 
-/* Container chính */
 .location-detail-container {
   width: 100%;
-  max-width: 1200px;
-  height: 100%;
+  max-width: 1400px;
+
   display: flex;
   flex-direction: column;
-  background: white;
+  gap: 24px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
   position: relative;
-}
 
-/* NÚT QUAY LẠI - Góc trái trên cùng */
-.back-btn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 100; /* Luôn nằm trên cùng */
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  font-weight: 600;
-  color: #333;
-  transition: all 0.3s ease;
-}
+  height: 360px;
 
-.back-btn:hover {
-  background: #fff;
-  transform: translateX(-5px);
-}
+  border-radius: 24px;
 
-/* HEADER (Ảnh và Overlay) */
-.detail-header {
-  position: relative;
-  flex-shrink: 0; /* Không cho header bị co lại */
-}
-
-.image-container {
-  width: 100%;
-  height: 350px;
   overflow: hidden;
+
+  background: #ddd;
 }
 
-.image-container img {
+.hero-image {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
 
-.image-overlay {
+.hero-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 40px 20px 20px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 32px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.1)
+  );
+
   color: white;
 }
 
-.image-overlay h1 {
-  font-size: 2rem;
+.hero-title {
+  font-size: 40px;
+  font-weight: 700;
+
+  margin-bottom: 12px;
+}
+
+.hero-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   OVERVIEW
+========================================================= */
+
+.overview-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
   margin-bottom: 10px;
 }
 
-.quick-info {
-  display: flex;
-  gap: 20px;
-  font-size: 0.9rem;
-  opacity: 0.9;
+.overview-score {
+  font-size: 42px;
+  font-weight: 700;
+
+  color: #222;
 }
 
-/* GRID NỘI DUNG - Chia cột và cho phép cuộn */
+.overview-star {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =========================================================
+   STAR PICKER
+========================================================= */
+
+.star-picker {
+  display: flex;
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.star-picker svg {
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.star-picker svg:hover {
+  transform: scale(1.1);
+}
+
+
+/* =========================================================
+   CONTENT GRID
+========================================================= */
+
 .detail-grid {
   display: grid;
-  grid-template-columns: 1fr 350px; /* Trái rộng, phải sidebar */
-  gap: 20px;
-  padding: 20px;
-  flex: 1; /* Chiếm hết phần còn lại */
-  overflow-y: auto; /* KÍCH HOẠT SCROLL DOWN Ở ĐÂY */
-  background: #fff;
+  grid-template-columns: minmax(0, 1fr) 380px;
+
+  gap: 24px;
+
+  min-height: 700px;
 }
 
-/* Khối thông tin chung */
-.info-block, .promo-block, .reviews-block {
-  background: #fff;
+
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-card {
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+
+  margin-bottom: 20px;
+
+  color: #222;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-text {
+  color: #555;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.menu-scroll {
+  max-height: 450px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding-right: 6px;
+}
+
+.menu-item {
+  padding: 18px;
+
+  border-radius: 16px;
+
+  background: #fafafa;
+
   border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 20px;
+}
+
+.menu-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 8px;
+}
+
+.menu-name {
+  font-weight: 700;
+  color: #222;
+}
+
+.menu-price {
+  font-weight: 700;
+  color: #0f9d58;
+}
+
+.menu-description {
+  color: #666;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   DISCOUNT
+========================================================= */
+
+.discount-scroll {
+  max-height: 280px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding-right: 6px;
+}
+
+.discount-card {
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: #fff8e6;
+
+  border: 1px dashed #f2b01e;
+}
+
+.discount-header {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 8px;
+}
+
+.discount-title {
+  font-weight: 700;
+}
+
+.discount-value {
+  font-weight: 700;
+  color: #e67e22;
+}
+
+.discount-description {
+  color: #555;
+
+  margin-bottom: 10px;
+}
+
+.discount-date {
+  font-size: 13px;
+  color: #777;
+}
+
+
+/* =========================================================
+   RIGHT PANEL
+========================================================= */
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+
+/* =========================================================
+   RATING
+========================================================= */
+
+.rating-card {
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.rating-value {
+  font-size: 42px;
+  font-weight: 700;
+
+  color: #222;
+
+  margin-bottom: 8px;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 6px;
+
+  margin-bottom: 16px;
+}
+
+.rating-text {
+  color: #666;
+}
+
+
+/* =========================================================
+   COMMENT SECTION
+========================================================= */
+
+.comment-card-wrapper {
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+
+  display: flex;
+  flex-direction: column;
+
+  height: fit-content;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  max-height: 420px;
+
+  overflow-y: auto;
+
+  padding-right: 6px;
+
   margin-bottom: 20px;
 }
 
-.clickable-h3 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  color: #2d3436;
-  font-size: 1.2rem;
-  border-bottom: 2px solid #f1f1f1;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+.comment-item {
+  padding: 16px;
+
+  border-radius: 16px;
+
+  background: #fafafa;
+
+  border: 1px solid #eee;
 }
 
-/* Danh sách món ăn/dịch vụ */
-.content-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.comment-user {
+  font-weight: 700;
+
+  margin-bottom: 8px;
+
+  color: #222;
 }
 
-.dish-card {
-  padding: 15px;
-  background: #fdfdfd;
-  border-left: 4px solid #ff7675;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+.comment-content {
+  color: #555;
+
+  line-height: 1.6;
+
+  margin-bottom: 10px;
 }
 
-.dish-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
+.comment-date {
+  font-size: 13px;
+  color: #888;
 }
 
-.dish-name { font-weight: bold; color: #d63031; }
-.dish-price { color: #2ecc71; font-weight: 600; }
-.dish-desc { font-size: 0.85rem; color: #636e72; }
 
-/* SIDEBAR & REVIEWS */
-.sidebar {
+/* =========================================================
+   CREATE COMMENT
+========================================================= */
+
+.comment-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+
+  border-top: 1px solid #eee;
+
+  padding-top: 18px;
 }
 
-.promo-card {
-  background: #fff9db;
-  border: 1px dashed #f1c40f;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.comment-card {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-
-.comment-top {
+.star-picker {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
+  gap: 8px;
 }
 
-.stars { display: flex; gap: 2px; }
+/* TODO:
+.star-picker button
+handleRating()
+*/
 
-/* Phân trang đánh giá */
-.review-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-top: 15px;
-}
+.comment-input {
+  width: 100%;
+  min-height: 90px;
 
-.review-pagination button {
-  padding: 5px 12px;
+  resize: none;
+
+  padding: 14px;
+
+  border-radius: 14px;
   border: 1px solid #ddd;
-  background: white;
-  border-radius: 4px;
-  cursor: pointer;
+
+  outline: none;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
 }
 
-.review-pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.comment-input:focus {
+  border-color: #4a90e2;
 }
 
-/* Viết bình luận button */
-.write-review-btn {
-  background: #0984e3;
-  color: white;
+.comment-submit {
+  align-self: flex-end;
+
+  padding: 12px 20px;
+
   border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 12px;
+
+  background: #1e88e5;
+  color: white;
+
+  font-weight: 600;
+
   cursor: pointer;
+
+  transition: 0.2s;
 }
 
-/* Responsive cho Mobile */
-@media (max-width: 768px) {
+.comment-submit:hover {
+  background: #166ec0;
+}
+
+
+/* =========================================================
+   FLOATING BACK BUTTON
+========================================================= */
+
+.floating-back-btn {
+  position: fixed;
+
+  top: 24px;
+  left: 24px;
+
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.92);
+
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+
+  cursor: pointer;
+
+  font-weight: 600;
+  color: #222;
+
+  transition: 0.2s ease;
+}
+
+.floating-back-btn:hover {
+  transform: translateY(-2px);
+
+  background: white;
+
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.floating-back-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* =========================================================
+   CUSTOM SCROLLBAR
+========================================================= */
+
+.menu-scroll::-webkit-scrollbar,
+.discount-scroll::-webkit-scrollbar,
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-scroll::-webkit-scrollbar-thumb,
+.discount-scroll::-webkit-scrollbar-thumb,
+.comment-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 999px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+
   .detail-grid {
-    grid-template-columns: 1fr; /* Chuyển thành 1 cột */
-  }
-  
-  .image-container {
-    height: 250px;
+    grid-template-columns: 1fr;
   }
 
-  .back-btn {
-    top: 10px;
-    left: 10px;
-    padding: 6px 12px;
+  .hero-section {
+    height: 280px;
+  }
+
+  .hero-title {
+    font-size: 30px;
+  }
+
+  .comment-card-wrapper {
+    min-height: auto;
+  }
+
+  .comment-list {
+    max-height: 400px;
   }
 }
