@@ -6,8 +6,10 @@ const HomePage = () => {
   return (
     <div className="home-container">
       <Header />
-
-      <Banner />
+      
+      <div className="banner">
+        <Banner />
+      </div>
 
       {/* HERO TEXT */}
       <section className="hero-section">

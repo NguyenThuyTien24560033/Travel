@@ -238,6 +238,21 @@
     box-shadow: 0 4px 10px rgba(24, 144, 255, 0.4);
 }
 
+
+
+
+
+.detail-fullscreen {
+    position: fixed;
+    inset: 0;
+
+    z-index: 999999;
+
+    background: #f3f5f9;
+
+    overflow-y: auto;
+}
+
 /* Responsive cho mobile */
 @media (max-width: 768px) {
     .output-main {

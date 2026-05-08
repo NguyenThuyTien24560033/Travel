@@ -168,6 +168,12 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
     fetchDetail();
   }, [id, type]);
 
+  useEffect(() => {
+    if (mode === "embedded") {
+      setRaw(data || null);
+    }
+  }, [data, mode]);
+
   /* =========================
      OTHER
   ========================= */
@@ -276,7 +282,11 @@ const LocationDetail = ({ data, type: propType, mode = "navigate", onClose }) =>
      RENDER
   ========================= */
   return (
-    <div className="location-detail-page">
+    <div
+      className={`location-detail-page ${
+        mode === "embedded" ? "embedded-mode" : ""
+      }`}
+    >
       <button
         className="floating-back-btn"
         onClick={handleBack}

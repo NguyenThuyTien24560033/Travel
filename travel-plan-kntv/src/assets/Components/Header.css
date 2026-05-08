@@ -1,3 +1,8 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 /* Container chính của Header */
 .main-header {
   width: 100%;

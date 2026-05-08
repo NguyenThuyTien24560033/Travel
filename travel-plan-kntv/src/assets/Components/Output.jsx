@@ -691,7 +691,7 @@ const currentHotel = currentPlan?.summary_info?.hotel;
         </div>
 
         {selectedDetail && (
-            <div className="overlay">
+            <div className="detail-fullscreen">
                 <LocationDetail
                     mode="embedded"
                     data={selectedDetail.data}
