@@ -188,12 +188,9 @@ function PartnerLayout() {
             {user && <PartnerSidebar onLogout={logout} />}
 
             {/* CONTENT */}
-            {/* <div className="content">
-            <Outlet />
-            </div> */}
             <main style={{ flex: 1, backgroundColor: "#fff" }}>
-            <Outlet />
-        </main>
+                <Outlet />
+            </main>
 
         </div>
         </PartnerContext.Provider>

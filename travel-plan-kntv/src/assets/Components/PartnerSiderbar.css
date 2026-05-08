@@ -84,6 +84,7 @@
   transform: translateX(0); /* Logout không cần trượt ngang */
 }
 
+
 /* Responsive cho màn hình máy tính bảng/nhỏ */
 @media (max-width: 1024px) {
   .sidebar {
