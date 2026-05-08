@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+html {
+    scrollbar-gutter: stable both-edges;
+}
+
 .app{
     width: 100vw;
     height: 100vh;
