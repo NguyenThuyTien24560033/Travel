@@ -191,7 +191,7 @@ function PartnerLayout() {
             {/* <div className="content">
             <Outlet />
             </div> */}
-            <main style={{ flex: 1, padding: "20px", backgroundColor: "#fff" }}>
+            <main style={{ flex: 1, backgroundColor: "#fff" }}>
             <Outlet />
         </main>
 
