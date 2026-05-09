@@ -79,8 +79,30 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  font-size: 20px;
+  /* Đảm bảo văn bản bao quanh có màu đen hoặc xám đậm */
+  color: #000; 
+}
 
-  font-size: 15px;
+.map-link {
+  /* 1. Thiết lập trạng thái ban đầu: Màu đen và không gạch chân */
+  text-decoration: none;
+  color: #000 !important; /* Buộc trình duyệt bỏ màu xanh mặc định */
+  font-size: inherit;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease; /* Hiệu ứng đổi màu mượt mà */
+}
+
+/* 2. Trạng thái khi di chuột vào (Hover) */
+.map-link:hover {
+  color: #007bff !important; /* Đổi sang màu xanh (Primary Blue) */
+  text-decoration: underline; /* Hiện gạch chân để rõ là liên kết */
+}
+
+/* 3. Đảm bảo sau khi bấm xong quay lại nó vẫn màu đen (không bị màu tím visited) */
+.map-link:visited {
+  color: #000 !important;
 }
 
 
