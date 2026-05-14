@@ -1,0 +1,97 @@
+:root {
+  --history-bg: transparent;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+body.dark-theme {
+  --card-bg: #1e293b;
+  --text-primary: #fbbf24;
+  --text-secondary: #cbd5e1; 
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+.history-header {
+  padding: 80px 24px 20px; 
+  border-bottom: 1px solid var(--border-color);
+  background: var(--history-bg) !important;
+}
+
+.history-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.history-header p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.history-list {
+  padding: 15px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--history-bg) !important;
+  min-height: 100vh;
+}
+
+.history-list p {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 40px;
+}
+
+.history-card {
+  background: var(--card-bg) !important;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.history-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.history-card h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.history-card p, .end-date {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.actions { display: flex; gap: 10px; }
+.actions button {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+body.dark-theme .actions button:nth-child(1) { background: #0c4a6e; color: #7dd3fc; }
+body.dark-theme .actions button:nth-child(2) { background: #064e3b; color: #6ee7b7; }
+body.dark-theme .actions button:nth-child(3) { background: #7f1d1d; color: #fca5a5; }
+
+@media (max-width: 768px) {
+  .history-card { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .actions { width: 100%; justify-content: space-between; }
+}

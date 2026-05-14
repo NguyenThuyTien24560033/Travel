@@ -1,0 +1,251 @@
+/* Container chính - Khóa chiều cao màn hình để không vỡ layout */
+.output-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f4f7f6;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; /* Ngăn toàn bộ trang cuộn */
+}
+
+/* 1. Đảm bảo Header luôn hiển thị và có vị trí xác định */
+.output-header {
+    padding: 15px 25px;
+    background: #fff;
+    display: flex;
+    justify-content: flex-end; /* Đẩy nút về bên phải */
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    z-index: 100; /* Đảm bảo luôn nằm trên các lớp khác */
+}
+
+/* 2. Style lại nút Close cho nổi bật */
+.close-btn {
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #ff4d4f;
+    color: white;
+    transform: rotate(90deg); /* Xoay nhẹ khi hover cho đẹp */
+}
+
+/* 3. Đảm bảo container không che mất header */
+.output-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    position: fixed; /* Hoặc absolute tùy vào layout của bạn */
+    top: 0;
+    left: 0;
+    background-color: #f4f7f6;
+    overflow: hidden;
+}
+
+.plan-tabs {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px;
+    background: #fff;
+    overflow-x: auto; /* Cuộn ngang nếu quá nhiều plan */
+}
+
+.plan-tab {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.plan-tab.active {
+    background: #1890ff;
+    color: white;
+    border-color: #1890ff;
+    box-shadow: 0 2px 4px rgba(24, 144, 255, 0.3);
+}
+
+/* Nội dung chính chia làm 2 cột */
+.output-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden; /* Quan trọng: Để các con tự cuộn */
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Cột trái: Lịch trình */
+.schedule-box {
+    flex: 2;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    overflow-y: auto; /* Cuộn dọc độc lập */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Cột phải: Thông tin tổng quan */
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto; /* Cuộn dọc độc lập nếu nội dung quá dài */
+}
+
+.summary-box, .input-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.input-box.locked {
+    background: #f0f2f5;
+    border: 1px dashed #ccc;
+}
+
+/* Kiểu dáng các khối ngày (Day Block) */
+.day-block {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.day-block h4 {
+    color: #1890ff;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.day-block h4::before {
+    content: "📍";
+    margin-right: 8px;
+}
+
+/* Các hàng Item (Ăn uống, địa điểm) */
+.item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.item-row:hover {
+    background: #f0f7ff;
+}
+
+.item-row button {
+    background: #52c41a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* RenderItem styling */
+.item-box {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #262626;
+}
+
+.surge-price {
+    font-size: 0.8rem;
+    color: #faad14;
+    margin-left: 10px;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.tag {
+    background: #e6f7ff;
+    color: #1890ff;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #91d5ff;
+}
+
+/* List ngân sách */
+.budget-list {
+    list-style: none;
+    padding: 0;
+}
+
+.budget-list li {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Footer cố định */
+.sticky-footer {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+}
+
+.save-btn {
+    background: #1890ff;
+    color: white;
+    border: none;
+    padding: 12px 60px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background: #40a9ff;
+    box-shadow: 0 4px 10px rgba(24, 144, 255, 0.4);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .output-main {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .schedule-box, .right-panel {
+        overflow-y: visible; /* Trên mobile cho cuộn chung cả trang */
+        flex: none;
+    }
+}
