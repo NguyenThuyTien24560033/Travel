@@ -1,0 +1,147 @@
+/* Container bao quanh toàn bộ màn hình */
+.trip-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Thẻ Card trắng chứa form */
+.trip-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 600px; /* Khống chế chiều rộng tối đa */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.trip-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+/* Các nhóm input dọc */
+.trip-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.trip-subtitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 4px;
+}
+
+/* Input chung */
+.trip-input-field, .trip-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #f8faff;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Đảm bảo padding không làm vỡ width */
+}
+
+.trip-input-field:focus, .trip-select:focus {
+    outline: none;
+    border-color: #007aff;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* Xử lý ngày đi - ngày về trên cùng 1 hàng, tự xuống dòng nếu hẹp */
+.trip-date {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Tự xuống dòng khi bật F12 */
+}
+
+.trip-date .trip-input-field {
+    flex: 1 1 200px; /* Co giãn, nhưng tối thiểu 200px mới cho đứng cùng hàng */
+}
+
+/* Xử lý 3 ô % ngân sách (Budget Allocation) */
+.trip-grid-3 {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Chống tràn hàng khi màn hình nhỏ */
+}
+
+.trip-grid-3 .trip-input-field {
+    flex: 1 1 150px; /* Tự chia 3, nếu nhỏ hơn 150px sẽ tự xuống dòng */
+}
+
+/* Khu vực chọn Tag (Travel Style, Food Type...) */
+.trip-tags {
+    display: flex;
+    flex-wrap: wrap; /* Quan trọng nhất để không vỡ khung */
+    gap: 8px;
+}
+
+.trip-tag {
+    padding: 8px 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
+    background: #f8f9fa;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.trip-tag:hover {
+    background: #e9ecef;
+}
+
+.trip-tag.active {
+    background: #007aff;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+}
+
+/* Nút Submit cuối cùng */
+.trip-submit {
+    width: 100%;
+    padding: 15px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.trip-submit:hover {
+    background: #333;
+}
+
+/* Responsive cho điện thoại siêu nhỏ hoặc bật F12 hẹp */
+@media (max-width: 480px) {
+    .trip-card {
+        padding: 20px;
+    }
+    
+    .trip-date .trip-input-field,
+    .trip-grid-3 .trip-input-field {
+        flex: 1 1 100%; /* Ép xuống dòng hoàn toàn trên màn hình quá bé */
+    }
+}

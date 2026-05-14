@@ -1,0 +1,373 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.profile-container {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px 20px;
+
+  background: linear-gradient(
+    135deg,
+    #f3f5f9,
+    #eef2ff
+  );
+}
+
+/* =========================
+   PROFILE CARD
+========================= */
+
+.profile-card {
+  width: 100%;
+  max-width: 480px;
+
+  background: white;
+
+  border-radius: 24px;
+
+  padding: 36px 32px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08),
+    0 2px 8px rgba(0,0,0,0.04);
+
+  transition: 0.25s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   ICON
+========================= */
+
+.profile-card svg {
+  color: #2563eb;
+
+  background: #eff6ff;
+
+  padding: 14px;
+
+  border-radius: 50%;
+}
+
+/* =========================
+   INFO
+========================= */
+
+.profile-info {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-info input {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+  border: 1px solid #dbe3f0;
+
+  background: #fafcff;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.profile-info input:focus {
+  border-color: #3b82f6;
+
+  background: white;
+
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+}
+
+.profile-info input:disabled {
+  background: #f3f4f6;
+  color: #4b5563;
+  cursor: not-allowed;
+}
+
+/* =========================
+   BUTTON GROUP
+========================= */
+
+.button-group {
+  width: 100%;
+
+  display: flex;
+  gap: 14px;
+}
+
+.button-group button {
+  flex: 1;
+
+  padding: 13px 16px;
+
+  border: none;
+  border-radius: 14px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* Edit / Save */
+
+.button-group button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+.button-group button:first-child:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+}
+
+/* Change password / Cancel */
+
+.button-group button:last-child {
+  background: #eef2ff;
+  color: #374151;
+}
+
+.button-group button:last-child:hover {
+  background: #dbeafe;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  background: rgba(15,23,42,0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+}
+
+/* =========================
+   MODAL CONTENT
+========================= */
+
+.modal-content {
+  width: 100%;
+  max-width: 420px;
+
+  background: white;
+
+  border-radius: 22px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.18);
+
+  animation: modalFade 0.2s ease;
+}
+
+.modal-content h3 {
+  margin-bottom: 24px;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #111827;
+
+  text-align: center;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-content input {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+  border: 1px solid #dbe3f0;
+
+  background: #fafcff;
+
+  outline: none;
+
+  font-size: 15px;
+
+  transition: 0.2s ease;
+}
+
+.modal-content input:focus {
+  border-color: #2563eb;
+
+  background: white;
+
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+}
+
+/* =========================
+   MODAL ACTIONS
+========================= */
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 8px;
+}
+
+.modal-actions button {
+  flex: 1;
+
+  padding: 13px;
+
+  border: none;
+  border-radius: 14px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* Save */
+
+.modal-actions button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+.modal-actions button:first-child:hover {
+  background: #1d4ed8;
+}
+
+/* Cancel */
+
+.modal-actions button:last-child {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modal-actions button:last-child:hover {
+  background: #e5e7eb;
+}
+
+
+
+.back-btn {
+  padding: 14px 26px;
+
+  border: none;
+  border-radius: 14px;
+
+  background: #000;
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+
+  transition: all 0.2s ease;
+
+  position: fixed;
+  top: 24px;
+  left: 24px;
+
+  z-index: 9999;
+}
+
+.back-btn:hover {
+  background: #111;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+}
+
+.back-btn:active {
+  transform: scale(0.96);
+}
+
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 640px) {
+
+  .profile-card {
+    padding: 28px 22px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    padding: 24px 20px;
+  }
+}
