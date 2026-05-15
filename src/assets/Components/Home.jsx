@@ -4,7 +4,6 @@ import "./Home.css";
 import Header from '../Components/Header.jsx'
 import Banner from '../../pages/User/Banner.jsx';
 
-
 const LanternString = () => {
   const colors = ["#e53935","#f57c00","#fdd835","#43a047","#1e88e5","#8e24aa","#e53935","#f57c00","#fdd835","#43a047","#e53935"];
   return (
@@ -42,38 +41,6 @@ const LanternString = () => {
   );
 };
 
-const Lotus = ({ flip = false, scale = 1 }) => (
-  <svg width={80*scale} height={70*scale} viewBox="0 0 80 70"
-    style={{ transform: flip ? "scaleX(-1)" : undefined, display: "block" }}>
-    <path d="M40 65 Q38 50 36 42" fill="none" stroke="#27ae60" strokeWidth="2"/>
-    <path d="M40 65 Q42 50 44 42" fill="none" stroke="#27ae60" strokeWidth="2"/>
-    <ellipse cx="25" cy="55" rx="14" ry="8" fill="#27ae60" opacity="0.7" transform="rotate(-25 25 55)"/>
-    <ellipse cx="55" cy="55" rx="14" ry="8" fill="#27ae60" opacity="0.7" transform="rotate(25 55 55)"/>
-    {[0,45,90,135,180,225,270,315].map((deg, i) => {
-      const rad = deg * Math.PI / 180;
-      return <ellipse key={i}
-        cx={40 + 10*Math.sin(rad)} cy={38 - 10*Math.cos(rad)}
-        rx="7" ry="14"
-        fill={i < 4 ? "#f06292" : "#f48fb1"} opacity="0.88"
-        transform={`rotate(${deg} ${40+10*Math.sin(rad)} ${38-10*Math.cos(rad)})`}/>;
-    })}
-    <circle cx="40" cy="38" r="7" fill="#ffd54f"/>
-    <circle cx="40" cy="38" r="4" fill="#ffb300"/>
-  </svg>
-);
-
-const NonLa = () => (
-  <svg width="54" height="60" viewBox="0 0 60 65">
-    <path d="M30 5 Q5 40 2 60 Q30 68 58 60 Q55 40 30 5Z" fill="#d4a843" opacity="0.88"/>
-    {[15,25,35,45,55].map((y,i) => (
-      <line key={i} x1={30-(y-5)*0.88} y1={y} x2={30+(y-5)*0.88} y2={y}
-        stroke="#b8860b" strokeWidth="0.6" opacity="0.45"/>
-    ))}
-    <ellipse cx="30" cy="60" rx="28" ry="5" fill="#c49a2a" opacity="0.75"/>
-    <path d="M20 57 Q30 55 40 57" fill="none" stroke="#e53935" strokeWidth="2"/>
-  </svg>
-);
-
 const VNFlag = ({ size = 1 }) => (
   <svg width={36*size} height={24*size} viewBox="0 0 36 24">
     <rect width="36" height="24" fill="#da020e" rx="2"/>
@@ -93,8 +60,12 @@ const HomePage = () => {
         <Banner />
         <div className="hero-text-overlay">
           <h1>Plan Smarter, Travel Better ✈️</h1>
-          <p>Khám phá hành trình của bạn một cách thông minh hơn. Lên kế hoạch, quản lý chuyến đi và lưu giữ mọi khoảnh khắc chỉ trong một nơi duy nhất.</p>
-          <p className="sub-text-bold">Your journey, your story — we help you make it unforgettable.</p>
+          <p className="hero-desc">
+            Khám phá hành trình của bạn một cách thông minh hơn. Lên kế hoạch, quản lý chuyến đi và lưu giữ mọi khoảnh khắc chỉ trong một nơi duy nhất.
+          </p>
+          <p className="sub-text-bold">
+            Your journey, your story — we help you make it unforgettable.
+          </p>
         </div>
       </div>
 
@@ -116,7 +87,7 @@ const HomePage = () => {
       <section className="cta-section">
         <div className="cta-white-box">
           <div className="cta-decor-row">
-            <VNFlag/><NonLa/><VNFlag/><NonLa/><VNFlag/>
+            <VNFlag size={1.2} />
           </div>
 
           <h2>Start your journey today</h2>
@@ -125,10 +96,6 @@ const HomePage = () => {
           <button className="login-green-btn" onClick={() => navigate("/role")}>
             Đăng nhập ngay
           </button>
-
-          <div className="cta-lotus-row">
-            {[0,1,2,3,4].map(i => <Lotus key={i} scale={0.55 + (i%3)*0.1} flip={i%2===1}/>)}
-          </div>
         </div>
       </section>
     </div>

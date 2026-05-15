@@ -22,8 +22,8 @@ export const usePartner = () => useContext(PartnerContext);
 //Đình Khang đổi đường dẫn tại đây
 // const MODE = "REAL_BACKEND"; 
 const REAL_API = {
-    login: "http://localhost:8000/travel/api/login/",
-    register: "http://localhost:8000/travel/users/",
+    login: "http://localhost:3001/travel/api/login/",
+    register: "http://localhost:3001/travel/users/",
     getUser: "users/", // Đổi để khớp với authorizedFetch (tự cộng BASE_URL)
     getLocation: "places/my-place/",
     logout: "api/logout/",

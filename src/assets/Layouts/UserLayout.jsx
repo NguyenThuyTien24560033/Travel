@@ -23,10 +23,10 @@ const JSON_API = "http://localhost:3001/users";
 // Đình Khang đổi comment khi chạy backend thật
 // const MODE = "REAL_BACKEND";
 const REAL_API = {
-  login: "http://localhost:8000/travel/api/login/",
-  register: "http://localhost:8000/travel/users/",
-  // getUser: "http://localhost:8000/travel/users",
-  // logout: "http://localhost:8000/travel/api/logout/",
+  login: "http://localhost:3001S/travel/api/login/",
+  register: "http://localhost:3001/travel/users/",
+  // getUser: "http://localhost:3001/travel/users",
+  // logout: "http://localhost:3001/travel/api/logout/",
   getUser: "users/", // Đổi để khớp với authorizedFetch (tự cộng BASE_URL)
   logout: "api/logout/",
 };

@@ -47,15 +47,19 @@ const PartnerProfile = () => {
     // cập nhật state khi user gõ input
     const handleSubmitProfile = (e) => {
         e.preventDefault();
-
         const username = document.querySelector('input[name="username"]').value;
         const email = document.querySelector('input[name="email"]').value;
 
-        handleSave({
-            ...formData,
-            username,
-            email,
-        });
+        const dataToUpdate = {};
+        if (username !== user.username) dataToUpdate.username = username;
+        if (email !== user.email) dataToUpdate.email = email;
+
+        if (Object.keys(dataToUpdate).length === 0) {
+            setEditing(false);
+            return;
+        }
+
+        handleSave(dataToUpdate);
     };
 
     // gửi dữ liệu update profile lên backend
@@ -66,6 +70,7 @@ const PartnerProfile = () => {
         }
 
         try {
+            console.log("Dữ liệu gửi đi nè: ", input);
             const res = await authorizedFetch(`users/${user.id}/`, {
                 method: "PATCH",
                 body: JSON.stringify(input),
@@ -244,153 +249,3 @@ const PartnerProfile = () => {
 };
 
 export default PartnerProfile;
-
-
-
-//   const navigate = useNavigate();
-//   const { user, setUser, logout } = usePartner();
-
-//   const [editing, setEditing] = useState(false);
-//   const [formData, setFormData] = useState({});
-//   const [showChangePassword, setShowChangePassword] = useState(false);
-
-//   const [oldPassword, setOldPassword] = useState("");
-//   const [newPassword, setNewPassword] = useState("");
-//   const [confirmPassword, setConfirmPassword] = useState("");
-
-//   /* =========================
-//      🔹 INIT USER
-//   ========================= */
-//   useEffect(() => {
-//     if (!user) {
-//       navigate("/");
-//       return;
-//     }
-
-//     setFormData(user);
-//   }, [user, navigate]);
-
-//   /* =========================
-//      🔹 INPUT CHANGE
-//   ========================= */
-//   const handleChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-
-//   /* =========================
-//      🔹 UPDATE PROFILE
-//   ========================= */
-//   const handleSave = async () => {
-//     if (!user?.id) {
-//       toast.error("User ID không tồn tại!");
-//       return;
-//     }
-
-//     try {
-//       let updatedUser;
-
-//       if (MODE === "JSON_SERVER") {
-//         const res = await fetch(`${JSON_API}/${user.id}`, {
-//           method: "PATCH",
-//           headers: { "Content-Type": "application/json" },
-//           body: JSON.stringify(formData),
-//         });
-
-//         if (!res.ok) throw new Error();
-//         updatedUser = await res.json();
-//       } else {
-//         const res = await fetch(REAL_API.update, {
-//           method: "PATCH",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-//           },
-//           body: JSON.stringify(formData),
-//         });
-
-//         if (!res.ok) throw new Error();
-//         updatedUser = await res.json();
-//       }
-
-//       localStorage.setItem("user", JSON.stringify(updatedUser));
-//       setUser(updatedUser);
-
-//       setEditing(false);
-//       toast.success("Cập nhật thành công!");
-//     } catch (err) {
-//       console.error(err);
-//       toast.error("Lỗi khi update!");
-//     }
-//   };
-
-//   /* =========================
-//      🔹 CHANGE PASSWORD
-//   ========================= */
-//   const handleChangePassword = async (e) => {
-//     e.preventDefault();
-
-//     if (MODE === "JSON_SERVER") {
-//       if (oldPassword !== user.password) {
-//         toast.error("Sai mật khẩu cũ");
-//         return;
-//       }
-//     }
-
-//     if (newPassword !== confirmPassword) {
-//       toast.error("Mật khẩu không khớp");
-//       return;
-//     }
-
-//     if (newPassword.length < 6) {
-//       toast.error("Mật khẩu >= 6 ký tự");
-//       return;
-//     }
-
-//     try {
-//       let updatedUser;
-
-//       if (MODE === "JSON_SERVER") {
-//         const res = await fetch(`${JSON_API}/${user.id}`, {
-//           method: "PATCH",
-//           headers: { "Content-Type": "application/json" },
-//           body: JSON.stringify({ password: newPassword }),
-//         });
-
-//         if (!res.ok) throw new Error();
-//         updatedUser = await res.json();
-//       } else {
-//         const res = await fetch(`${REAL_API.update}change-password/`, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-//           },
-//           body: JSON.stringify({
-//             old_password: oldPassword,
-//             new_password: newPassword,
-//           }),
-//         });
-
-//         if (!res.ok) throw new Error();
-
-//         updatedUser = { ...user, password: newPassword };
-//       }
-
-//       localStorage.setItem("user", JSON.stringify(updatedUser));
-//       setUser(updatedUser);
-
-//       toast.success("Đổi mật khẩu thành công!");
-
-//       setShowChangePassword(false);
-//       setOldPassword("");
-//       setNewPassword("");
-//       setConfirmPassword("");
-//     } catch {
-//       toast.error("Đổi mật khẩu thất bại");
-//     }
-//   };
-
-//   if (!user) return null;
